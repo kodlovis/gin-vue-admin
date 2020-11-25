@@ -40,6 +40,8 @@ func MysqlTables(db *gorm.DB) {
 		model.ExaCustomer{},
 		model.SysOperationRecord{},
 		model.PasKpi{},
+		model.PasTag{},
+		model.KpiEvaluation{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))

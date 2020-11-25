@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="search-term">
-      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">        
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">          
         <!-- <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item> -->
         <el-form-item>
-          <el-button @click="openDialog" type="primary">新增指标表</el-button>
+          <el-button @click="openDialog" type="primary">新增方案</el-button>
         </el-form-item>
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
@@ -18,17 +18,6 @@
             <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量删除</el-button>
           </el-popover>
         </el-form-item>
-        <!-- 樊新增归档模块 -->
-        <!-- <el-form-item>
-          <el-popover placement="top" v-model="deleteVisible" width="160">
-            <p>确定要归档吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button @click="deleteVisible = false" size="mini" type="text">取消</el-button>
-                <el-button @click="onDelete" size="mini" type="primary">确定</el-button>
-              </div>
-            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量归档</el-button>
-          </el-popover>
-        </el-form-item> -->
       </el-form>
     </div>
     <el-table
@@ -41,30 +30,31 @@
       tooltip-effect="dark"
     >
     <el-table-column type="selection" width="55"></el-table-column>
-    <el-table-column label="日期" width="180">
+    <!-- <el-table-column label="日期" width="180">
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
-    </el-table-column>
+    </el-table-column> -->
     
-    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
+    <el-table-column label="方案名称" prop="Name" width="120"></el-table-column> 
     
-    <el-table-column label="指标说明" prop="Description" width="120"></el-table-column> 
+    <el-table-column label="方案类型" prop="Category" width="120"></el-table-column> 
     
-    <el-table-column label="指标状态" prop="Status" width="120"></el-table-column> 
+    <el-table-column label="方案状态" prop="Status" width="120"></el-table-column> 
     
-    <el-table-column label="指标类型" prop="Category" width="120"></el-table-column> 
+    <el-table-column label="方案描述" prop="Description" width="120"></el-table-column> 
+    
+    <el-table-column label="方案总分" prop="Score" width="120"></el-table-column> 
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button class="table-button" @click="updatePasKpi(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
+          <el-button class="table-button" @click="updateKpiEvaluation(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
           <el-popover placement="top" width="160" v-model="scope.row.visible">
             <p>确定要删除吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="deletePasKpi(scope.row)">确定</el-button>
+              <el-button type="primary" size="mini" @click="deleteKpiEvaluation(scope.row)">确定</el-button>
             </div>
             <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">删除</el-button>
           </el-popover>
-          <!-- <el-button class="table-button" @click="updatePasKpi(scope.row)" size="small" type="primary" icon="el-icon-edit">归档</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -82,20 +72,24 @@
 
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
       <el-form :model="formData" label-position="right" label-width="80px">
-         <el-form-item label="指标名称:">
+         <el-form-item label="方案名称:">
             <el-input v-model="formData.Name" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="指标说明:">
-            <el-input v-model="formData.Description" clearable placeholder="请输入" ></el-input>
+         <el-form-item label="方案类型:">
+            <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="指标状态:">
+         <el-form-item label="方案状态:">
             <el-input v-model="formData.Status" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="指标类型:">
-            <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
+         <el-form-item label="方案描述:">
+            <el-input v-model="formData.Description" clearable placeholder="请输入" ></el-input>
+      </el-form-item>
+       
+         <el-form-item label="方案总分:">
+            <el-input v-model="formData.Score" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        </el-form>
       <div class="dialog-footer" slot="footer">
@@ -108,30 +102,31 @@
 
 <script>
 import {
-    createPasKpi,
-    deletePasKpi,
-    deletePasKpiByIds,
-    updatePasKpi,
-    findPasKpi,
-    getPasKpiList
-} from "@/api/pasKpi";  //  此处请自行替换地址
+    createKpiEvaluation,
+    deleteKpiEvaluation,
+    deleteKpiEvaluationByIds,
+    updateKpiEvaluation,
+    findKpiEvaluation,
+    getKpiEvaluationList
+} from "@/api/kpiEvaluation";  //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
-  name: "PasKpi",
+  name: "KpiEvaluation",
   mixins: [infoList],
   data() {
     return {
-      listApi: getPasKpiList,
+      listApi: getKpiEvaluationList,
       dialogFormVisible: false,
       visible: false,
       type: "",
       deleteVisible: false,
       multipleSelection: [],formData: {
             Name:"",
-            Description:"",
-            Status:"",
             Category:"",
+            Status:"",
+            Description:"",
+            Score:"",
             
       }
     };
@@ -157,7 +152,7 @@ export default {
       //条件搜索前端看此方法
       onSubmit() {
         this.page = 1
-        this.pageSize = 10        
+        this.pageSize = 10         
         this.getTableData()
       },
       handleSelectionChange(val) {
@@ -176,7 +171,7 @@ export default {
           this.multipleSelection.map(item => {
             ids.push(item.ID)
           })
-        const res = await deletePasKpiByIds({ ids })
+        const res = await deleteKpiEvaluationByIds({ ids })
         if (res.code == 0) {
           this.$message({
             type: 'success',
@@ -186,35 +181,11 @@ export default {
           this.getTableData()
         }
       },
-      // 樊新增批量归档
-      // async onDelete() {
-      //   const ids = []
-      //   if(this.multipleSelection.length == 0){
-      //     this.$message({
-      //       type: 'warning',
-      //       message: '请选择要归档的数据'
-      //     })
-      //     return
-      //   }
-      //   this.multipleSelection &&
-      //     this.multipleSelection.map(item => {
-      //       ids.push(item.ID)
-      //     })
-      //   const res = await UpdatePasKpiByIds({ ids })
-      //   if (res.code == 0) {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '删除成功'
-      //     })
-      //     this.deleteVisible = false
-      //     this.getTableData()
-      //   }
-      // },
-    async updatePasKpi(row) {
-      const res = await findPasKpi({ ID: row.ID });
+    async updateKpiEvaluation(row) {
+      const res = await findKpiEvaluation({ ID: row.ID });
       this.type = "update";
       if (res.code == 0) {
-        this.formData = res.data.repasKpi;
+        this.formData = res.data.rekpiEvaluation;
         this.dialogFormVisible = true;
       }
     },
@@ -222,15 +193,16 @@ export default {
       this.dialogFormVisible = false;
       this.formData = {
           Name:"",
-          Description:"",
-          Status:"",
           Category:"",
+          Status:"",
+          Description:"",
+          Score:"",
           
       };
     },
-    async deletePasKpi(row) {
+    async deleteKpiEvaluation(row) {
       this.visible = false;
-      const res = await deletePasKpi({ ID: row.ID });
+      const res = await deleteKpiEvaluation({ ID: row.ID });
       if (res.code == 0) {
         this.$message({
           type: "success",
@@ -243,13 +215,13 @@ export default {
       let res;
       switch (this.type) {
         case "create":
-          res = await createPasKpi(this.formData);
+          res = await createKpiEvaluation(this.formData);
           break;
         case "update":
-          res = await updatePasKpi(this.formData);
+          res = await updateKpiEvaluation(this.formData);
           break;
         default:
-          res = await createPasKpi(this.formData);
+          res = await createKpiEvaluation(this.formData);
           break;
       }
       if (res.code == 0) {
