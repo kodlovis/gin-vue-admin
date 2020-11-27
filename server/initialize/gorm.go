@@ -41,7 +41,7 @@ func MysqlTables(db *gorm.DB) {
 		model.SysOperationRecord{},
 		model.PasKpi{},
 		model.PasTag{},
-		model.KpiEvaluation{},
+		//model.KpiEvaluation{},
 		model.PasAllocation{},
 		model.PasEvalutionForm{},
 	)
