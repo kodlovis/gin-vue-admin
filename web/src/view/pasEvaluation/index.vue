@@ -4,7 +4,7 @@
 
 <script>
 export default {
-    name:"SuperAdmin",
+    name:"PasKpi",
 }
 </script>
 <style lang="scss">

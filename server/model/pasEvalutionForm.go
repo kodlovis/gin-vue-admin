@@ -2,9 +2,7 @@
 package model
 
 import (
-	"gin-vue-admin/global"
-)
-import (
+  "gin-vue-admin/global"
   "time"
 )
 
@@ -12,11 +10,11 @@ import (
 type PasEvalutionForm struct {
       global.GVA_MODEL
       AllocationId  int `json:"AllocationId" form:"AllocationId" gorm:"column:AllocationId;comment:;type:int;size:10;"`
-      ScoreDate  time.Time `json:"ScoreDate" form:"ScoreDate" gorm:"column:ScoreDate;comment:;type:datetime;"`
       Score  int `json:"Score" form:"Score" gorm:"column:Score;comment:;type:int;size:10;"`
+      ScoreDate  time.Time `json:"ScoreDate" form:"ScoreDate" gorm:"column:ScoreDate;comment:;type:datetime;"`
 }
 
 
 func (PasEvalutionForm) TableName() string {
-  return "pasEvalutionform"
+  return "pasEvalutionForm"
 }

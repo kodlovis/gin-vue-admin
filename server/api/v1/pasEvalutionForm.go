@@ -17,11 +17,11 @@ import (
 // @Produce application/json
 // @Param data body model.PasEvalutionForm true "创建PasEvalutionForm"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /pasEvalutionform/createPasEvalutionForm [post]
+// @Router /pasEvalutionForm/createPasEvalutionForm [post]
 func CreatePasEvalutionForm(c *gin.Context) {
-	var pasEvalutionform model.PasEvalutionForm
-	_ = c.ShouldBindJSON(&pasEvalutionform)
-	if err := service.CreatePasEvalutionForm(pasEvalutionform); err != nil {
+	var pasEvalutionForm model.PasEvalutionForm
+	_ = c.ShouldBindJSON(&pasEvalutionForm)
+	if err := service.CreatePasEvalutionForm(pasEvalutionForm); err != nil {
         global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -36,11 +36,11 @@ func CreatePasEvalutionForm(c *gin.Context) {
 // @Produce application/json
 // @Param data body model.PasEvalutionForm true "删除PasEvalutionForm"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /pasEvalutionform/deletePasEvalutionForm [delete]
+// @Router /pasEvalutionForm/deletePasEvalutionForm [delete]
 func DeletePasEvalutionForm(c *gin.Context) {
-	var pasEvalutionform model.PasEvalutionForm
-	_ = c.ShouldBindJSON(&pasEvalutionform)
-	if err := service.DeletePasEvalutionForm(pasEvalutionform); err != nil {
+	var pasEvalutionForm model.PasEvalutionForm
+	_ = c.ShouldBindJSON(&pasEvalutionForm)
+	if err := service.DeletePasEvalutionForm(pasEvalutionForm); err != nil {
         global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -55,7 +55,7 @@ func DeletePasEvalutionForm(c *gin.Context) {
 // @Produce application/json
 // @Param data body request.IdsReq true "批量删除PasEvalutionForm"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /pasEvalutionform/deletePasEvalutionFormByIds [delete]
+// @Router /pasEvalutionForm/deletePasEvalutionFormByIds [delete]
 func DeletePasEvalutionFormByIds(c *gin.Context) {
 	var IDS request.IdsReq
     _ = c.ShouldBindJSON(&IDS)
@@ -74,11 +74,11 @@ func DeletePasEvalutionFormByIds(c *gin.Context) {
 // @Produce application/json
 // @Param data body model.PasEvalutionForm true "更新PasEvalutionForm"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /pasEvalutionform/updatePasEvalutionForm [put]
+// @Router /pasEvalutionForm/updatePasEvalutionForm [put]
 func UpdatePasEvalutionForm(c *gin.Context) {
-	var pasEvalutionform model.PasEvalutionForm
-	_ = c.ShouldBindJSON(&pasEvalutionform)
-	if err := service.UpdatePasEvalutionForm(&pasEvalutionform); err != nil {
+	var pasEvalutionForm model.PasEvalutionForm
+	_ = c.ShouldBindJSON(&pasEvalutionForm)
+	if err := service.UpdatePasEvalutionForm(&pasEvalutionForm); err != nil {
         global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -93,15 +93,15 @@ func UpdatePasEvalutionForm(c *gin.Context) {
 // @Produce application/json
 // @Param data body model.PasEvalutionForm true "用id查询PasEvalutionForm"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /pasEvalutionform/findPasEvalutionForm [get]
+// @Router /pasEvalutionForm/findPasEvalutionForm [get]
 func FindPasEvalutionForm(c *gin.Context) {
-	var pasEvalutionform model.PasEvalutionForm
-	_ = c.ShouldBindQuery(&pasEvalutionform)
-	if err, repasEvalutionform := service.GetPasEvalutionForm(pasEvalutionform.ID); err != nil {
+	var pasEvalutionForm model.PasEvalutionForm
+	_ = c.ShouldBindQuery(&pasEvalutionForm)
+	if err, repasEvalutionForm := service.GetPasEvalutionForm(pasEvalutionForm.ID); err != nil {
         global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"repasEvalutionform": repasEvalutionform}, c)
+		response.OkWithData(gin.H{"repasEvalutionForm": repasEvalutionForm}, c)
 	}
 }
 
@@ -112,7 +112,7 @@ func FindPasEvalutionForm(c *gin.Context) {
 // @Produce application/json
 // @Param data body request.PasEvalutionFormSearch true "分页获取PasEvalutionForm列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /pasEvalutionform/getPasEvalutionFormList [get]
+// @Router /pasEvalutionForm/getPasEvalutionFormList [get]
 func GetPasEvalutionFormList(c *gin.Context) {
 	var pageInfo request.PasEvalutionFormSearch
 	_ = c.ShouldBindQuery(&pageInfo)

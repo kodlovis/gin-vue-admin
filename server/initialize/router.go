@@ -44,8 +44,8 @@ func Routers() *gin.Engine {
 	router.InitEmailRouter(ApiGroup)                 // 邮件相关路由
 	router.InitPasKpiRouter(ApiGroup)
 	router.InitPasTagRouter(ApiGroup)
-	//router.InitKpiEvaluationRouter(ApiGroup)
 	router.InitPasAllocationRouter(ApiGroup)
+	router.InitPasEvaluationRouter(ApiGroup)
 	router.InitPasEvalutionFormRouter(ApiGroup)
 
 	global.GVA_LOG.Info("router register success")

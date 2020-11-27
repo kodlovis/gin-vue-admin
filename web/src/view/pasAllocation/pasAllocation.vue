@@ -34,9 +34,9 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column>
     
-    <el-table-column label="方案名称" prop="EvaluationId" width="120"></el-table-column> 
+    <el-table-column label="EID（用来获得方案表）" prop="EvaluationId" width="120"></el-table-column> 
     
-    <el-table-column label="UID（用来获得）" prop="UID" width="120"></el-table-column> 
+    <el-table-column label="UID（用来获得User表）" prop="UID" width="120"></el-table-column> 
     
     <el-table-column label="评分人" prop="Scorer" width="120"></el-table-column> 
     
@@ -76,31 +76,31 @@
 
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
       <el-form :model="formData" label-position="right" label-width="80px">
-         <el-form-item label="EvaluationId字段:">
+         <el-form-item label="EID（用来获得方案表）:">
             <el-input v-model="formData.EvaluationId" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="UID字段:">
+         <el-form-item label="UID（用来获得User表）:">
             <el-input v-model="formData.UID" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="Scorer字段:">
+         <el-form-item label="评分人:">
             <el-input v-model="formData.Scorer" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="OriginalScore字段:">
+         <el-form-item label="原本分数:">
             <el-input v-model="formData.OriginalScore" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="AdjustedScore字段:">
+         <el-form-item label="更改后的分数:">
             <el-input v-model="formData.AdjustedScore" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="StartDate字段:">
+         <el-form-item label="开始日期:">
               <el-date-picker type="date" placeholder="选择日期" v-model="formData.StartDate" clearable></el-date-picker>
        </el-form-item>
        
-         <el-form-item label="EndingDate字段:">
+         <el-form-item label="结束日期:">
               <el-date-picker type="date" placeholder="选择日期" v-model="formData.EndingDate" clearable></el-date-picker>
        </el-form-item>
        </el-form>

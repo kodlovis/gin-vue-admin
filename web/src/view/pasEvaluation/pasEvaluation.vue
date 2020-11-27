@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="search-term">
-      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">            
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">          
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="openDialog" type="primary">新增pasEvaluation</el-button>
+          <el-button @click="openDialog" type="primary">新增方案</el-button>
         </el-form-item>
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
@@ -34,17 +34,15 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column>
     
-    <el-table-column label="Category字段" prop="Category" width="120"></el-table-column> 
+    <el-table-column label="方案名称" prop="Name" width="120"></el-table-column> 
     
-    <el-table-column label="Description字段" prop="Description" width="120"></el-table-column> 
+    <el-table-column label="方案类型" prop="Category" width="120"></el-table-column> 
     
-    <el-table-column label="Id字段" prop="Id" width="120"></el-table-column> 
+    <el-table-column label="方案状态" prop="Status" width="120"></el-table-column> 
     
-    <el-table-column label="Name字段" prop="Name" width="120"></el-table-column> 
+    <el-table-column label="方案描述" prop="Description" width="120"></el-table-column> 
     
-    <el-table-column label="Score字段" prop="Score" width="120"></el-table-column> 
-    
-    <el-table-column label="Status字段" prop="Status" width="120"></el-table-column> 
+    <el-table-column label="方案总分" prop="Score" width="120"></el-table-column> 
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
@@ -74,27 +72,24 @@
 
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
       <el-form :model="formData" label-position="right" label-width="80px">
-         <el-form-item label="Category字段:">
-            <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
-         <el-form-item label="Description字段:">
-            <el-input v-model="formData.Description" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
-         <el-form-item label="Id字段:"><el-input v-model.number="formData.Id" clearable placeholder="请输入"></el-input>
-      </el-form-item>
-       
-         <el-form-item label="Name字段:">
+         <el-form-item label="方案名称:">
             <el-input v-model="formData.Name" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="Score字段:">
-            <el-input v-model="formData.Score" clearable placeholder="请输入" ></el-input>
+         <el-form-item label="方案类型:">
+            <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="Status字段:">
+         <el-form-item label="方案状态:">
             <el-input v-model="formData.Status" clearable placeholder="请输入" ></el-input>
+      </el-form-item>
+       
+         <el-form-item label="方案描述:">
+            <el-input v-model="formData.Description" clearable placeholder="请输入" ></el-input>
+      </el-form-item>
+       
+         <el-form-item label="方案总分:">
+            <el-input v-model="formData.Score" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        </el-form>
       <div class="dialog-footer" slot="footer">
@@ -127,12 +122,11 @@ export default {
       type: "",
       deleteVisible: false,
       multipleSelection: [],formData: {
-            Category:"",
-            Description:"",
-            Id:0,
             Name:"",
-            Score:"",
+            Category:"",
             Status:"",
+            Description:"",
+            Score:"",
             
       }
     };
@@ -158,7 +152,7 @@ export default {
       //条件搜索前端看此方法
       onSubmit() {
         this.page = 1
-        this.pageSize = 10          
+        this.pageSize = 10         
         this.getTableData()
       },
       handleSelectionChange(val) {
@@ -198,12 +192,11 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-          Category:"",
-          Description:"",
-          Id:0,
           Name:"",
-          Score:"",
+          Category:"",
           Status:"",
+          Description:"",
+          Score:"",
           
       };
     },

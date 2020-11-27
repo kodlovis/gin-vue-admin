@@ -1,27 +1,24 @@
 <template>
 <div>
     <el-form :model="formData" label-position="right" label-width="80px">
+             <el-form-item label="Name字段:">
+                <el-input v-model="formData.Name" clearable placeholder="请输入" ></el-input>
+          </el-form-item>
+           
              <el-form-item label="Category字段:">
                 <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
+          </el-form-item>
+           
+             <el-form-item label="Status字段:">
+                <el-input v-model="formData.Status" clearable placeholder="请输入" ></el-input>
           </el-form-item>
            
              <el-form-item label="Description字段:">
                 <el-input v-model="formData.Description" clearable placeholder="请输入" ></el-input>
           </el-form-item>
            
-             <el-form-item label="Id字段:"><el-input v-model.number="formData.Id" clearable placeholder="请输入"></el-input>
-          </el-form-item>
-           
-             <el-form-item label="Name字段:">
-                <el-input v-model="formData.Name" clearable placeholder="请输入" ></el-input>
-          </el-form-item>
-           
              <el-form-item label="Score字段:">
                 <el-input v-model="formData.Score" clearable placeholder="请输入" ></el-input>
-          </el-form-item>
-           
-             <el-form-item label="Status字段:">
-                <el-input v-model="formData.Status" clearable placeholder="请输入" ></el-input>
           </el-form-item>
            <el-form-item>
            <el-button @click="save" type="primary">保存</el-button>
@@ -44,12 +41,11 @@ export default {
   data() {
     return {
       type: "",formData: {
-            Category:"",
-            Description:"",
-            Id:0,
             Name:"",
-            Score:"",
+            Category:"",
             Status:"",
+            Description:"",
+            Score:"",
             
       }
     };

@@ -7,7 +7,7 @@ import (
 )
 
 func InitPasEvalutionFormRouter(Router *gin.RouterGroup) {
-	PasEvalutionFormRouter := Router.Group("pasEvalutionform").Use(middleware.JWTAuth()).Use(middleware.CasbinHandler()).Use(middleware.OperationRecord())
+	PasEvalutionFormRouter := Router.Group("pasEvalutionForm").Use(middleware.JWTAuth()).Use(middleware.CasbinHandler()).Use(middleware.OperationRecord())
 	{
 		PasEvalutionFormRouter.POST("createPasEvalutionForm", v1.CreatePasEvalutionForm)   // 新建PasEvalutionForm
 		PasEvalutionFormRouter.DELETE("deletePasEvalutionForm", v1.DeletePasEvalutionForm) // 删除PasEvalutionForm
