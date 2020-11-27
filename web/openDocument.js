@@ -7,7 +7,7 @@
 
 var child_process = require("child_process");
 
-var url = "https://www.shanshan.com/index/",
+var url = "https://www.gin-vue-admin.com",
     cmd = '';
 console.log(process.platform)
 switch (process.platform) {

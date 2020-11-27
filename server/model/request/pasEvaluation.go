@@ -2,7 +2,7 @@ package request
 
 import "gin-vue-admin/model"
 
-type KpiEvaluationSearch struct{
-    model.KpiEvaluation
+type PasEvaluationSearch struct{
+    model.PasEvaluation
     PageInfo
 }

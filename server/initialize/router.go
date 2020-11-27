@@ -45,6 +45,8 @@ func Routers() *gin.Engine {
 	router.InitPasKpiRouter(ApiGroup)
 	router.InitPasTagRouter(ApiGroup)
 	router.InitKpiEvaluationRouter(ApiGroup)
+	router.InitPasAllocationRouter(ApiGroup)
+	router.InitPasEvalutionFormRouter(ApiGroup)
 
 	global.GVA_LOG.Info("router register success")
 	return Router

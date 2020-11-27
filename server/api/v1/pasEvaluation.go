@@ -10,18 +10,18 @@ import (
     "go.uber.org/zap"
 )
 
-// @Tags KpiEvaluation
-// @Summary 创建KpiEvaluation
+// @Tags PasEvaluation
+// @Summary 创建PasEvaluation
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.KpiEvaluation true "创建KpiEvaluation"
+// @Param data body model.PasEvaluation true "创建PasEvaluation"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /kpiEvaluation/createKpiEvaluation [post]
-func CreateKpiEvaluation(c *gin.Context) {
-	var kpiEvaluation model.KpiEvaluation
-	_ = c.ShouldBindJSON(&kpiEvaluation)
-	if err := service.CreateKpiEvaluation(kpiEvaluation); err != nil {
+// @Router /pasEvaluation/createPasEvaluation [post]
+func CreatePasEvaluation(c *gin.Context) {
+	var pasEvaluation model.PasEvaluation
+	_ = c.ShouldBindJSON(&pasEvaluation)
+	if err := service.CreatePasEvaluation(pasEvaluation); err != nil {
         global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -29,18 +29,18 @@ func CreateKpiEvaluation(c *gin.Context) {
 	}
 }
 
-// @Tags KpiEvaluation
-// @Summary 删除KpiEvaluation
+// @Tags PasEvaluation
+// @Summary 删除PasEvaluation
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.KpiEvaluation true "删除KpiEvaluation"
+// @Param data body model.PasEvaluation true "删除PasEvaluation"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /kpiEvaluation/deleteKpiEvaluation [delete]
-func DeleteKpiEvaluation(c *gin.Context) {
-	var kpiEvaluation model.KpiEvaluation
-	_ = c.ShouldBindJSON(&kpiEvaluation)
-	if err := service.DeleteKpiEvaluation(kpiEvaluation); err != nil {
+// @Router /pasEvaluation/deletePasEvaluation [delete]
+func DeletePasEvaluation(c *gin.Context) {
+	var pasEvaluation model.PasEvaluation
+	_ = c.ShouldBindJSON(&pasEvaluation)
+	if err := service.DeletePasEvaluation(pasEvaluation); err != nil {
         global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -48,18 +48,18 @@ func DeleteKpiEvaluation(c *gin.Context) {
 	}
 }
 
-// @Tags KpiEvaluation
-// @Summary 批量删除KpiEvaluation
+// @Tags PasEvaluation
+// @Summary 批量删除PasEvaluation
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.IdsReq true "批量删除KpiEvaluation"
+// @Param data body request.IdsReq true "批量删除PasEvaluation"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /kpiEvaluation/deleteKpiEvaluationByIds [delete]
-func DeleteKpiEvaluationByIds(c *gin.Context) {
+// @Router /pasEvaluation/deletePasEvaluationByIds [delete]
+func DeletePasEvaluationByIds(c *gin.Context) {
 	var IDS request.IdsReq
     _ = c.ShouldBindJSON(&IDS)
-	if err := service.DeleteKpiEvaluationByIds(IDS); err != nil {
+	if err := service.DeletePasEvaluationByIds(IDS); err != nil {
         global.GVA_LOG.Error("批量删除失败!", zap.Any("err", err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
@@ -67,18 +67,18 @@ func DeleteKpiEvaluationByIds(c *gin.Context) {
 	}
 }
 
-// @Tags KpiEvaluation
-// @Summary 更新KpiEvaluation
+// @Tags PasEvaluation
+// @Summary 更新PasEvaluation
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.KpiEvaluation true "更新KpiEvaluation"
+// @Param data body model.PasEvaluation true "更新PasEvaluation"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /kpiEvaluation/updateKpiEvaluation [put]
-func UpdateKpiEvaluation(c *gin.Context) {
-	var kpiEvaluation model.KpiEvaluation
-	_ = c.ShouldBindJSON(&kpiEvaluation)
-	if err := service.UpdateKpiEvaluation(&kpiEvaluation); err != nil {
+// @Router /pasEvaluation/updatePasEvaluation [put]
+func UpdatePasEvaluation(c *gin.Context) {
+	var pasEvaluation model.PasEvaluation
+	_ = c.ShouldBindJSON(&pasEvaluation)
+	if err := service.UpdatePasEvaluation(&pasEvaluation); err != nil {
         global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -86,37 +86,37 @@ func UpdateKpiEvaluation(c *gin.Context) {
 	}
 }
 
-// @Tags KpiEvaluation
-// @Summary 用id查询KpiEvaluation
+// @Tags PasEvaluation
+// @Summary 用id查询PasEvaluation
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.KpiEvaluation true "用id查询KpiEvaluation"
+// @Param data body model.PasEvaluation true "用id查询PasEvaluation"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /kpiEvaluation/findKpiEvaluation [get]
-func FindKpiEvaluation(c *gin.Context) {
-	var kpiEvaluation model.KpiEvaluation
-	_ = c.ShouldBindQuery(&kpiEvaluation)
-	if err, rekpiEvaluation := service.GetKpiEvaluation(kpiEvaluation.ID); err != nil {
+// @Router /pasEvaluation/findPasEvaluation [get]
+func FindPasEvaluation(c *gin.Context) {
+	var pasEvaluation model.PasEvaluation
+	_ = c.ShouldBindQuery(&pasEvaluation)
+	if err, repasEvaluation := service.GetPasEvaluation(pasEvaluation.ID); err != nil {
         global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"rekpiEvaluation": rekpiEvaluation}, c)
+		response.OkWithData(gin.H{"repasEvaluation": repasEvaluation}, c)
 	}
 }
 
-// @Tags KpiEvaluation
-// @Summary 分页获取KpiEvaluation列表
+// @Tags PasEvaluation
+// @Summary 分页获取PasEvaluation列表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.KpiEvaluationSearch true "分页获取KpiEvaluation列表"
+// @Param data body request.PasEvaluationSearch true "分页获取PasEvaluation列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /kpiEvaluation/getKpiEvaluationList [get]
-func GetKpiEvaluationList(c *gin.Context) {
-	var pageInfo request.KpiEvaluationSearch
+// @Router /pasEvaluation/getPasEvaluationList [get]
+func GetPasEvaluationList(c *gin.Context) {
+	var pageInfo request.PasEvaluationSearch
 	_ = c.ShouldBindQuery(&pageInfo)
-	if err, list, total := service.GetKpiEvaluationInfoList(pageInfo); err != nil {
+	if err, list, total := service.GetPasEvaluationInfoList(pageInfo); err != nil {
 	    global.GVA_LOG.Error("获取失败", zap.Any("err", err))
         response.FailWithMessage("获取失败", c)
     } else {
