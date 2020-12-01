@@ -1,0 +1,110 @@
+import service from '@/utils/request'
+
+// @Tags Kpi
+// @Summary 创建Kpi
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.Kpi true "创建Kpi"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
+// @Router /Kpi/createKpi [post]
+export const createKpi = (data) => {
+     return service({
+         url: "/Kpi/createKpi",
+         method: 'post',
+         data
+     })
+ }
+
+
+// @Tags Kpi
+// @Summary 删除Kpi
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.Kpi true "删除Kpi"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
+// @Router /Kpi/deleteKpi [delete]
+ export const deleteKpi = (data) => {
+     return service({
+         url: "/Kpi/deleteKpi",
+         method: 'delete',
+         data
+     })
+ }
+
+// @Tags Kpi
+// @Summary 删除Kpi
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.IdsReq true "批量删除Kpi"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
+// @Router /Kpi/deleteKpi [delete]
+ export const deleteKpiByIds = (data) => {
+     return service({
+         url: "/Kpi/deleteKpiByIds",
+         method: 'delete',
+         data
+     })
+ }
+
+// 樊新增批量归档
+//  export const updateKpiByIds = (data) => {
+//     return service({
+//         url: "/Kpi/updateKpiByIds",
+//         method: 'update',
+//         data
+//     })
+// }
+
+
+// @Tags Kpi
+// @Summary 更新Kpi
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.Kpi true "更新Kpi"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
+// @Router /Kpi/updateKpi [put]
+ export const updateKpi = (data) => {
+     return service({
+         url: "/Kpi/updateKpi",
+         method: 'put',
+         data
+     })
+ }
+
+
+// @Tags Kpi
+// @Summary 用id查询Kpi
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.Kpi true "用id查询Kpi"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
+// @Router /Kpi/findKpi [get]
+ export const findKpi = (params) => {
+     return service({
+         url: "/Kpi/findKpi",
+         method: 'get',
+         params
+     })
+ }
+
+
+// @Tags Kpi
+// @Summary 分页获取Kpi列表
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.PageInfo true "分页获取Kpi列表"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
+// @Router /Kpi/getKpiList [get]
+ export const getKpiList = (params) => {
+     return service({
+         url: "/Kpi/getKpiList",
+         method: 'get',
+         params
+     })
+ }

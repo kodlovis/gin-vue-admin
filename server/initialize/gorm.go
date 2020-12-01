@@ -3,6 +3,7 @@ package initialize
 import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
+	"gin-vue-admin/model/pas"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -39,11 +40,11 @@ func MysqlTables(db *gorm.DB) {
 		model.ExaSimpleUploader{},
 		model.ExaCustomer{},
 		model.SysOperationRecord{},
-		model.PasKpi{},
-		model.PasTag{},
-		model.PasAllocation{},
-		model.PasEvaluation{},
-		model.PasEvalutionForm{},
+		pas.Kpi{},
+		pas.Tag{},
+		pas.Allocation{},
+		pas.Evaluation{},
+		pas.EvalutionForm{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))
