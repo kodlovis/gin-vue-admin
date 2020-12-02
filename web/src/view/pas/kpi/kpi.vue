@@ -53,6 +53,10 @@
     
     <el-table-column label="指标类型" prop="Category" width="120"></el-table-column> 
     
+    <el-table-column label="标签名称" prop="Name1" width="120"></el-table-column> 
+    
+    <el-table-column label="标签分类" prop="Category1" width="120"></el-table-column>
+
       <el-table-column label="按钮组">
         <template slot-scope="scope">
           <el-button class="table-button" @click="updateKpi(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
@@ -115,6 +119,7 @@ import {
     findKpi,
     getKpiList
 } from "@/api/pas/kpi";  //  此处请自行替换地址
+//import { getTagList } from "@/api/pas/tag";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -132,6 +137,7 @@ export default {
             Description:"",
             Status:"",
             Category:"",
+            Tag:"",
             
       }
     };
