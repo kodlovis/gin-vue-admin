@@ -12,7 +12,7 @@ type Evaluation struct {
       Category  string `json:"Category" form:"Category" gorm:"column:Category;comment:方案类型;type:varchar(255);size:255;"`
       Status  bool `json:"Status" form:"Status" gorm:"column:Status;comment:方案状态;type:varchar(255);size:255;"`
       Description  string `json:"Description" form:"Description" gorm:"column:Description;comment:方案描述;type:varchar(255);size:255;"`
-      Score  float64 `json:"Score" form:"Score" gorm:"column:Score;comment:方案总分;type:varchar(255);size:255;"`
+      Score  float64 `json:"Score" form:"Score" gorm:"column:Score;comment:方案总分;type:float;"`
 }
 
 

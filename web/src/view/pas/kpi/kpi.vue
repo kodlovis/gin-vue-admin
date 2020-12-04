@@ -18,17 +18,6 @@
             <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量删除</el-button>
           </el-popover>
         </el-form-item>
-        <!-- 樊新增归档模块 -->
-        <!-- <el-form-item>
-          <el-popover placement="top" v-model="deleteVisible" width="160">
-            <p>确定要归档吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button @click="deleteVisible = false" size="mini" type="text">取消</el-button>
-                <el-button @click="onDelete" size="mini" type="primary">确定</el-button>
-              </div>
-            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量归档</el-button>
-          </el-popover>
-        </el-form-item> -->
       </el-form>
     </div>
     <el-table
@@ -52,11 +41,19 @@
     <el-table-column label="指标状态" prop="Status" width="120"></el-table-column> 
     
     <el-table-column label="指标类型" prop="Category" width="120"></el-table-column> 
-    
-    <el-table-column label="标签名称" prop="Name1" width="120"></el-table-column> 
-    
-    <el-table-column label="标签分类" prop="Category1" width="120"></el-table-column>
 
+    <el-table-column label="标签名称">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Tags"
+        :key="index">{{item.Name}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="标签类型">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Tags"
+        :key="index">{{item.Category}}</span>
+      </template>
+    </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
           <el-button class="table-button" @click="updateKpi(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
@@ -68,7 +65,6 @@
             </div>
             <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">删除</el-button>
           </el-popover>
-          <!-- <el-button class="table-button" @click="updateKpi(scope.row)" size="small" type="primary" icon="el-icon-edit">归档</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -101,6 +97,24 @@
          <el-form-item label="指标类型:">
             <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
+
+      <el-form ref="elForm" :model="formData" :rules="rules" size="medium" label-width="100px"
+        label-position="left">
+        <el-col :span="13">
+          <el-row gutter="15">
+            <el-col :span="24">
+              <el-form-item label="下拉选择" prop="tagName">
+                <el-select v-model="formData.tagName" placeholder="请选择下拉选择" clearable
+                  :style="{width: '100%'}">
+                  <el-option v-for="(item, index) in tagNameOptions" :key="index" :label="item.label"
+                    :value="item.value" :disabled="item.disabled"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-form>
+
        </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -119,7 +133,9 @@ import {
     findKpi,
     getKpiList
 } from "@/api/pas/kpi";  //  此处请自行替换地址
-//import { getTagList } from "@/api/pas/tag";
+import {
+    getTagList
+}from "@/api/pas/tag"; 
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -127,7 +143,7 @@ export default {
   mixins: [infoList],
   data() {
     return {
-      listApi: getKpiList,
+      listApi: getKpiList,getTagList,
       dialogFormVisible: false,
       visible: false,
       type: "",
@@ -137,9 +153,25 @@ export default {
             Description:"",
             Status:"",
             Category:"",
-            Tag:"",
-            
-      }
+            tagName: 1,
+      },
+      rules: {
+        tagName: [{
+          required: true,
+          message: '请选择下拉选择',
+          trigger: 'change'
+        }],
+      },
+      tagNameOptions: [{
+        "label": "选项一",
+        "value": "这是一"
+      }, {
+        "label": "选项二",
+        "value": "这是二"
+      }, {
+        "label": "选项三",
+        "value": "这是三"
+      }],
     };
   },
   filters: {
@@ -192,30 +224,6 @@ export default {
           this.getTableData()
         }
       },
-      // 樊新增批量归档
-      // async onDelete() {
-      //   const ids = []
-      //   if(this.multipleSelection.length == 0){
-      //     this.$message({
-      //       type: 'warning',
-      //       message: '请选择要归档的数据'
-      //     })
-      //     return
-      //   }
-      //   this.multipleSelection &&
-      //     this.multipleSelection.map(item => {
-      //       ids.push(item.ID)
-      //     })
-      //   const res = await UpdateKpiByIds({ ids })
-      //   if (res.code == 0) {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '删除成功'
-      //     })
-      //     this.deleteVisible = false
-      //     this.getTableData()
-      //   }
-      // },
     async updateKpi(row) {
       const res = await findKpi({ ID: row.ID });
       this.type = "update";

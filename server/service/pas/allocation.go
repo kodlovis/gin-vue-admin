@@ -75,5 +75,6 @@ func GetAllocationInfoList(info rp.AllocationSearch) (err error, list interface{
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Allocations).Error
+	err = db.Preload("Evaluation").Find(&Allocations).Error
 	return err, Allocations, total
 }

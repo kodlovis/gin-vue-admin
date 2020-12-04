@@ -11,7 +11,7 @@ type Tag struct {
       Name  string `json:"Name" form:"Name" gorm:"column:Name;comment:标签名称;type:varchar(255);size:255;"`
       Category  string `json:"Category" form:"Category" gorm:"column:Category;comment:标签分类;type:varchar(255);size:255;"`
       Parentid  int `json:"Parentid" form:"Parentid" gorm:"column:Parentid;comment:树形结构;type:int;size:10;"`
-      Kpis  []*Kpi `gorm:"many2many:kpi_tag;"`
+      Kpis  []Kpi `gorm:"many2many:kpi_tag;"`
 }
 
 

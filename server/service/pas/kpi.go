@@ -25,6 +25,7 @@ func CreateKpi(Kpi mp.Kpi) (err error) {
 
 func DeleteKpi(Kpi mp.Kpi) (err error) {
 	err = global.GVA_DB.Delete(Kpi).Error
+	err = global.GVA_DB.Table("kpi_tag").Where("kpi_id = ?",Kpi.ID).Delete(&[]mp.KpiTag{}).Error
 	return err
 }
 
@@ -36,14 +37,9 @@ func DeleteKpi(Kpi mp.Kpi) (err error) {
 
 func DeleteKpiByIds(ids rp.IdsReq) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.Kpi{},"id in ?",ids.Ids).Error
+	err = global.GVA_DB.Table("kpi_tag").Where("kpi_id = ?",ids.Ids).Delete(&[]mp.KpiTag{}).Error
 	return err
 }
-
-//樊新增，记录：批量删除括号中的是根据id去删除，批量更新的语句应该不同。待研习
-// func UpdateKpiByIds(ids request.IdsReq) (err error) {
-// 	err = global.GVA_DB.Save(&[]model.Kpi{},"id in ?",ids.Ids).Error
-// 	return err
-// }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateKpi
@@ -82,5 +78,6 @@ func GetKpiInfoList(info rp.KpiSearch) (err error, list interface{}, total int64
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
+	err = db.Preload("Tags").Find(&Kpis).Error
 	return err, Kpis, total
 }

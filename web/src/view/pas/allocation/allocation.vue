@@ -34,13 +34,27 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column> -->
     
-    <el-table-column label="EID（用来获得方案表）" prop="EvaluationId" width="120"></el-table-column> 
-    
-    <el-table-column label="UID（用来获得User表）" prop="UID" width="120"></el-table-column> 
+    <!-- <el-table-column label="EID（用来获得方案表）" prop="EvaluationId" width="120"></el-table-column>  -->
+    <el-table-column label="方案名称">
+      <template slot-scope="scope">
+        <span>{{scope.row.evaluation.Name}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="方案类型">
+      <template slot-scope="scope">
+        <span>{{scope.row.evaluation.Category}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="方案描述">
+      <template slot-scope="scope">
+        <span>{{scope.row.evaluation.Description}}</span>
+      </template>
+    </el-table-column>
+    <!-- <el-table-column label="UID（用来获得User表）" prop="UID" width="120"></el-table-column> 
     
     <el-table-column label="评分人" prop="Scorer" width="120"></el-table-column> 
     
-    <el-table-column label="原本的分数" prop="OriginalScore" width="120"></el-table-column> 
+    <el-table-column label="原本的分数" prop="OriginalScore" width="120"></el-table-column>  -->
     
     <el-table-column label="更改后的分数" prop="AdjustedScore" width="120"></el-table-column> 
     
