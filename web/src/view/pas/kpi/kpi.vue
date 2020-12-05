@@ -89,30 +89,23 @@
          <el-form-item label="指标说明:">
             <el-input v-model="formData.Description" clearable placeholder="请输入" ></el-input>
       </el-form-item>
-       
          <el-form-item label="指标状态:">
             <el-input v-model="formData.Status" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
+      </el-form-item>      
          <el-form-item label="指标类型:">
             <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
-
-      <el-form ref="elForm" :model="formData" :rules="rules" size="medium" label-width="100px"
-        label-position="left">
-        <el-col :span="13">
-          <el-row gutter="15">
-            <el-col :span="24">
-              <el-form-item label="下拉选择" prop="tagName">
-                <el-select v-model="formData.tagName" placeholder="请选择下拉选择" clearable
-                  :style="{width: '100%'}">
-                  <el-option v-for="(item, index) in tagNameOptions" :key="index" :label="item.label"
-                    :value="item.value" :disabled="item.disabled"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-col>
+      
+      <el-form ref="elForm" :model="formData" :rules="rules" label-width="100px"
+        label-position="left" >
+          <el-form-item label="下拉选择" prop="tagName"> 
+            <el-select v-model="formData.tagName" placeholder="请选择下拉选择" clearable
+              :style="{width: '100%'}">
+              <el-option v-for="(item, index) in TagData" :key="index"
+                :value="item.Name" :disabled="item.disabled"
+                ></el-option>
+            </el-select>
+          </el-form-item>
       </el-form>
 
        </el-form>
@@ -133,8 +126,8 @@ import {
     findKpi,
     getKpiList
 } from "@/api/pas/kpi";  //  此处请自行替换地址
-import {
-    getTagList
+import{
+  getTagList,
 }from "@/api/pas/tag"; 
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -143,7 +136,7 @@ export default {
   mixins: [infoList],
   data() {
     return {
-      listApi: getKpiList,getTagList,
+      listApi: getKpiList,
       dialogFormVisible: false,
       visible: false,
       type: "",
@@ -162,16 +155,6 @@ export default {
           trigger: 'change'
         }],
       },
-      tagNameOptions: [{
-        "label": "选项一",
-        "value": "这是一"
-      }, {
-        "label": "选项二",
-        "value": "这是二"
-      }, {
-        "label": "选项三",
-        "value": "这是三"
-      }],
     };
   },
   filters: {
@@ -226,9 +209,11 @@ export default {
       },
     async updateKpi(row) {
       const res = await findKpi({ ID: row.ID });
+      const tagS = await getTagList();
       this.type = "update";
       if (res.code == 0) {
         this.formData = res.data.reKpi;
+        this.TagData = tagS.data.list;
         this.dialogFormVisible = true;
       }
     },
