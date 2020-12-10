@@ -28,6 +28,10 @@ func DeleteKpi(Kpi mp.Kpi) (err error) {
 	err = global.GVA_DB.Table("kpi_tag").Where("kpi_id = ?",Kpi.ID).Delete(&[]mp.KpiTag{}).Error
 	return err
 }
+func RemoveKpiTags(Kpi mp.Kpi) (err error) {
+	err = global.GVA_DB.Table("kpi_tag").Where("kpi_id = ?",Kpi.ID).Delete(&[]mp.KpiTag{}).Error
+	return err
+}
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteKpiByIds

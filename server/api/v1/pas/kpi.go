@@ -48,6 +48,16 @@ func DeleteKpi(c *gin.Context) {
 	}
 }
 
+func RemoveKpiTags(c *gin.Context) {
+	var Kpi mp.Kpi
+	_ = c.ShouldBindJSON(&Kpi)
+	if err := sp.RemoveKpiTags(Kpi); err != nil {
+        global.GVA_LOG.Error("清除失败!", zap.Any("err", err))
+		response.FailWithMessage("清除失败", c)
+	} else {
+		response.OkWithMessage("清除成功", c)
+	}
+}
 // @Tags Kpi
 // @Summary 批量删除Kpi
 // @Security ApiKeyAuth
@@ -67,17 +77,6 @@ func DeleteKpiByIds(c *gin.Context) {
 	}
 }
 
-//樊新增批量归档
-// func UpdateKpiByIds(c *gin.Context) {
-// 	var IDS request.IdsReq
-//     _ = c.ShouldBindJSON(&IDS)
-// 	if err := service.UpdateKpiByIds(IDS); err != nil {
-//         global.GVA_LOG.Error("批量归档失败!", zap.Any("err", err))
-// 		response.FailWithMessage("批量归档失败", c)
-// 	} else {
-// 		response.OkWithMessage("批量归档成功", c)
-// 	}
-// }
 
 // @Tags Kpi
 // @Summary 更新Kpi

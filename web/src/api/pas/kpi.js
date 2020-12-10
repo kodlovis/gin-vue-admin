@@ -33,6 +33,13 @@ export const createKpi = (data) => {
      })
  }
 
+ export const removeKpiTags = (data) => {
+    return service({
+        url: "/Kpi/removeKpiTags",
+        method: 'delete',
+        data
+    })
+}
 // @Tags Kpi
 // @Summary 删除Kpi
 // @Security ApiKeyAuth
@@ -48,15 +55,6 @@ export const createKpi = (data) => {
          data
      })
  }
-
-// 樊新增批量归档
-//  export const updateKpiByIds = (data) => {
-//     return service({
-//         url: "/Kpi/updateKpiByIds",
-//         method: 'update',
-//         data
-//     })
-// }
 
 
 // @Tags Kpi

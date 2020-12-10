@@ -15,5 +15,6 @@ func InitKpiRouter(Router *gin.RouterGroup) {
 		KpiRouter.PUT("updateKpi", pas.UpdateKpi)    // 更新Kpi
 		KpiRouter.GET("findKpi", pas.FindKpi)        // 根据ID获取Kpi
 		KpiRouter.GET("getKpiList", pas.GetKpiList)  // 获取Kpi列表
+		KpiRouter.DELETE("removeKpiTags",pas.RemoveKpiTags)
 	}
 }
