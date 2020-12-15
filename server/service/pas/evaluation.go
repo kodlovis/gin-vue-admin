@@ -17,6 +17,13 @@ func CreateEvaluation(Evaluation mp.Evaluation) (err error) {
 	return err
 }
 
+func SetKpiEvaluation(evaluation *mp.Evaluation) error {
+	var s mp.Evaluation
+	global.GVA_DB.Preload("kpi").First(&s, "id = ?", evaluation.ID)
+	err := global.GVA_DB.Model(&s).Association("kpi").Replace(&evaluation.Kpis)
+	return err
+}
+
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteEvaluation
 //@description: 删除Evaluation记录
@@ -76,5 +83,6 @@ func GetEvaluationInfoList(info rp.EvaluationSearch) (err error, list interface{
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Evaluations).Error
+	err = db.Preload("Kpis").Find(&Evaluations).Error
 	return err, Evaluations, total
 }

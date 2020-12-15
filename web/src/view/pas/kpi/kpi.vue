@@ -38,20 +38,20 @@
     
     <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
     
-    <el-table-column label="指标状态" prop="Status" width="120"></el-table-column> 
+    <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
     
     <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column> 
 
     <el-table-column label="标签名称">
       <template slot-scope="scope">
         <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.Name}}</span>
+        :key="index">{{item.Name}}<br/></span>
       </template>
     </el-table-column>
     <el-table-column label="标签类型">
       <template slot-scope="scope">
         <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.Category}}</span>
+        :key="index">{{item.Category}}<br/></span>
       </template>
     </el-table-column>
       <el-table-column label="按钮组">
@@ -97,20 +97,21 @@
             <el-input v-model="formData.Description" clearable placeholder="请输入"  type="textarea"
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
-         <el-form-item label="指标状态:">
+         <!-- <el-form-item label="指标状态:">
             <el-input v-model="formData.Status" clearable placeholder="请输入"></el-input>
-      </el-form-item>      
-         <el-form-item label="指标类型:">
+      </el-form-item>       -->
+         <el-form-item label="指标算法:">
             <el-input v-model="formData.Category" clearable placeholder="请输入"  type="textarea"
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
-          <el-form-item label="下拉选择" prop="Tags"> 
-            <el-select v-model="formData.Tags" placeholder="请选择下拉选择" clearable
+          <el-form-item label="添加标签" prop="Tags"> 
+            <el-select v-model="formData.Tags" placeholder="请选择需要添加的标签" clearable
               :style="{width: '100%'}">
               <el-option v-for="(item, index) in tagData" :key="index"
                 :value="item.ID" :disabled="item.disabled"
                 >{{item.Name}}</el-option>
             </el-select>
+            <!-- <el-input v-model="formData.Tags"></el-input> -->
           </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">

@@ -16,5 +16,8 @@ func InitKpiRouter(Router *gin.RouterGroup) {
 		KpiRouter.GET("findKpi", pas.FindKpi)        // 根据ID获取Kpi
 		KpiRouter.GET("getKpiList", pas.GetKpiList)  // 获取Kpi列表
 		KpiRouter.DELETE("removeKpiTags",pas.RemoveKpiTags)
+		KpiRouter.POST("addKpiEvaluation", pas.AddKpiEvaluation)
+		KpiRouter.POST("getKpiEvaluation", pas.GetKpiEvaluation)
+		KpiRouter.GET("getKpiByIds", pas.GetKpiByIds)
 	}
 }

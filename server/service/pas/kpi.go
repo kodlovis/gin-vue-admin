@@ -45,6 +45,7 @@ func DeleteKpiByIds(ids rp.IdsReq) (err error) {
 	return err
 }
 
+
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateKpi
 //@description: 更新Kpi记录
@@ -84,4 +85,32 @@ func GetKpiInfoList(info rp.KpiSearch) (err error, list interface{}, total int64
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
 	err = db.Preload("Tags").Find(&Kpis).Error
 	return err, Kpis, total
+}
+
+func GetKpiByIds(ids rp.IdsReq,info rp.KpiSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+    // 创建db
+	db := global.GVA_DB.Model(&mp.Kpi{})
+	var Kpis []mp.Kpi
+    // 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
+	err = global.GVA_DB.Where("id in ?",ids.Ids).First(&[]mp.Kpi{}).Error
+	return err, Kpis, total
+}
+
+func AddKpiEvaluation(Kpis []mp.Kpi, ID uint) (err error) {
+	var evaluation mp.Evaluation
+	evaluation.ID = ID
+	evaluation.Kpis = Kpis
+	err = SetKpiEvaluation(&evaluation)
+	return err
+}
+
+func GetKpiEvaluation(info *rp.GetEvaluationId) (err error, evaluation []mp.Evaluation) {
+	err = global.GVA_DB.Where("id = ? ", info.ID).Order("sort").Find(&evaluation).Error
+	//sql := "SELECT authority_menu.keep_alive,authority_menu.default_menu,authority_menu.created_at,authority_menu.updated_at,authority_menu.deleted_at,authority_menu.menu_level,authority_menu.parent_id,authority_menu.path,authority_menu.`name`,authority_menu.hidden,authority_menu.component,authority_menu.title,authority_menu.icon,authority_menu.sort,authority_menu.menu_id,authority_menu.authority_id FROM authority_menu WHERE authority_menu.authority_id = ? ORDER BY authority_menu.sort ASC"
+	//err = global.GVA_DB.Raw(sql, authorityId).Scan(&menus).Error
+	return err, evaluation
 }

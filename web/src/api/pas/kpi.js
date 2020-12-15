@@ -90,7 +90,13 @@ export const createKpi = (data) => {
      })
  }
 
-
+ export const getKpiByIds = (params) => {
+    return service({
+        url: "/Kpi/getKpiByIds",
+        method: 'get',
+        params
+    })
+}
 // @Tags Kpi
 // @Summary 分页获取Kpi列表
 // @Security ApiKeyAuth
@@ -106,3 +112,19 @@ export const createKpi = (data) => {
          params
      })
  }
+
+ export const addKpiEvaluation = (data) => {
+    return service({
+        url: "/Kpi/addKpiEvaluation",
+        method: 'post',
+        data
+    })
+}
+
+export const getKpiEvaluation = (data) => {
+    return service({
+        url: "/Kpi/getKpiEvaluation",
+        method: 'post',
+        data
+    })
+}

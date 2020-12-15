@@ -139,3 +139,40 @@ func GetKpiList(c *gin.Context) {
         }, "获取成功", c)
     }
 }
+func GetKpiByIds(c *gin.Context) {
+	var IDS rp.IdsReq
+	var pageInfo rp.KpiSearch
+    _ = c.ShouldBindJSON(&IDS)
+	if err, list, total := sp.GetKpiByIds(IDS,pageInfo); err != nil {
+        global.GVA_LOG.Error("批量查询失败!", zap.Any("err", err))
+		response.FailWithMessage("批量查询失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+            List:     list,
+            Total:    total,
+            Page:     pageInfo.Page,
+            PageSize: pageInfo.PageSize,
+        }, "获取成功", c)
+	}
+}
+func AddKpiEvaluation(c *gin.Context) {
+	var evaluationKpi rp.KpiSearch
+	_ = c.ShouldBindJSON(&evaluationKpi)
+	if err := sp.AddKpiEvaluation(evaluationKpi.Kpis, evaluationKpi.ID); err != nil {
+		global.GVA_LOG.Error("添加失败!", zap.Any("err", err))
+		response.FailWithMessage("添加失败", c)
+	} else {
+		response.OkWithMessage("添加成功", c)
+	}
+}
+
+func GetKpiEvaluation(c *gin.Context) {
+	var param rp.GetEvaluationId
+	_ = c.ShouldBindJSON(&param)
+	if err,evaluation := sp.GetKpiEvaluation(&param); err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(gin.H{"menus": evaluation}, "获取成功", c)
+	}
+}

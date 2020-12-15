@@ -13,6 +13,7 @@ type Evaluation struct {
       Status  bool `json:"Status" form:"Status" gorm:"column:Status;comment:方案状态;type:varchar(255);size:255;"`
       Description  string `json:"Description" form:"Description" gorm:"column:Description;comment:方案描述;type:varchar(255);size:255;"`
       Score  float64 `json:"Score" form:"Score" gorm:"column:Score;comment:方案总分;type:float;"`
+      Kpis []Kpi `gorm:"many2many:evaluation_kpi;"`
 }
 
 

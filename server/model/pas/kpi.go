@@ -13,6 +13,7 @@ type Kpi struct {
       Status  bool `json:"Status" form:"Status" gorm:"column:Status;comment:指标状态;type:varchar(255);size:255;"`
       Category  string `json:"Category" form:"Category" gorm:"column:Category;comment:指标类型;type:varchar(255);size:255;"`
       Tags  []Tag `gorm:"many2many:kpi_tag;"`
+      Evaluations  []Evaluation `gorm:"many2many:evaluation_kpi;"`
 }
 
 func (Kpi) TableName() string {
