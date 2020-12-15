@@ -19,7 +19,7 @@ zap:
 # redis configuration
 redis:
   db: 0
-  addr: '127.0.0.1:16379'
+  addr: '106.14.23.61:16379'
   password: ''
 
 # email configuration
@@ -52,7 +52,7 @@ captcha:
 
 # mysql connect configuration
 mysql:
-  path: '127.0.0.1:13306'
+  path: '106.14.23.61:13306'
   config: 'charset=utf8mb4&parseTime=True&loc=Local'
   db-name: 'qmPlus'
   username: 'root'

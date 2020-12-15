@@ -8,3 +8,8 @@ type KpiSearch struct{
     ID uint
     PageInfo
 }
+
+type AddKpiEvaluationInfo struct{
+    Kpis []pas.Kpi
+    ID uint
+}

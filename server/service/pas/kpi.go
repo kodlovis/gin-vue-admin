@@ -96,7 +96,7 @@ func GetKpiByIds(ids rp.IdsReq,info rp.KpiSearch) (err error, list interface{}, 
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
-	err = global.GVA_DB.Where("id in ?",ids.Ids).First(&[]mp.Kpi{}).Error
+	err = global.GVA_DB.Where("id in ?",ids.Ids).Find(&[]mp.Kpi{}).Error
 	return err, Kpis, total
 }
 

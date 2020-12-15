@@ -35,7 +35,7 @@ COPY --from=builder /go/src/gin-vue-admin/config.yaml ./
 COPY --from=builder /go/src/gin-vue-admin/resource ./resource
 COPY docker/docker-start.sh ./
 
-ENV API_SERVER="http://localhost:8888/"
+ENV API_SERVER="http://106.14.23.61:8888/"
 EXPOSE 80
 
 ENTRYPOINT ["./docker-start.sh"]

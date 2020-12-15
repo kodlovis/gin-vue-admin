@@ -40,6 +40,17 @@
       </template>
     </el-table-column>
     </el-table>
+
+    <el-pagination
+      :current-page="page"
+      :page-size="pageSize"
+      :page-sizes="[3, 5,10, 30, 50, 100]"
+      :style="{float:'right',padding:'20px'}"
+      :total="total"
+      @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      layout="total, sizes, prev, pager, next, jumper"
+    ></el-pagination>
   </div>
 </template>
 
@@ -47,10 +58,7 @@
 import {
     getKpiList,
     addKpiEvaluation,
-    getKpiEvaluation,
     getKpiByIds,
-    findKpi,
-    deleteKpiByIds
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -137,9 +145,9 @@ export default {
           this.multipleSelection.map(item => {
             ids.push(item.ID)
           })
-          const checkArr = await deleteKpiByIds( ids )
+          const checkArr = await getKpiByIds( ids )
           const res = await addKpiEvaluation({ 
-            kpis: checkArr,
+            kpis: checkArr.data.list,
             ID: this.row.ID
           })
           if(res.code == 0){
@@ -169,8 +177,8 @@ export default {
   },
   async created() {
     await this.getTableData();
-    const res1 = await getKpiEvaluation({ ID: this.row.ID })
-    const kpis = res1.data.reEvaluation
+    // const res1 = await getKpiEvaluation({ ID: this.row.ID })
+    // const kpis = res1.data.reEvaluation
   }
 }
 
@@ -181,4 +189,9 @@ export default {
 .el-table .cell {
   white-space: pre-line;
 }
+.tableX .el-table--scrollable-x .el-table__body-wrapper {
+   padding: 0 0 5px 0;
+    margin: 0 0 5px 0;
+    overflow-x: auto;
+  }
 </style>

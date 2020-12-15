@@ -19,10 +19,11 @@ func CreateEvaluation(Evaluation mp.Evaluation) (err error) {
 
 func SetKpiEvaluation(evaluation *mp.Evaluation) error {
 	var s mp.Evaluation
-	global.GVA_DB.Preload("kpi").First(&s, "id = ?", evaluation.ID)
-	err := global.GVA_DB.Model(&s).Association("kpi").Replace(&evaluation.Kpis)
+	global.GVA_DB.Preload("Kpi").First(&s, "id = ?", evaluation.ID)
+	err := global.GVA_DB.Model(&s).Association("Kpi").Replace(&evaluation.Kpis)
 	return err
 }
+
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteEvaluation
