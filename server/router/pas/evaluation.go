@@ -15,6 +15,8 @@ func InitEvaluationRouter(Router *gin.RouterGroup) {
 		EvaluationRouter.PUT("updateEvaluation", pas.UpdateEvaluation)    // 更新Evaluation
 		EvaluationRouter.GET("findEvaluation", pas.FindEvaluation)        // 根据ID获取Evaluation
 		EvaluationRouter.GET("getEvaluationList",pas.GetEvaluationList)  // 获取Evaluation列表
+		EvaluationRouter.DELETE("removeEvaluationKpi", pas.RemoveEvaluationKpi)
+		
 		
 	}
 }

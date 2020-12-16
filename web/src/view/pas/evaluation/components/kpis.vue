@@ -4,10 +4,13 @@
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="0">
-          <el-button icon="el-icon-confirm" size="mini" slot="reference" type="primary" @click="kpiDataEnter">批量添加</el-button>
+            <el-button icon="el-icon-confirm" size="mini" slot="reference" type="primary" @click="kpiDataEnter">批量添加</el-button>
+            <el-button icon="el-icon-confirm" size="mini" slot="reference" type="danger" @click="removeEvaluationKpi">清空指标</el-button>
+            <el-button @click="openDialog" type="primary" size="mini" slot="reference">查看已添加指标</el-button>
           </el-popover>
         </el-form-item>
       </el-form>
+      
     </div>
     <el-table
       :data="tableData"
@@ -18,7 +21,7 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column type="selection" width="55" ref="multipleSelection" @check="nodeChange" :props="menuDefaultProps"></el-table-column>
+    <el-table-column type="selection" width="55" ref="multipleSelection" ></el-table-column>
 
     
     <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
@@ -51,6 +54,40 @@
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
+
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作" :append-to-body="true">
+      <el-table
+      :data="tableData"
+      @selection-change="handleSelectionChange"
+      border
+      ref="multipleTable"
+      stripe
+      style="width: 100%"
+      tooltip-effect="dark"
+    >
+    <el-table-column type="selection" width="55" ></el-table-column>
+
+    
+    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
+    
+    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
+    
+    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column> 
+
+    <el-table-column label="标签名称">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Tags"
+        :key="index">{{item.Name}}<br/></span>
+      </template>
+    </el-table-column>
+    <el-table-column label="标签类型">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Tags"
+        :key="index">{{item.Category}}<br/></span>
+      </template>
+    </el-table-column>
+    </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -59,7 +96,11 @@ import {
     getKpiList,
     addKpiEvaluation,
     getKpiByIds,
+    findKpi
 } from "@/api/pas/kpi";  //  此处请自行替换地址
+import {
+    removeEvaluationKpi
+} from "@/api/pas/evaluation";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -125,6 +166,20 @@ export default {
     }
   },
   methods: {
+    openDialog() {
+      this.dialogFormVisible = true;
+    },
+    async removeEvaluationKpi() {
+        const res = await removeEvaluationKpi({ID:Number(this.row.ID)})
+        if (res.code == 0) {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          this.deleteVisible = false
+          this.getTableData()
+        }
+      },
     nodeChange(){
           this.needConfirm = true
       },
@@ -145,7 +200,7 @@ export default {
           this.multipleSelection.map(item => {
             ids.push(item.ID)
           })
-          const checkArr = await getKpiByIds( ids )
+          const checkArr = await getKpiByIds( { ids } )
           const res = await addKpiEvaluation({ 
             kpis: checkArr.data.list,
             ID: this.row.ID
@@ -177,8 +232,6 @@ export default {
   },
   async created() {
     await this.getTableData();
-    // const res1 = await getKpiEvaluation({ ID: this.row.ID })
-    // const kpis = res1.data.reEvaluation
   }
 }
 
@@ -194,4 +247,7 @@ export default {
     margin: 0 0 5px 0;
     overflow-x: auto;
   }
+.el-dialog{
+  width: 80%;
+}
 </style>

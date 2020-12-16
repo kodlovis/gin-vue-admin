@@ -279,5 +279,12 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+
+.role-box {
+  .el-tabs__content {
+    height: calc(100vh - 150px);
+    overflow: auto;
+  }
+}
 </style>
