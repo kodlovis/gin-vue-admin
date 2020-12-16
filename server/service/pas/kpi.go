@@ -91,12 +91,11 @@ func GetKpiByIds(ids rp.IdsReq,info rp.KpiSearch) (err error, list interface{}, 
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
     // 创建db
-	db := global.GVA_DB.Model(&mp.Kpi{})
+	db := global.GVA_DB.Model(&mp.Kpi{}).Where("id in ?",ids.Ids)
 	var Kpis []mp.Kpi
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
-	err = global.GVA_DB.Where("id in ?",ids.Ids).Find(&[]mp.Kpi{}).Error
 	return err, Kpis, total
 }
 

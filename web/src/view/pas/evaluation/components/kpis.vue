@@ -3,11 +3,11 @@
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item>
-          <el-popover placement="top" v-model="deleteVisible" width="0">
+          <div>
             <el-button icon="el-icon-confirm" size="mini" slot="reference" type="primary" @click="kpiDataEnter">批量添加</el-button>
             <el-button icon="el-icon-confirm" size="mini" slot="reference" type="danger" @click="removeEvaluationKpi">清空指标</el-button>
             <el-button @click="openDialog" type="primary" size="mini" slot="reference">查看已添加指标</el-button>
-          </el-popover>
+          </div>
         </el-form-item>
       </el-form>
       
@@ -21,9 +21,8 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column type="selection" width="55" ref="multipleSelection" ></el-table-column>
+    <el-table-column type="selection" width="55"></el-table-column>
 
-    
     <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
     
     <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
@@ -58,7 +57,6 @@
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作" :append-to-body="true">
       <el-table
       :data="tableData"
-      @selection-change="handleSelectionChange"
       border
       ref="multipleTable"
       stripe
@@ -67,7 +65,6 @@
     >
     <el-table-column type="selection" width="55" ></el-table-column>
 
-    
     <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
     
     <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
@@ -96,7 +93,6 @@ import {
     getKpiList,
     addKpiEvaluation,
     getKpiByIds,
-    findKpi
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import {
     removeEvaluationKpi
@@ -121,30 +117,12 @@ export default {
       visible: false,
       type: "",
       deleteVisible: false,
-      menuDefaultProps: {
-        label: function(data){
-          return data.meta.title
-        }
-      },
       multipleSelection: [],formData: {
             Name:"",
             Description:"",
             Status:"",
             Category:"",
             Tags: 1,
-      },
-      evaluationData:{
-        ID:"",
-        Name:"",
-      },
-      tagData:{
-           Name:"",
-           ID:"",
-           Category:"",
-           Parentid:"",
-      }, 
-      tagColumn:{
-           Name:"",
       },
     };
   },
@@ -200,7 +178,7 @@ export default {
           this.multipleSelection.map(item => {
             ids.push(item.ID)
           })
-          const checkArr = await getKpiByIds( { ids } )
+          const checkArr = await getKpiByIds({ ids })
           const res = await addKpiEvaluation({ 
             kpis: checkArr.data.list,
             ID: this.row.ID
