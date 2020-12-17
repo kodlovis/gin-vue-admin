@@ -90,11 +90,11 @@ export const createKpi = (data) => {
      })
  }
 
- export const getKpiByIds = (params) => {
+ export const getKpiByIds = (data) => {
     return service({
         url: "/Kpi/getKpiByIds",
-        method: 'get',
-        params
+        method: 'post',
+        data
     })
 }
 // @Tags Kpi

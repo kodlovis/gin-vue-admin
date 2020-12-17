@@ -93,6 +93,7 @@ import {
     getKpiList,
     addKpiEvaluation,
     getKpiByIds,
+    getKpiEvaluation
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import {
     removeEvaluationKpi
@@ -100,7 +101,7 @@ import {
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
-  name: "kpi",
+  name: "kpis",
   mixins: [infoList],
   props: {
     row: {
@@ -108,7 +109,7 @@ export default {
         return {}
       },
       type: Object
-    }
+    },
   },
   data() {
     return {
@@ -165,6 +166,16 @@ export default {
     enterAndNext(){
       this.kpiDataEnter()
     },
+    
+    //条件搜索前端看此方法
+    onSubmit() {
+      this.page = 1
+      this.pageSize = 10        
+      this.getTableData()
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
     async kpiDataEnter(){
           const ids = []
         if(this.multipleSelection.length == 0){
@@ -186,15 +197,6 @@ export default {
           if(res.code == 0){
               this.$message({ type: 'success', message: "批量添加成功" })
           }
-      },
-      //条件搜索前端看此方法
-      onSubmit() {
-        this.page = 1
-        this.pageSize = 10        
-        this.getTableData()
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val
       },
       
     closeDialog() {
