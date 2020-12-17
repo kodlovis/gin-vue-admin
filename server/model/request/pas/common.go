@@ -21,7 +21,7 @@ type GetAuthorityId struct {
 }
 
 type GetEvaluationId struct {
-	ID uint
+	ID int
 }
 
 type Empty struct {}

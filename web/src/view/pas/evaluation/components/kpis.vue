@@ -54,7 +54,7 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作" :append-to-body="true">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作" :append-to-body="true" style="width: 90%">
       <el-table
       :data="tableData"
       border
@@ -63,13 +63,26 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column type="selection" width="55" ></el-table-column>
-
-    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
+    <el-table-column label="指标名称" width="120">
+      <template slot-scope="scope">
+        <span v-for="(item, index) in scope.row.Kpis" 
+        :key="index" >{{item.Name}}<br/></span>
+      </template>
+      </el-table-column> 
     
-    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标说明" width="360" type="textarea">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Kpis"
+        :key="index">{{item.Description}}<br/></span>
+      </template>
+      </el-table-column> 
     
-    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标算法" width="360" type="textarea">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Kpis"
+        :key="index">{{item.Category}}<br/></span>
+      </template>
+      </el-table-column> 
 
     <el-table-column label="标签名称">
       <template slot-scope="scope">
@@ -96,7 +109,7 @@ import {
     getKpiEvaluation
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import {
-    removeEvaluationKpi
+    removeEvaluationKpi,
 } from "@/api/pas/evaluation";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -125,6 +138,11 @@ export default {
             Category:"",
             Tags: 1,
       },
+      KpiData:{
+            Name:"",
+           ID:"",
+           Category:"",
+      },
     };
   },
   filters: {
@@ -145,8 +163,12 @@ export default {
     }
   },
   methods: {
-    openDialog() {
-      this.dialogFormVisible = true;
+    async openDialog() {
+      const res = await getKpiEvaluation({ID:Number(this.row.ID)})
+      if (res.code == 0) {
+        this.KpiData = res.data.list;
+        this.dialogFormVisible = true;
+      }
     },
     async removeEvaluationKpi() {
         const res = await removeEvaluationKpi({ID:Number(this.row.ID)})
@@ -185,7 +207,7 @@ export default {
           })
           return
         }
-        this.multipleSelection &&
+        this .multipleSelection &&
           this.multipleSelection.map(item => {
             ids.push(item.ID)
           })
