@@ -34,7 +34,7 @@
     <!-- <el-table-column label="日期" width="180">
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column> -->
-    <el-table-column label="方案ID" prop="ID" width="120"></el-table-column> 
+    <!-- <el-table-column label="方案ID" prop="ID" width="120"></el-table-column>  -->
     <el-table-column label="方案名称" prop="Name" width="120"></el-table-column> 
     
     <!-- <el-table-column label="方案类型" prop="Category" width="120"></el-table-column>  -->
@@ -47,8 +47,8 @@
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button class="table-button" @click="updateEvaluation(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
-          <el-button class="table-button" @click="opdendrawer(scope.row)" size="small" type="primary" icon="el-icon-edit">添加指标</el-button>
+          <el-button class="table-button" @click="updateEvaluation(scope.row)" size="small" type="primary" icon="el-icon-edit">修改</el-button>
+          <el-button class="table-button" @click="opdendrawer(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑方案</el-button>
           <el-popover placement="top" width="160" v-model="scope.row.visible">
             <p>确定要删除吗？</p>
             <div style="text-align: right; margin: 0">
@@ -72,7 +72,7 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="修改方案">
       <el-form :model="formData" label-position="right" label-width="80px">
         
          <el-form-item label="方案名称:">

@@ -88,8 +88,8 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
-      <el-form :model="formData" label-position="right" label-width="80px">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="修改指标">
+      <el-form :model="formData" label-position="right" label-width="80px" :rules="rules">
          <el-form-item label="指标名称:">
             <el-input v-model="formData.Name" clearable placeholder="请输入"></el-input>
       </el-form-item>
@@ -162,6 +162,11 @@ export default {
       }, 
       tagColumn:{
            Name:"",
+      },
+      rules: {
+        Tags:[{
+          required: true,
+        }],
       },
     };
   },

@@ -2,11 +2,11 @@
   <div>
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">      
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
-          <el-button @click="openDialog" type="primary">新增Tag</el-button>
+          <el-button @click="openDialog" type="primary">新增标签</el-button>
         </el-form-item>
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
@@ -30,15 +30,15 @@
       tooltip-effect="dark"
     >
     <el-table-column type="selection" width="55"></el-table-column>
-    <el-table-column label="日期" width="180">
+    <!-- <el-table-column label="日期" width="180">
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
-    </el-table-column>
+    </el-table-column> -->
     
     <el-table-column label="标签名称" prop="Name" width="120"></el-table-column> 
     
     <el-table-column label="标签分类" prop="Category" width="120"></el-table-column> 
     
-    <el-table-column label="树形结构" prop="Parentid" width="120"></el-table-column> 
+    <!-- <el-table-column label="树形结构" prop="Parentid" width="120"></el-table-column>  -->
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
@@ -66,7 +66,7 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="编辑标签">
       <el-form :model="formData" label-position="right" label-width="80px">
          <el-form-item label="标签名称:">
             <el-input v-model="formData.Name" clearable placeholder="请输入" ></el-input>
@@ -76,8 +76,8 @@
             <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="树形结构:"><el-input v-model.number="formData.Parentid" clearable placeholder="请输入"></el-input>
-      </el-form-item>
+         <!-- <el-form-item label="树形结构:"><el-input v-model.number="formData.Parentid" clearable placeholder="请输入"></el-input>
+      </el-form-item> -->
        </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
