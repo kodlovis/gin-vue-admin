@@ -4,9 +4,45 @@
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item>
           <div>
-            <el-button icon="el-icon-confirm" size="mini" slot="reference" type="primary" @click="kpiDataEnter">批量添加</el-button>
+            <el-button @click="openDialog" type="primary" size="mini" slot="reference">添加指标</el-button>
             <el-button icon="el-icon-confirm" size="mini" slot="reference" type="danger" @click="removeEvaluationKpi">清空指标</el-button>
-            <el-button @click="openDialog" type="primary" size="mini" slot="reference">查看已添加指标</el-button>
+          </div>
+        </el-form-item>
+      </el-form>
+    </div>
+    <el-table
+      :data="KpiData.Kpis"
+      border
+      ref="multipleTable"
+      stripe
+      style="width: 100%"
+      tooltip-effect="dark"
+    >
+    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column>
+
+    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column>
+
+    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column>
+    </el-table>
+
+    <el-pagination
+      :current-page="page"
+      :page-size="pageSize"
+      :page-sizes="[3, 5,10, 30, 50, 100]"
+      :style="{float:'right',padding:'20px'}"
+      :total="total"
+      @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      layout="total, sizes, prev, pager, next, jumper"
+    ></el-pagination>
+
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作" :append-to-body="true" style="width: 90%,marigin:right">
+    
+    <div>
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-form-item>
+          <div>
+            <el-button icon="el-icon-confirm" size="mini" slot="reference" type="primary" @click="kpiDataEnter">批量添加</el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -41,67 +77,6 @@
         :key="index">{{item.Category}}<br/></span>
       </template>
     </el-table-column>
-    </el-table>
-
-    <el-pagination
-      :current-page="page"
-      :page-size="pageSize"
-      :page-sizes="[3, 5,10, 30, 50, 100]"
-      :style="{float:'right',padding:'20px'}"
-      :total="total"
-      @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"
-      layout="total, sizes, prev, pager, next, jumper"
-    ></el-pagination>
-
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作" :append-to-body="true" style="width: 90%">
-      <el-table
-      :data="KpiData.Kpis"
-      border
-      ref="multipleTable"
-      stripe
-      style="width: 100%"
-      tooltip-effect="dark"
-    >
-  <el-table-column label="指标名称" prop="Name" width="120"></el-table-column>
-
-    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column>
-
-    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column>
-
-    <!-- <el-table-column label="指标名称" width="120">
-      <template slot-scope="scope">
-        <span v-for="(item, index) in scope.row.Kpis"
-        :key="index" >{{item.Name}}<br/></span>
-      </template>
-      </el-table-column>
-
-    <el-table-column label="指标说明" width="360" type="textarea">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Kpis"
-        :key="index">{{item.Description}}<br/></span>
-      </template>
-      </el-table-column>
-
-    <el-table-column label="指标算法" width="360" type="textarea">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Kpis"
-        :key="index">{{item.Category}}<br/></span>
-      </template>
-      </el-table-column>
-
-    <el-table-column label="标签名称">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.Name}}<br/></span>
-      </template>
-    </el-table-column>
-    <el-table-column label="标签类型">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.Category}}<br/></span>
-      </template>
-    </el-table-column> -->
     </el-table>
     </el-dialog>
   </div>
@@ -146,8 +121,8 @@ export default {
       },
       KpiData:{
             Name:"",
-           ID:"",
-           Category:"",
+            ID:"",
+            Category:"",
       },
     };
   },
@@ -170,11 +145,7 @@ export default {
   },
   methods: {
     async openDialog() {
-      const res = await getKpiEvaluation({ID:Number(this.row.ID)})
-      if (res.code == 0) {
-        this.KpiData = res.data.list[0];
         this.dialogFormVisible = true;
-      }
     },
     async removeEvaluationKpi() {
         const res = await removeEvaluationKpi({ID:Number(this.row.ID)})
@@ -205,7 +176,7 @@ export default {
       this.multipleSelection = val
     },
     async kpiDataEnter(){
-          const ids = []
+        const ids = []
         if(this.multipleSelection.length == 0){
           this.$message({
             type: 'warning',
@@ -225,6 +196,11 @@ export default {
           if(res.code == 0){
               this.$message({ type: 'success', message: "批量添加成功" })
           }
+        this.dialogFormVisible = false;
+        const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
+        if (ref.code == 0) {
+        this.KpiData = ref.data.list[0];
+        }
       },
 
     closeDialog() {
@@ -240,6 +216,10 @@ export default {
   },
   async created() {
     await this.getTableData();
+    const res = await getKpiEvaluation({ID:Number(this.row.ID)})
+    if (res.code == 0) {
+      this.KpiData = res.data.list[0];
+    }
   }
 }
 

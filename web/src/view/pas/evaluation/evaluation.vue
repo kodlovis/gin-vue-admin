@@ -121,6 +121,9 @@ import {
     findEvaluation,
     getEvaluationList,
 } from "@/api/pas/evaluation";  //  此处请自行替换地址
+import{
+    getKpiEvaluation
+} from "@/api/pas/kpi";
 import Kpis from "@/view/pas/evaluation/components/kpis";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -179,7 +182,7 @@ export default {
         }
       }
     },
-    opdendrawer(row) {
+    async opdendrawer(row) {
       this.drawer = true;
       this.activeRow = row;
     },
