@@ -4,7 +4,7 @@
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item>
           <div>
-            <el-button @click="openDialog" type="primary" size="mini" slot="reference">已添加的指标</el-button>
+            <el-button @click="openDialog" type="primary" size="mini" slot="reference">添加指标</el-button>
             <el-button icon="el-icon-confirm" size="mini" slot="reference" type="danger" @click="removeEvaluationKpi">清空指标</el-button>
           </div>
         </el-form-item>

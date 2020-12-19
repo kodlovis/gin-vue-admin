@@ -103,7 +103,7 @@
 
     <el-drawer :visible.sync="drawer" :with-header="false" size="60%" title="方案配置" v-if="drawer">
       <el-tabs :before-leave="autoEnter" class="role-box" type="border-card">
-        <el-tab-pane label="添加指标">
+        <el-tab-pane label="已添加的指标">
           <Kpis :evaluation="tableData" :row="activeRow" ref="kpis" />
         </el-tab-pane>
       </el-tabs>

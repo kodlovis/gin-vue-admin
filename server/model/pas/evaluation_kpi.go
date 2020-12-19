@@ -3,8 +3,8 @@ package pas
 
 // 如果含有time.Time 请自行import time包
 type EvaluationKpi struct {
-      KpiId  int `json:"kpiId" form:"kpiId" gorm:"column:kpiId;comment:指标ID;type:int;size:10;"`
-      EvaluationId  int `json:"evaluationId" form:"evaluationId" gorm:"column:evaluationId;comment:方案ID;type:int;size:10;"`
+      KpiId uint `json:"KpiId" gorm:"primarykey"`
+      KpiScore  float64 `json:"KpiScore" form:"KpiScore" gorm:"column:KpiScore;comment:指标分数;type:float;"`
 }
 
 
