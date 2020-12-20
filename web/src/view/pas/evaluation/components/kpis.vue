@@ -11,18 +11,42 @@
       </el-form>
     </div>
     <el-table
-      :data="KpiData.Kpis"
+      :data="KpiData"
       border
       ref="multipleTable"
       stripe
       style="width: 100%"
       tooltip-effect="dark"
+      @selection-change="handleSelectionChange"
+      white-space: pre-line
     >
-    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column>
+    <el-table-column label="指标名称">
+      <template slot-scope="scope">
+        <p v-for="(item,index) in scope.row.Kpis"
+        :key="index">{{item.Name}}<br/></p>
+      </template>
+    </el-table-column>
 
-    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column>
+    <el-table-column label="指标说明" width="360" type="textarea">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Kpis"
+        :key="index">{{item.Description}}<br/></span>
+      </template>
+    </el-table-column>
 
-    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column>
+    <el-table-column label="指标算法" width="360" type="textarea">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Kpis"
+        :key="index">{{item.Category}}<br/></span>
+      </template>
+    </el-table-column>
+    
+    <el-table-column label="指标分数" width="360" type="textarea">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.EvaluationKpis"
+        :key="index">{{item.KpiScore}}<br/></span>
+      </template>
+    </el-table-column>
     </el-table>
 
     <el-pagination
@@ -77,6 +101,12 @@
         :key="index">{{item.Category}}<br/></span>
       </template>
     </el-table-column>
+    <el-table-column label="指标分数">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.EvaluationKpis"
+        :key="index">{{item.KpiScore}}<br/></span>
+      </template>
+    </el-table-column>
     </el-table>
     </el-dialog>
   </div>
@@ -107,7 +137,8 @@ export default {
   },
   data() {
     return {
-      listApi: getKpiList,
+      listApi: getKpiList,getKpiEvaluation,
+      KElistApi: getKpiEvaluation,
       dialogFormVisible: false,
       visible: false,
       type: "",
@@ -123,7 +154,10 @@ export default {
             Name:"",
             ID:"",
             Category:"",
+            EvaluationKpis:"",
+            KpiScore:"",
       },
+
     };
   },
   filters: {
@@ -218,7 +252,7 @@ export default {
     await this.getTableData();
     const res = await getKpiEvaluation({ID:Number(this.row.ID)})
     if (res.code == 0) {
-      this.KpiData = res.data.list[0];
+      this.KpiData = res.data.list
     }
   }
 }

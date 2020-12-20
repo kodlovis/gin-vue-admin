@@ -168,12 +168,16 @@ func AddKpiEvaluation(c *gin.Context) {
 
 func GetKpiEvaluation(c *gin.Context) {
 	var param rp.GetEvaluationId
-	var pageInfo rp.KpiSearch
+	var pageInfo rp.EvaluationSearch
 	_ = c.ShouldBindJSON(&param)
-	if err,list := sp.GetKpiEvaluation(&param,pageInfo); err != nil {
+	if err,list, total := sp.GetKpiEvaluation(&param,pageInfo); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Any("err", err))
 		response.FailWithMessage("获取失败", c)
 	} else {
-		response.OkWithDetailed(gin.H{"list": list}, "获取成功", c)
+		response.OkWithDetailed(response.PageResult{
+            List:     list,
+            Total:    total,
+            Page:     pageInfo.Page,
+            PageSize: pageInfo.PageSize,}, "获取成功", c)
 	}
 }

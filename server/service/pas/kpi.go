@@ -113,10 +113,18 @@ func AddKpiEvaluation(Kpis []mp.Kpi, ID uint) (err error) {
 }
 
 
-func GetKpiEvaluation(id *rp.GetEvaluationId,info rp.KpiSearch) (err error,evaluation []mp.Evaluation) {
+func GetKpiEvaluation(id *rp.GetEvaluationId,info rp.EvaluationSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+    // 创建db
+	db := global.GVA_DB.Model(&mp.Evaluation{}).Where("id = ?",id.ID)
 	var Evaluations []mp.Evaluation
-	err = global.GVA_DB.Preload("Kpis").First(&Evaluations, "id = ?", id.ID).Error
+    // 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&Evaluations).Error
+	err = db.Preload("Kpis").Preload("EvaluationKpis").Find(&Evaluations).Error
+	return err, Evaluations, total
+
 	//sql := "SELECT authority_menu.keep_alive,authority_menu.default_menu,authority_menu.created_at,authority_menu.updated_at,authority_menu.deleted_at,authority_menu.menu_level,authority_menu.parent_id,authority_menu.path,authority_menu.`name`,authority_menu.hidden,authority_menu.component,authority_menu.title,authority_menu.icon,authority_menu.sort,authority_menu.menu_id,authority_menu.authority_id FROM authority_menu WHERE authority_menu.authority_id = ? ORDER BY authority_menu.sort ASC"
 	//err = global.GVA_DB.Raw(sql, authorityId).Scan(&menus).Error
-	return err, Evaluations
 }
