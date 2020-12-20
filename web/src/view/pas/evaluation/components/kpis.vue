@@ -41,12 +41,7 @@
       </template>
     </el-table-column>
     
-    <el-table-column label="指标分数" width="360" type="textarea">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.EvaluationKpis"
-        :key="index">{{item.KpiScore}}<br/></span>
-      </template>
-    </el-table-column>
+    <el-table-column label="指标分数" prop="KpiScore" width="120"></el-table-column>
     </el-table>
 
     <el-pagination
@@ -137,8 +132,7 @@ export default {
   },
   data() {
     return {
-      listApi: getKpiList,getKpiEvaluation,
-      KElistApi: getKpiEvaluation,
+      listApi: getKpiList,
       dialogFormVisible: false,
       visible: false,
       type: "",
