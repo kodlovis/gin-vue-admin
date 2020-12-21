@@ -115,11 +115,18 @@ func GetKpiScoreByIds(id rp.GetEvaluationId,info rp.KpiSearch) (err error, list 
 	err = db.Preload("Tags").Preload("EvaluationKpis","evaluation_id = ?",id.ID).Find(&Kpis).Error
 	return err, Kpis, total
 }
-func AddKpiEvaluation(Kpis []mp.Kpi, ID uint) (err error) {
+func AddKpiEvaluation(Kpis []mp.Kpi, ID uint,KpiScore []float64) (err error) {
 	var evaluation mp.Evaluation
 	evaluation.ID = ID
 	evaluation.Kpis = Kpis
+	for i := 0; i <len(KpiScore); i++ {
+		err = global.GVA_DB.Model(&mp.EvaluationKpi{}).Where("evaluation_id = ?", ID,"kpi_id = ?", Kpis[0].ID).UpdateColumns(mp.EvaluationKpi{KpiScore : KpiScore[0]}).Error
+	}
 	err = SetKpiEvaluation(&evaluation)
+
+	
+	//db := global.GVA_DB.Model(mp.EvaluationKpi{}).Where("evaluation_id = ?", ID).Updates(mp.EvaluationKpi{KpiScore : })
+	//err = global.GVA_DB.Table("EvaluationKpi").Where("evaluation_id = ?", ID,"KpiScore in ?" , KpiScore).Updates(&[]mp.EvaluationKpi{}).Error
 	return err
 }
 

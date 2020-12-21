@@ -12,5 +12,6 @@ type KpiSearch struct{
 type AddKpiEvaluationInfo struct{
     Kpis []pas.Kpi
     ID uint
+    KpiScore []float64
 }
 

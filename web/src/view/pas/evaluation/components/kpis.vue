@@ -98,8 +98,13 @@
     </el-table-column>
     <el-table-column label="指标分数">
       <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.EvaluationKpis"
-        :key="index">{{item.KpiScore}}<br/></span>
+        <el-form>
+          <el-form-item v-for="(item,index) in scope.row.EvaluationKpis"
+        :key="index">
+            <el-input v-model="item.KpiScore" 
+             ></el-input>
+          </el-form-item>
+        </el-form>
       </template>
     </el-table-column>
     </el-table>
@@ -144,6 +149,7 @@ export default {
             Status:"",
             Category:"",
             Tags: 1,
+            EvaluationKpis:0,
       },
       KpiData:{
             Name:"",
@@ -152,7 +158,9 @@ export default {
             EvaluationKpis:"",
             KpiScore:"",
       },
-
+      EvaluationKpis:{
+            KpiScore:"",
+      }
     };
   },
   filters: {
@@ -206,6 +214,7 @@ export default {
     },
     async kpiDataEnter(){
         const ids = []
+        const score = []
         if(this.multipleSelection.length == 0){
           this.$message({
             type: 'warning',
@@ -213,14 +222,19 @@ export default {
           })
           return
         }
-        this .multipleSelection &&
+        this.multipleSelection &&
           this.multipleSelection.map(item => {
             ids.push(item.ID)
+            for (let i = 0; i < item.EvaluationKpis.length; i++) {
+              var data = Number(item.EvaluationKpis[i].KpiScore)
+              score.push(data)
+            }
           })
           const checkArr = await getKpiByIds({ ids })
           const res = await addKpiEvaluation({
             kpis: checkArr.data.list,
-            ID: this.row.ID
+            ID: this.row.ID,
+            KpiScore: score
           })
           if(res.code == 0){
               this.$message({ type: 'success', message: "批量添加成功" })
