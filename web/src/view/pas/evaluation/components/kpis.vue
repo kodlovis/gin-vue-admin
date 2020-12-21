@@ -228,7 +228,7 @@ export default {
         this.dialogFormVisible = false;
         const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
         if (ref.code == 0) {
-        this.KpiData = ref.data.list[0];
+        this.KpiData = ref.data.list;
         }
       },
 
