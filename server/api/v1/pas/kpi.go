@@ -155,6 +155,22 @@ func GetKpiByIds(c *gin.Context) {
         }, "获取成功", c)
 	}
 }
+func GetKpiScoreByIds(c *gin.Context) {
+	var param rp.GetEvaluationId
+	var pageInfo rp.KpiSearch
+    _ = c.ShouldBindJSON(&param)
+	if err, list, total := sp.GetKpiScoreByIds(param,pageInfo); err != nil {
+        global.GVA_LOG.Error("批量查询失败!", zap.Any("err", err))
+		response.FailWithMessage("批量查询失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+            List:     list,
+            Total:    total,
+            Page:     pageInfo.Page,
+            PageSize: pageInfo.PageSize,
+        }, "获取成功", c)
+	}
+}
 func AddKpiEvaluation(c *gin.Context) {
 	var evaluationKpi rp.AddKpiEvaluationInfo
 	_ = c.ShouldBindJSON(&evaluationKpi)

@@ -83,7 +83,7 @@ func GetKpiInfoList(info rp.KpiSearch) (err error, list interface{}, total int64
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
-	err = db.Preload("Tags").Preload("EvaluationKpis").Find(&Kpis).Error
+	err = db.Preload("Tags").Preload("EvaluationKpis","evaluation_id = ?",info.ID).Find(&Kpis).Error
 	return err, Kpis, total
 }
 
@@ -103,7 +103,18 @@ func GetKpiByIds(ids rp.IdsReq,info rp.KpiSearch) (err error, list interface{}, 
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
 	return err, Kpis, total
 }
-
+func GetKpiScoreByIds(id rp.GetEvaluationId,info rp.KpiSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+    // 创建db
+	db := global.GVA_DB.Model(&mp.Kpi{})
+	var Kpis []mp.Kpi
+    // 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
+	err = db.Preload("Tags").Preload("EvaluationKpis","evaluation_id = ?",id.ID).Find(&Kpis).Error
+	return err, Kpis, total
+}
 func AddKpiEvaluation(Kpis []mp.Kpi, ID uint) (err error) {
 	var evaluation mp.Evaluation
 	evaluation.ID = ID

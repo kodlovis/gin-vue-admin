@@ -68,7 +68,7 @@
 
     </div>
     <el-table
-      :data="tableData"
+      :data="KpiScoreData"
       @selection-change="handleSelectionChange"
       border
       ref="multipleTable"
@@ -112,7 +112,8 @@ import {
     getKpiList,
     addKpiEvaluation,
     getKpiByIds,
-    getKpiEvaluation
+    getKpiEvaluation,
+    getKpiScoreByIds
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import {
     removeEvaluationKpi,
@@ -137,7 +138,7 @@ export default {
       visible: false,
       type: "",
       deleteVisible: false,
-      multipleSelection: [],formData: {
+      multipleSelection: [],KpiScoreData: {
             Name:"",
             Description:"",
             Status:"",
@@ -183,7 +184,7 @@ export default {
             message: '删除成功'
           })
           this.deleteVisible = false
-          this.getTableData()
+          this.getKpiScoreByIds()
         }
       },
     nodeChange(){
@@ -198,7 +199,7 @@ export default {
     onSubmit() {
       this.page = 1
       this.pageSize = 10
-      this.getTableData()
+      this.getKpiScoreByIds()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -243,11 +244,13 @@ export default {
     },
   },
   async created() {
-    await this.getTableData();
+    const life = await getKpiScoreByIds({ID:Number(this.row.ID)});
     const res = await getKpiEvaluation({ID:Number(this.row.ID)})
-    if (res.code == 0) {
+    if (life.code == 0) {
+      this.KpiScoreData = life.data.list
       this.KpiData = res.data.list
     }
+    
   }
 }
 

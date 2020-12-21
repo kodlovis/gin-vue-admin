@@ -13,3 +13,4 @@ type AddKpiEvaluationInfo struct{
     Kpis []pas.Kpi
     ID uint
 }
+

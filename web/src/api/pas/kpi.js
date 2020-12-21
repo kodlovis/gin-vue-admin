@@ -97,6 +97,14 @@ export const createKpi = (data) => {
         data
     })
 }
+
+export const getKpiScoreByIds = (data) => {
+    return service({
+        url: "/Kpi/getKpiScoreByIds",
+        method: 'post',
+        data
+    })
+}
 // @Tags Kpi
 // @Summary 分页获取Kpi列表
 // @Security ApiKeyAuth
