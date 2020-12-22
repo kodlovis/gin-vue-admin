@@ -120,7 +120,7 @@ func AddKpiEvaluation(Kpis []mp.Kpi, ID uint,KpiScore []float64) (err error) {
 	evaluation.ID = ID
 	evaluation.Kpis = Kpis
 	for i := 0; i <len(KpiScore); i++ {
-		err = global.GVA_DB.Model(&mp.EvaluationKpi{}).Where("evaluation_id = ?", ID,"kpi_id = ?", Kpis[0].ID).UpdateColumns(mp.EvaluationKpi{KpiScore : KpiScore[0]}).Error
+		err = global.GVA_DB.Model(&mp.EvaluationKpi{}).Where("evaluation_id = ? AND kpi_id = ?",ID, Kpis[i].ID).UpdateColumns(mp.EvaluationKpi{KpiScore : KpiScore[i]}).Error
 	}
 	err = SetKpiEvaluation(&evaluation)
 
