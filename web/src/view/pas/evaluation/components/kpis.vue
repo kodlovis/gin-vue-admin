@@ -100,8 +100,10 @@
       <template slot-scope="scope">
         <el-form>
           <el-form-item v-for="(item,index) in scope.row.EvaluationKpis"
-        :key="index">
-            <el-input v-model="item.KpiScore" 
+             :key="index">
+            <el-input v-model="item.KpiScore" v-if="!scope.row.EvaluationKpis" clearable placeholder="请输入"
+             >{{item.KpiScore}}</el-input>
+            <el-input v-else clearable placeholder="请输入" v-model="item.KpiScore"
              ></el-input>
           </el-form-item>
         </el-form>
