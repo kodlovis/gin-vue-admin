@@ -42,6 +42,14 @@
     </el-table-column>
     
     <el-table-column label="指标分数" prop="KpiScore" width="120"></el-table-column>
+
+    <el-table-column label="评分人" width="120">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Users"
+        :key="index">{{item.nickName}}
+        </span>
+      </template>
+    </el-table-column>
     </el-table>
 
     <el-pagination
@@ -108,6 +116,20 @@
           </el-form-item>
         </el-form>
       </template>
+    </el-table-column>
+    <el-table-column label="评分人">
+      <template slot-scope="scope">
+        <el-form>
+          <el-form-item v-for="(item,index) in scope.row.EvaluationKpis"
+             :key="index">
+             <div v-for="(user,index) in item.Users"
+             :key="index">
+            <el-input v-model="user.nickName"  clearable placeholder="请输入"
+             >{{user.nickName}}</el-input>
+          </div>
+          </el-form-item>
+         </el-form>
+        </template>
     </el-table-column>
     </el-table>
     </el-dialog>

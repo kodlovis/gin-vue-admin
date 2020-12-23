@@ -112,7 +112,7 @@ func GetKpiScoreByIds(id rp.GetEvaluationId,info rp.KpiSearch) (err error, list 
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
-	err = db.Preload("Tags").Preload("EvaluationKpis","evaluation_id = ?",id.ID).Find(&Kpis).Error
+	err = db.Preload("Tags").Preload("EvaluationKpis.Users").Preload("EvaluationKpis","evaluation_id = ?",id.ID).Find(&Kpis).Error
 	return err, Kpis, total
 }
 func AddKpiEvaluation(Kpis []mp.Kpi, ID uint,KpiScore []float64) (err error) {
@@ -123,10 +123,6 @@ func AddKpiEvaluation(Kpis []mp.Kpi, ID uint,KpiScore []float64) (err error) {
 		err = global.GVA_DB.Model(&mp.EvaluationKpi{}).Where("evaluation_id = ? AND kpi_id = ?",ID, Kpis[i].ID).UpdateColumns(mp.EvaluationKpi{KpiScore : KpiScore[i]}).Error
 	}
 	err = SetKpiEvaluation(&evaluation)
-
-	
-	//db := global.GVA_DB.Model(mp.EvaluationKpi{}).Where("evaluation_id = ?", ID).Updates(mp.EvaluationKpi{KpiScore : })
-	//err = global.GVA_DB.Table("EvaluationKpi").Where("evaluation_id = ?", ID,"KpiScore in ?" , KpiScore).Updates(&[]mp.EvaluationKpi{}).Error
 	return err
 }
 
@@ -140,9 +136,6 @@ func GetKpiEvaluation(id *rp.GetEvaluationId,info rp.EvaluationSearch) (err erro
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Evaluations).Error
-	err = db.Preload("Kpis").Find(&Evaluations).Error
+	err = db.Preload("Kpis").Preload("Users").Find(&Evaluations).Error
 	return err, Evaluations, total
-
-	//sql := "SELECT authority_menu.keep_alive,authority_menu.default_menu,authority_menu.created_at,authority_menu.updated_at,authority_menu.deleted_at,authority_menu.menu_level,authority_menu.parent_id,authority_menu.path,authority_menu.`name`,authority_menu.hidden,authority_menu.component,authority_menu.title,authority_menu.icon,authority_menu.sort,authority_menu.menu_id,authority_menu.authority_id FROM authority_menu WHERE authority_menu.authority_id = ? ORDER BY authority_menu.sort ASC"
-	//err = global.GVA_DB.Raw(sql, authorityId).Scan(&menus).Error
 }
