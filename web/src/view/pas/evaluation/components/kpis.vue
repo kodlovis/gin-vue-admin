@@ -104,7 +104,7 @@
         :key="index">{{item.Category}}<br/></span>
       </template>
     </el-table-column>
-    <el-table-column label="指标分数">
+    <el-table-column label="指标分数" width="120">
       <template slot-scope="scope">
         <el-form>
           <el-form-item v-for="(item,index) in scope.row.EvaluationKpis"
@@ -124,8 +124,10 @@
              :key="index">
              <div v-for="(user,index) in item.Users"
              :key="index">
-            <el-input v-model="user.nickName"  clearable placeholder="请输入"
+            <el-input v-model="user.nickName" v-if="!item.Users" clearable placeholder="请输入"
              >{{user.nickName}}</el-input>
+             <el-input v-else clearable placeholder="请输入" v-model="user.nickName"
+             ></el-input>
           </div>
           </el-form-item>
          </el-form>
@@ -147,6 +149,12 @@ import {
 import {
     removeEvaluationKpi,
 } from "@/api/pas/evaluation";
+import {
+    getUserByNickName
+} from "@/api/user";
+import {
+    addUserEvaluationKpi
+} from "@/api/pas/evaluationKpi";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -239,6 +247,7 @@ export default {
     async kpiDataEnter(){
         const ids = []
         const score = []
+        const nickName =[]
         if(this.multipleSelection.length == 0){
           this.$message({
             type: 'warning',
@@ -251,14 +260,20 @@ export default {
             ids.push(item.ID)
             for (let i = 0; i < item.EvaluationKpis.length; i++) {
               var data = Number(item.EvaluationKpis[i].KpiScore)
+              var userData =item.EvaluationKpis[i].Users
               score.push(data)
+              for (let u = 0; u < userData.length; u++) {
+                nickName.push(userData[u].nickName)
+              }
             }
           })
           const checkArr = await getKpiByIds({ ids })
+          const UsersArr = await getUserByNickName({nickName})
           const res = await addKpiEvaluation({
             kpis: checkArr.data.list,
-            ID: this.row.ID,
-            KpiScore: score
+            id: this.row.ID,
+            kpiScore: score,
+            Users:UsersArr.data.list
           })
           if(res.code == 0){
               this.$message({ type: 'success', message: "批量添加成功" })

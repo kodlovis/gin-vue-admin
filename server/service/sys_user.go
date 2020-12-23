@@ -130,3 +130,15 @@ func FindUserByUuid(uuid string) (err error, user *model.SysUser) {
 	}
 	return nil, &u
 }
+
+func GetUserByNickName(info request.UserSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+    // 创建db
+	db := global.GVA_DB.Model(&model.SysUser{}).Where("nick_name in ?",info.NickName)
+	var Users []model.SysUser
+    // 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&Users).Error
+	return err, Users, total
+}

@@ -174,7 +174,7 @@ func GetKpiScoreByIds(c *gin.Context) {
 func AddKpiEvaluation(c *gin.Context) {
 	var evaluationKpi rp.AddKpiEvaluationInfo
 	_ = c.ShouldBindJSON(&evaluationKpi)
-	if err := sp.AddKpiEvaluation(evaluationKpi.Kpis, evaluationKpi.ID,evaluationKpi.KpiScore); err != nil {
+	if err := sp.AddKpiEvaluation(evaluationKpi.Kpis, evaluationKpi.ID,evaluationKpi.KpiScore,evaluationKpi.Users); err != nil {
 		global.GVA_LOG.Error("添加失败!", zap.Any("err", err))
 		response.FailWithMessage("添加失败", c)
 	} else {
