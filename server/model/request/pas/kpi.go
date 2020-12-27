@@ -11,7 +11,7 @@ type KpiSearch struct{
     PageInfo
 }
 
-type AddKpiEvaluationInfo struct{
+type AssignedKpiEvaluationInfo struct{
     Kpis []pas.Kpi
     ID uint
     KpiScore []float64

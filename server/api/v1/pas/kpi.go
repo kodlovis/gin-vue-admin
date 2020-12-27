@@ -171,10 +171,10 @@ func GetKpiScoreByIds(c *gin.Context) {
         }, "获取成功", c)
 	}
 }
-func AddKpiEvaluation(c *gin.Context) {
-	var evaluationKpi rp.AddKpiEvaluationInfo
+func AssignedKpiEvaluation(c *gin.Context) {
+	var evaluationKpi rp.AssignedKpiEvaluationInfo
 	_ = c.ShouldBindJSON(&evaluationKpi)
-	if err := sp.AddKpiEvaluation(evaluationKpi.Kpis, evaluationKpi.ID,evaluationKpi.KpiScore,evaluationKpi.Users); err != nil {
+	if err := sp.AssignedKpiEvaluation(evaluationKpi.Kpis, evaluationKpi.ID); err != nil {
 		global.GVA_LOG.Error("添加失败!", zap.Any("err", err))
 		response.FailWithMessage("添加失败", c)
 	} else {

@@ -121,9 +121,9 @@ export const getKpiScoreByIds = (data) => {
      })
  }
 
- export const addKpiEvaluation = (data) => {
+ export const assignedKpiEvaluation = (data) => {
     return service({
-        url: "/Kpi/addKpiEvaluation",
+        url: "/Kpi/assignedKpiEvaluation",
         method: 'post',
         data
     })
