@@ -12,7 +12,7 @@ type EvaluationKpi struct {
       EvaluationId uint  `json:"EvaluationId"  gorm:"column:evaluation_id;primarykey"`
       KpiScore  float64 `json:"KpiScore" form:"KpiScore" gorm:"column:KpiScore;comment:指标分数;type:float;"`
       Users []model.SysUser  `gorm:"many2many:evaluationKpi_user;foreignKey:ID;References:ID"`
-}
+    }
 
 
 func (EvaluationKpi) TableName() string {

@@ -3,7 +3,6 @@ package pas
 import (
 	"gorm.io/gorm"
 	"gin-vue-admin/global"
-	 "gin-vue-admin/model"
 	mp "gin-vue-admin/model/pas"
 	rp "gin-vue-admin/model/request/pas"
 )
@@ -117,27 +116,16 @@ func GetKpiScoreByIds(id rp.GetEvaluationId,info rp.KpiSearch) (err error, list 
 	err = db.Preload("Tags").Preload("EvaluationKpis.Users").Preload("EvaluationKpis","evaluation_id = ?",id.ID).Find(&Kpis).Error
 	return err, Kpis, total
 }
-func AddKpiEvaluation(Kpis []mp.Kpi, ID uint,KpiScore []float64,Users []model.SysUser) (err error) {
+func AssignedKpiEvaluation(Kpis []mp.Kpi, ID uint) (err error) {
 	var evaluation mp.EvaluationKpi
 	evaluation.EvaluationId = ID
-	evaluation.Kpis = Kpis
-	evaluation.Users = Users
 	var s mp.EvaluationKpi
 	global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		for i := 0; i <len(KpiScore); i++ {
-			if err := tx.Model(&mp.EvaluationKpi{}).Where("evaluation_id = ? AND kpi_id = ?",ID, Kpis[i].ID).UpdateColumns(mp.EvaluationKpi{KpiScore : KpiScore[i]}).Error; err != nil {
-				// 返回任何错误都会回滚事务
-				return err
-			  }
-		  }
-		if err := tx.Preload("Kpis").Preload("Users").First(&s, "evaluation_id = ?", evaluation.EvaluationId).Error; err != nil {
-			return err
-		  }
-		if err := tx.Model(&s).Association("Users").Replace(&evaluation.Users); err != nil {
+		if err := tx.Preload("Kpis").Find(&s).Where("evaluation_id = ?", evaluation.EvaluationId).Error; err != nil {
 			return err
 		  }
 		if err := tx.Model(&s).Association("Kpis").Replace(&evaluation.Kpis); err != nil {
-			return err
+		 	return err
 		  }
 		return nil
 		})

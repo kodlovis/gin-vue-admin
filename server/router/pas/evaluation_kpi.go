@@ -10,5 +10,6 @@ func InitEvaluationKpiRouter(Router *gin.RouterGroup) {
 	EvaluationKpiRouter := Router.Group("EvaluationKpi").Use(middleware.JWTAuth()).Use(middleware.CasbinHandler()).Use(middleware.OperationRecord())
 	{
 		EvaluationKpiRouter.GET("getEvaluationKpiList", pas.GetEvaluationKpiList)
+		EvaluationKpiRouter.POST("setUserEvaluation", pas.SetUserEvaluation)
 	}
 }

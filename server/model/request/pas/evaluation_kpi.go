@@ -8,8 +8,10 @@ type EvaluationKpiSearch struct{
     PageInfo
 }
 
-type AddUserEvaluationKpiInfo struct{
+type AssignedKpiEvaluationInfo struct{
     ID uint
     Users []model.SysUser
-    NickName []string
+    Ids []uint
+    Kpis []pas.Kpi
+    KpiScore []float64
 }

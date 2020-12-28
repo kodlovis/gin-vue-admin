@@ -24,3 +24,14 @@ func GetEvaluationKpiList(c *gin.Context) {
         }, "获取成功", c)
     }
 }
+
+func SetUserEvaluation(c *gin.Context){
+    var evaluationKpi rp.AssignedKpiEvaluationInfo
+	_ = c.ShouldBindJSON(&evaluationKpi)
+	if err := sp.SetUserEvaluation(evaluationKpi.ID, evaluationKpi.Users); err != nil {
+		global.GVA_LOG.Error("添加失败!", zap.Any("err", err))
+		response.FailWithMessage("添加失败", c)
+	} else {
+		response.OkWithMessage("添加成功", c)
+	}
+}

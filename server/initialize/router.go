@@ -47,7 +47,9 @@ func Routers() *gin.Engine {
 	pas.InitTagRouter(ApiGroup)
 	pas.InitAllocationRouter(ApiGroup)
 	pas.InitEvaluationRouter(ApiGroup)
-	pas.InitEvalutionFormRouter(ApiGroup)
+	pas.InitEvaluationFormRouter(ApiGroup)
+	pas.InitEvaluationKpiRouter(ApiGroup)
+	
 	
 	
 

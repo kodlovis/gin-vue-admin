@@ -15,3 +15,11 @@ export const getEvaluationKpiList = (params) => {
         params
     })
 }
+
+export const setUserEvaluation= (data) => {
+    return service({
+        url: "/EvaluationKpi/setUserEvaluation",
+        method: 'post',
+        data
+    })
+}

@@ -17,13 +17,13 @@ func CreateEvaluation(Evaluation mp.Evaluation) (err error) {
 	return err
 }
 
-func SetKpiEvaluation(evaluation *mp.EvaluationKpi) error {
-	var s mp.EvaluationKpi
-	global.GVA_DB.Preload("Kpis").Preload("Users").First(&s, "evaluation_id = ?", evaluation.EvaluationId)
-	global.GVA_DB.Model(&s).Association("Users").Replace(&evaluation.Users)
-	err := global.GVA_DB.Model(&s).Association("Kpis").Replace(&evaluation.Kpis)
-	return err
-}
+// func SetKpiEvaluation(evaluation *mp.EvaluationKpi) error {
+// 	var s mp.EvaluationKpi
+// 	global.GVA_DB.Preload("Kpis").Preload("Users").First(&s, "evaluation_id = ?", evaluation.EvaluationId)
+// 	global.GVA_DB.Model(&s).Association("Users").Replace(&evaluation.Users)
+// 	err := global.GVA_DB.Model(&s).Association("Kpis").Replace(&evaluation.Kpis)
+// 	return err
+// }
 
 
 //@author: [piexlmax](https://github.com/piexlmax)

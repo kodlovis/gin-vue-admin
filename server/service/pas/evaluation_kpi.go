@@ -34,3 +34,14 @@ func GetEvaluationKpiInfoList(info rp.EvaluationKpiSearch) (err error, list inte
 // 	//err := global.GVA_DB.Model(&s).Association("Users").Replace(&evaluation.Users)
 // 	return err
 // }
+
+
+func SetUserEvaluation(ID uint,Users []model.SysUser)error{
+	var evaluation mp.EvaluationKpi
+	evaluation.EvaluationId = ID
+	evaluation.Users = Users
+	var s mp.EvaluationKpi
+	global.GVA_DB.Preload("Users").First(&s, "id = ?", evaluation.EvaluationId)
+	err := global.GVA_DB.Model(&s).Association("U").Replace(&evaluation.Users)
+	return err
+}
