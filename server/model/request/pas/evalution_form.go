@@ -2,7 +2,7 @@ package pas
 
 import "gin-vue-admin/model/pas"
 
-type EvalutionFormSearch struct{
-    pas.EvalutionForm
+type EvaluationFormSearch struct{
+    pas.EvaluationForm
     PageInfo
 }

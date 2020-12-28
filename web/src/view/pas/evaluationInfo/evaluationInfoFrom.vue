@@ -20,13 +20,13 @@
 
 <script>
 import {
-    createEvalutionForm,
-    updateEvalutionForm,
-    findEvalutionForm
-} from "@/api/pas/evalutionForm";  //  此处请自行替换地址
+    createEvaluationForm,
+    updateEvaluationForm,
+    findEvaluationForm
+} from "@/api/pas/evaluationForm";  //  此处请自行替换地址
 import infoList from "@/mixins/infoList";
 export default {
-  name: "EvalutionForm",
+  name: "EvaluationForm",
   mixins: [infoList],
   data() {
     return {
@@ -43,13 +43,13 @@ export default {
       let res;
       switch (this.type) {
         case "create":
-          res = await createEvalutionForm(this.formData);
+          res = await createEvaluationForm(this.formData);
           break;
         case "update":
-          res = await updateEvalutionForm(this.formData);
+          res = await updateEvaluationForm(this.formData);
           break;
         default:
-          res = await createEvalutionForm(this.formData);
+          res = await createEvaluationForm(this.formData);
           break;
       }
       if (res.code == 0) {
@@ -66,9 +66,9 @@ export default {
   async created() {
    // 建议通过url传参获取目标数据ID 调用 find方法进行查询数据操作 从而决定本页面是create还是update 以下为id作为url参数示例
     if(this.$route.query.id){
-    const res = await findEvalutionForm({ ID: this.$route.query.id })
+    const res = await findEvaluationForm({ ID: this.$route.query.id })
     if(res.code == 0){
-       this.formData = res.data.reEvalutionForm
+       this.formData = res.data.reEvaluationForm
        this.type == "update"
      }
     }else{

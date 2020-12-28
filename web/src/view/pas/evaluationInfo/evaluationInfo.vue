@@ -6,7 +6,7 @@
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="openDialog" type="primary">新增EvalutionForm</el-button>
+          <el-button @click="openDialog" type="primary">新增EvaluationForm</el-button>
         </el-form-item>
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
@@ -42,12 +42,12 @@
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button class="table-button" @click="updateEvalutionForm(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
+          <el-button class="table-button" @click="updateEvaluationForm(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
           <el-popover placement="top" width="160" v-model="scope.row.visible">
             <p>确定要删除吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="deleteEvalutionForm(scope.row)">确定</el-button>
+              <el-button type="primary" size="mini" @click="deleteEvaluationForm(scope.row)">确定</el-button>
             </div>
             <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">删除</el-button>
           </el-popover>
@@ -88,21 +88,21 @@
 
 <script>
 import {
-    createEvalutionForm,
-    deleteEvalutionForm,
-    deleteEvalutionFormByIds,
-    updateEvalutionForm,
-    findEvalutionForm,
-    getEvalutionFormList
-} from "@/api/pas/evalutionForm";  //  此处请自行替换地址
+    createEvaluationForm,
+    deleteEvaluationForm,
+    deleteEvaluationFormByIds,
+    updateEvaluationForm,
+    findEvaluationForm,
+    getEvaluationFormList
+} from "@/api/pas/evaluationForm";  //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
-  name: "EvalutionForm",
+  name: "EvaluationForm",
   mixins: [infoList],
   data() {
     return {
-      listApi: getEvalutionFormList,
+      listApi: getEvaluationFormList,
       dialogFormVisible: false,
       visible: false,
       type: "",
@@ -155,7 +155,7 @@ export default {
           this.multipleSelection.map(item => {
             ids.push(item.ID)
           })
-        const res = await deleteEvalutionFormByIds({ ids })
+        const res = await deleteEvaluationFormByIds({ ids })
         if (res.code == 0) {
           this.$message({
             type: 'success',
@@ -165,11 +165,11 @@ export default {
           this.getTableData()
         }
       },
-    async updateEvalutionForm(row) {
-      const res = await findEvalutionForm({ ID: row.ID });
+    async updateEvaluationForm(row) {
+      const res = await findEvaluationForm({ ID: row.ID });
       this.type = "update";
       if (res.code == 0) {
-        this.formData = res.data.reEvalutionForm;
+        this.formData = res.data.reEvaluationForm;
         this.dialogFormVisible = true;
       }
     },
@@ -182,9 +182,9 @@ export default {
           
       };
     },
-    async deleteEvalutionForm(row) {
+    async deleteEvaluationForm(row) {
       this.visible = false;
-      const res = await deleteEvalutionForm({ ID: row.ID });
+      const res = await deleteEvaluationForm({ ID: row.ID });
       if (res.code == 0) {
         this.$message({
           type: "success",
@@ -197,13 +197,13 @@ export default {
       let res;
       switch (this.type) {
         case "create":
-          res = await createEvalutionForm(this.formData);
+          res = await createEvaluationForm(this.formData);
           break;
         case "update":
-          res = await updateEvalutionForm(this.formData);
+          res = await updateEvaluationForm(this.formData);
           break;
         default:
-          res = await createEvalutionForm(this.formData);
+          res = await createEvaluationForm(this.formData);
           break;
       }
       if (res.code == 0) {

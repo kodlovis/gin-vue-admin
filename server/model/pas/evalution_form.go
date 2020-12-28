@@ -1,4 +1,4 @@
-// 自动生成模板EvalutionForm
+// 自动生成模板EvaluationForm
 package pas
 
 import (
@@ -7,7 +7,7 @@ import (
 )
 
 // 如果含有time.Time 请自行import time包
-type EvalutionForm struct {
+type EvaluationForm struct {
       global.GVA_MODEL
       AllocationId  int `json:"AllocationId" form:"AllocationId" gorm:"column:AllocationId;comment:考核分配ID;type:int;size:10;"`
       Score  float64 `json:"Score" form:"Score" gorm:"column:Score;comment:得分;type:int;size:10;"`
@@ -16,6 +16,6 @@ type EvalutionForm struct {
 }
 
 
-func (EvalutionForm) TableName() string {
-  return "evalutionForm"
+func (EvaluationForm) TableName() string {
+  return "evaluationForm"
 }

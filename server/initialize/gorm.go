@@ -44,7 +44,7 @@ func MysqlTables(db *gorm.DB) {
 		pas.Tag{},
 		pas.Allocation{},
 		pas.Evaluation{},
-		pas.EvalutionForm{},
+		pas.EvaluationForm{},
 		pas.EvaluationKpi{},
 	)
 	if err != nil {
