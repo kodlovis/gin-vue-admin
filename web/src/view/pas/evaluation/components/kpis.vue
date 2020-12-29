@@ -76,7 +76,7 @@
 
     </div>
     <el-table
-      :data="KpiScoreData"
+      :data="kpiList"
       @selection-change="handleSelectionChange"
       border
       ref="multipleTable"
@@ -86,52 +86,34 @@
     >
     <el-table-column type="selection" width="55"></el-table-column>
 
-    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column>
+    
+    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
+    
+    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
+    
+    <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
+    
+    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column> 
 
-    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column>
-
-    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column>
-
-    <el-table-column label="标签名称">
+     <el-table-column label="指标分数">
+          <el-input v-model="EvaluationKpiData.KpiScore" clearable placeholder="请输入"></el-input>
+    </el-table-column>
+    <el-table-column label="评分人" width="120">
       <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.Name}}<br/></span>
+          <el-cascader
+            @change="handleOptionChange"
+            v-model="scope.id"
+            :options="userOptions"
+            :rules="rules"
+            clearable
+            :props="{ checkStrictly: true,label:'nickName',value:'id',multiple: true,}"
+            filterable
+            ref="cascaderAddr"
+          ></el-cascader>
       </template>
     </el-table-column>
-    <el-table-column label="标签类型">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.Category}}<br/></span>
-      </template>
-    </el-table-column>
-    <el-table-column label="指标分数" width="120">
-      <template slot-scope="scope">
-        <el-form>
-          <el-form-item v-for="(item,index) in scope.row.EvaluationKpis"
-             :key="index">
-            <el-input v-model="item.KpiScore" v-if="!scope.row.EvaluationKpis" clearable placeholder="请输入"
-             >{{item.KpiScore}}</el-input>
-            <el-input v-else clearable placeholder="请输入" v-model="item.KpiScore"
-             ></el-input>
-          </el-form-item>
-        </el-form>
-      </template>
-    </el-table-column>
-    <el-table-column label="评分人">
-      <template slot-scope="scope">
-        <el-form>
-          <el-form-item v-for="(item,index) in scope.row.EvaluationKpis"
-             :key="index">
-             <div v-for="(user,index) in item.Users"
-             :key="index">
-            <el-input v-model="user.nickName" v-if="!item.Users" clearable placeholder="请输入"
-             >{{user.nickName}}</el-input>
-             <el-input v-else clearable placeholder="请输入" v-model="user.nickName"
-             ></el-input>
-          </div>
-          </el-form-item>
-         </el-form>
-        </template>
+    <el-table-column>
+      <el-button @click="kpiDataEnter" type="primary" size="mini" slot="reference">添加</el-button>
     </el-table-column>
     </el-table>
     </el-dialog>
@@ -141,25 +123,26 @@
 <script>
 import {
     getKpiList,
-    addKpiEvaluation,
+    assignedKpiEvaluation,
     getKpiByIds,
     getKpiEvaluation,
-    getKpiScoreByIds
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import {
     removeEvaluationKpi,
 } from "@/api/pas/evaluation";
 import {
-    getUserByNickName
-} from "@/api/user";
-import {
-    addUserEvaluationKpi
+    getEvaluationKpiList,
+    setUserEvaluation
 } from "@/api/pas/evaluationKpi";
+import {
+    getUserList
+} from "@/api/user";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
   name: "kpis",
   mixins: [infoList],
+  ids:[],
   props: {
     row: {
       default: function() {
@@ -175,6 +158,7 @@ export default {
       visible: false,
       type: "",
       deleteVisible: false,
+      multipleOption: [],
       multipleSelection: [],KpiScoreData: {
             Name:"",
             Description:"",
@@ -192,6 +176,17 @@ export default {
       },
       EvaluationKpis:{
             KpiScore:"",
+            Users:{
+              ID:[]
+            }
+      },
+      EvaluationKpiData:{
+        ids:["1","2"]
+      },
+      rules: {
+        id: [
+          { required: true, message: "请选择用户角色", trigger: "blur" }
+        ]
       }
     };
   },
@@ -244,6 +239,10 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    handleOptionChange(val) {
+      this.multipleOption = val
+      this.changeUser()
+    },
     async kpiDataEnter(){
         const ids = []
         const score = []
@@ -268,12 +267,10 @@ export default {
             }
           })
           const checkArr = await getKpiByIds({ ids })
-          const UsersArr = await getUserByNickName({nickName})
-          const res = await addKpiEvaluation({
+          //const usersArr =  await getUserByNickName({nickName})
+          const res = await assignedKpiEvaluation({
             kpis: checkArr.data.list,
             id: this.row.ID,
-            kpiScore: score,
-            Users:UsersArr.data.list
           })
           if(res.code == 0){
               this.$message({ type: 'success', message: "批量添加成功" })
@@ -295,15 +292,59 @@ export default {
           Tags: 1,
       };
     },
+    
+    setOptions(userData) {
+      this.userOptions = [];
+      this.ids = [];
+      this.setUserOptions(userData, this.userOptions ,this.ids);
+    },
+    setUserOptions(UserData, optionsData ,ids) {
+      UserData &&
+        UserData.map(item => {
+          // if (item.children && item.children.length) {
+          //   const option = {
+          //     ID: item.ID,
+          //     nickName: item.nickName,
+          //     children: []
+          //   };
+          //   this.setAuthorityOptions(item.children, option.children);
+          //   optionsData.push(option);
+          // } else {
+            const option = {
+              id: item.ID,
+              nickName: item.nickName
+            };
+            optionsData.push(option);
+            const idOption = {
+              id: item.ID,
+            };
+            ids.push(idOption)
+          //}
+        });
+    },
+    async changeUser() {
+      const ids = [];
+      this.multipleOption &&
+          this.multipleOption.map(item => {
+            ids.push(Number(item))
+          })
+      const res = await setUserEvaluation({
+        id: this.row.ID,
+        userId: ids
+      });
+      if (res.code == 0) {
+        this.$message({ type: "success", message: "角色设置成功" });
+      }
+    }
   },
   async created() {
-    const life = await getKpiScoreByIds({ID:Number(this.row.ID)});
-    const res = await getKpiEvaluation({ID:Number(this.row.ID)})
-    if (life.code == 0) {
-      this.KpiScoreData = life.data.list
-      this.KpiData = res.data.list
-    }
-    
+    //const life = await getKpiScoreByIds({ID:Number(this.row.ID)});
+    const life = await getKpiList({ID:Number(this.row.ID)});
+    const res = await getKpiEvaluation({ID:Number(this.row.ID)});
+      this.KpiData = res.data.list;
+      this.kpiList = life.data.list;
+    const user = await getUserList({ page: 1, pageSize: 999 });
+      this.setOptions(user.data.list);
   }
 }
 

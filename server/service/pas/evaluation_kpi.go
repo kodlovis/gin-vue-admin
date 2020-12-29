@@ -42,6 +42,6 @@ func SetUserEvaluation(ID uint,Users []model.SysUser)error{
 	evaluation.Users = Users
 	var s mp.EvaluationKpi
 	global.GVA_DB.Preload("Users").First(&s, "id = ?", evaluation.EvaluationId)
-	err := global.GVA_DB.Model(&s).Association("U").Replace(&evaluation.Users)
+	err := global.GVA_DB.Model(&s).Association("Users").Replace(&evaluation.Users)
 	return err
 }
