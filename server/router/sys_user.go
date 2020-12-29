@@ -19,5 +19,6 @@ func InitUserRouter(Router *gin.RouterGroup) {
 		UserRouter.DELETE("deleteUser", v1.DeleteUser)           // 删除用户
 		UserRouter.PUT("setUserInfo", v1.SetUserInfo)            // 设置用户信息
 		UserRouter.POST("getUserByNickName", v1.GetUserByNickName)
+		UserRouter.POST("getUserByIds", v1.GetUserByIds)
 	}
 }

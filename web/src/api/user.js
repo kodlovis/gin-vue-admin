@@ -119,3 +119,11 @@ export const getUserByNickName = (data) => {
         data
     })
 }
+
+export const getUserByIds = (data) => {
+    return service({
+        url: "/user/getUserByIds",
+        method: 'post',
+        data
+    })
+}

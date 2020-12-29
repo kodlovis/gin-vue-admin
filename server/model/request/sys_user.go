@@ -36,5 +36,5 @@ type SetUserAuth struct {
 type UserSearch struct {
 	Users []model.SysUser
 	NickName []string
-    PageInfo
+	PageInfo
 }
