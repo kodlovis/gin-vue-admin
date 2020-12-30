@@ -43,11 +43,24 @@
     
     <el-table-column label="指标分数" prop="KpiScore" width="120"></el-table-column>
 
-    <el-table-column label="评分人" width="120">
+    <!-- <el-table-column label="评分人" width="120">
       <template slot-scope="scope">
         <span v-for="(item,index) in scope.row.Users"
         :key="index">{{item.nickName}}
         </span>
+      </template>
+    </el-table-column> -->
+    
+    <el-table-column label="评分人" width="120">
+      <template slot-scope="scope">
+          <el-cascader
+            @change="(val)=>{handleOptionChange(val,scope.row)}"
+            :options="userOptions"
+            :rules="rules"
+            clearable
+            :props="{ checkStrictly: true,label:'nickName',value:'id',multiple: true,}"
+            filterable
+          ></el-cascader>
       </template>
     </el-table-column>
     </el-table>
@@ -64,17 +77,6 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right">
-    
-    <div>
-      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item>
-          <div>
-            <el-button icon="el-icon-confirm" size="mini" slot="reference" type="primary" @click="kpiDataEnter">批量添加</el-button>
-          </div>
-        </el-form-item>
-      </el-form>
-
-    </div>
     <el-table
       :data="kpiList"
       @selection-change="handleSelectionChange"
@@ -84,9 +86,6 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column type="selection" width="55"></el-table-column>
-
-    
     <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
     
     <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
@@ -96,25 +95,16 @@
     <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column> 
 
      <el-table-column label="指标分数">
-          <el-input v-model="EvaluationKpiData.KpiScore" clearable placeholder="请输入"></el-input>
-    </el-table-column>
-    <el-table-column label="评分人" width="120">
+       
       <template slot-scope="scope">
-          <el-cascader
-            @change="handleOptionChange"
-            v-model="scope.id"
-            :options="userOptions"
-            :rules="rules"
-            clearable
-            :props="{ checkStrictly: true,label:'nickName',value:'id',multiple: true,}"
-            filterable
-            ref="cascaderAddr"
-          ></el-cascader>
+          <el-input v-model="scope.row.EvaluationKpis.KpiScore" clearable placeholder="请输入"></el-input>
       </template>
     </el-table-column>
-    <el-table-column>
-      <el-button @click="kpiDataEnter" type="primary" size="mini" slot="reference">添加</el-button>
-    </el-table-column>
+      <el-table-column label="按钮组">
+        <template slot-scope="scope">
+          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加">添加</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     </el-dialog>
   </div>
@@ -123,19 +113,19 @@
 <script>
 import {
     getKpiList,
-    assignedKpiEvaluation,
-    getKpiByIds,
     getKpiEvaluation,
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import {
     removeEvaluationKpi,
 } from "@/api/pas/evaluation";
 import {
-    getEvaluationKpiList,
-    setUserEvaluation
+    setUserEvaluation,
+    createEvaluationKpi,
+    deleteEvaluationKpi
 } from "@/api/pas/evaluationKpi";
 import {
-    getUserList
+    getUserList,
+    getUserByIds
 } from "@/api/user";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -159,29 +149,18 @@ export default {
       type: "",
       deleteVisible: false,
       multipleOption: [],
-      multipleSelection: [],KpiScoreData: {
-            Name:"",
-            Description:"",
-            Status:"",
-            Category:"",
-            Tags: 1,
-            EvaluationKpis:0,
-      },
-      KpiData:{
+      multipleSelection: [],
+      KpiData: [],
+      kpiList:{
             Name:"",
             ID:"",
             Category:"",
-            EvaluationKpis:"",
             KpiScore:"",
-      },
-      EvaluationKpis:{
-            KpiScore:"",
-            Users:{
-              ID:[]
-            }
-      },
-      EvaluationKpiData:{
-        ids:["1","2"]
+            EvaluationKpis:{
+              KpiScore:"",
+              evaluation_id:"",
+              kpi_id:"",
+        },
       },
       rules: {
         id: [
@@ -220,6 +199,7 @@ export default {
           })
           this.deleteVisible = false
           this.getKpiScoreByIds()
+          this.refreshEvalutationKpi()
         }
       },
     nodeChange(){
@@ -239,49 +219,31 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    handleOptionChange(val) {
+    handleOptionChange(val,row) {
+      const arr = this.$steamrollArray(val)
+      console.log(arr,row.ID)
       this.multipleOption = val
-      this.changeUser()
+      const ID = row.ID
+      this.$message(ID+"123")
+      this.changeUser(ID)
     },
-    async kpiDataEnter(){
-        const ids = []
-        const score = []
-        const nickName =[]
-        if(this.multipleSelection.length == 0){
-          this.$message({
-            type: 'warning',
-            message: '请选择要批量的数据'
-          })
-          return
-        }
-        this.multipleSelection &&
-          this.multipleSelection.map(item => {
-            ids.push(item.ID)
-            for (let i = 0; i < item.EvaluationKpis.length; i++) {
-              var data = Number(item.EvaluationKpis[i].KpiScore)
-              var userData =item.EvaluationKpis[i].Users
-              score.push(data)
-              for (let u = 0; u < userData.length; u++) {
-                nickName.push(userData[u].nickName)
-              }
-            }
-          })
-          const checkArr = await getKpiByIds({ ids })
-          //const usersArr =  await getUserByNickName({nickName})
-          const res = await assignedKpiEvaluation({
-            kpis: checkArr.data.list,
-            id: this.row.ID,
+    async kpiDataEnter(row){
+        const res = await createEvaluationKpi({...this.row.EvaluationKpis,
+        KpiScore: Number(row.EvaluationKpis.KpiScore),
+        EvaluationId: this.row.ID,
+        KpiId: row.ID,
           })
           if(res.code == 0){
-              this.$message({ type: 'success', message: "批量添加成功" })
+              this.$message({ type: 'success', message: "添加成功" })
           }
-        this.dialogFormVisible = false;
-        const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
+          this.refreshEvalutationKpi()
+      },
+    async refreshEvalutationKpi(){
+      const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
         if (ref.code == 0) {
         this.KpiData = ref.data.list;
         }
-      },
-
+    },
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
@@ -328,12 +290,14 @@ export default {
           this.multipleOption.map(item => {
             ids.push(Number(item))
           })
+      const checkArr = await getUserByIds({ ids })
       const res = await setUserEvaluation({
-        id: this.row.ID,
-        userId: ids
+        id: this.KpiData.ID,
+        users: checkArr.data.list
       });
       if (res.code == 0) {
         this.$message({ type: "success", message: "角色设置成功" });
+        this.refreshEvalutationKpi()
       }
     }
   },
@@ -345,6 +309,7 @@ export default {
       this.kpiList = life.data.list;
     const user = await getUserList({ page: 1, pageSize: 999 });
       this.setOptions(user.data.list);
+      this.refreshEvalutationKpi()
   }
 }
 
