@@ -23,3 +23,18 @@ export const setUserEvaluation= (data) => {
         data
     })
 }
+
+export const deleteEvaluationKpi = (data) => {
+    return service({
+        url: "/EvaluationKpi/deleteEvaluationKpi",
+        method: 'delete',
+        data
+    })
+}
+export const createEvaluationKpi = (data) => {
+     return service({
+         url: "/EvaluationKpi/createEvaluationKpi",
+         method: 'post',
+         data
+     })
+ }

@@ -6,7 +6,7 @@ import (
 
 // 如果含有time.Time 请自行import time包
 type EvaluationKpi struct {
-      Kpis  []Kpi  `json:"Kpis" gorm:"ForeignKey:id;References:kpi_id"`
+      Kpis  []Kpi  `json:"Kpis" gorm:"ForeignKey:id;AssociationForeignKey:KpiId;References:kpi_id"`
       ID uint  `gorm:"primarykey"`
       KpiId uint `json:"KpiId" gorm:"column:kpi_id;primarykey"`
       EvaluationId uint  `json:"EvaluationId"  gorm:"column:evaluation_id;primarykey"`

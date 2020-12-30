@@ -45,3 +45,13 @@ func SetUserEvaluation(ID uint,Users []model.SysUser)error{
 	err := global.GVA_DB.Model(&s).Association("Users").Replace(&evaluation.Users)
 	return err
 }
+
+func CreateEvaluationKpi(EvaluationKpi mp.EvaluationKpi) (err error) {
+	err = global.GVA_DB.Create(&EvaluationKpi).Error
+	return err
+}
+
+func DeleteEvaluationKpi(EvaluationKpi mp.EvaluationKpi) (err error) {
+	err = global.GVA_DB.Delete(EvaluationKpi).Error
+	return err
+}

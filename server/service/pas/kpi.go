@@ -116,9 +116,13 @@ func GetKpiScoreByIds(id rp.GetEvaluationId,info rp.KpiSearch) (err error, list 
 	err = db.Preload("Tags").Preload("EvaluationKpis.Users").Preload("EvaluationKpis","evaluation_id = ?",id.ID).Find(&Kpis).Error
 	return err, Kpis, total
 }
-func AssignedKpiEvaluation(Kpis []mp.Kpi, ID uint) (err error) {
+
+//暂时不用
+func AssignedKpiEvaluation(Kpis []mp.Kpi, ID uint,KpiScore float64) (err error) {
 	var evaluation mp.EvaluationKpi
 	evaluation.EvaluationId = ID
+	evaluation.Kpis = Kpis
+	evaluation.KpiScore= KpiScore
 	var s mp.EvaluationKpi
 	global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Preload("Kpis").Find(&s).Where("evaluation_id = ?", evaluation.EvaluationId).Error; err != nil {

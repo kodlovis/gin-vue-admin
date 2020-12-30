@@ -14,7 +14,7 @@ type Kpi struct {
       Category  string `json:"Category" form:"Category" gorm:"column:Category;comment:指标类型;type:varchar(255);size:255;"`
       Tags  []Tag `gorm:"many2many:kpi_tag;"`
       Evaluations  []Evaluation `json:"Evaluations" gorm:"many2many:evaluation_kpi;"`
-      EvaluationKpis  []EvaluationKpi  `json:"EvaluationKpis" gorm:"ForeignKey:KpiId;AssociationForeignKey:ID"`
+      EvaluationKpis  EvaluationKpi  `json:"EvaluationKpis" gorm:"ForeignKey:KpiId;AssociationForeignKey:ID"`
 }
 
 func (Kpi) TableName() string {
