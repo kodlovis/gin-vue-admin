@@ -97,12 +97,3 @@ export const createEvaluation = (data) => {
          params
      })
  }
-
- 
- export const removeEvaluationKpi = (data) => {
-    return service({
-        url: "/Evaluation/removeEvaluationKpi",
-        method: 'delete',
-        data
-    })
-}

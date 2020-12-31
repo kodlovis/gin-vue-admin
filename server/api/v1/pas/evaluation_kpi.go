@@ -48,10 +48,10 @@ func CreateEvaluationKpi(c *gin.Context) {
 	}
 }
 
-func DeleteEvaluationKpi(c *gin.Context) {
-	var EvaluationKpi mp.EvaluationKpi
-	_ = c.ShouldBindJSON(&EvaluationKpi)
-	if err := sp.DeleteEvaluationKpi(EvaluationKpi); err != nil {
+func RemoveEvaluationKpi(c *gin.Context) {
+	var evaluationKpi rp.AssignedKpiEvaluationInfo
+	_ = c.ShouldBindJSON(&evaluationKpi)
+	if err := sp.RemoveEvaluationKpi(evaluationKpi.ID); err != nil {
         global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
 		response.FailWithMessage("删除失败", c)
 	} else {

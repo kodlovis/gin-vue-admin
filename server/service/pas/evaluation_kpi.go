@@ -51,7 +51,7 @@ func CreateEvaluationKpi(EvaluationKpi mp.EvaluationKpi) (err error) {
 	return err
 }
 
-func DeleteEvaluationKpi(EvaluationKpi mp.EvaluationKpi) (err error) {
-	err = global.GVA_DB.Delete(EvaluationKpi).Error
+func RemoveEvaluationKpi(ID uint) (err error) {
+	err = global.GVA_DB.Delete(&[]mp.EvaluationKpi{},"id = ?",ID).Error
 	return err
 }

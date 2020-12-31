@@ -89,7 +89,3 @@ func GetEvaluationInfoList(info rp.EvaluationSearch) (err error, list interface{
 	return err, Evaluations, total
 }
 
-func RemoveEvaluationKpi(Evaluation mp.Evaluation) (err error) {
-	err = global.GVA_DB.Table("evaluation_kpi").Where("evaluation_id = ?",Evaluation.ID).Delete(&[]mp.EvaluationKpi{}).Error
-	return err
-}

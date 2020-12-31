@@ -128,15 +128,3 @@ func GetEvaluationList(c *gin.Context) {
         }, "获取成功", c)
     }
 }
-
-
-func RemoveEvaluationKpi(c *gin.Context) {
-	var Evaluation mp.Evaluation
-	_ = c.ShouldBindJSON(&Evaluation)
-	if err := sp.RemoveEvaluationKpi(Evaluation); err != nil {
-        global.GVA_LOG.Error("清除失败!", zap.Any("err", err))
-		response.FailWithMessage("清除失败", c)
-	} else {
-		response.OkWithMessage("清除成功", c)
-	}
-}
