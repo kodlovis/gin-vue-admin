@@ -6,6 +6,7 @@
           <div>
             <el-button @click="openDialog" type="primary" size="mini" slot="reference">添加指标</el-button>
             <el-button icon="el-icon-confirm" size="mini" slot="reference" type="danger" @click="removeEvaluationKpi">清空指标</el-button>
+
           </div>
         </el-form-item>
       </el-form>
@@ -68,6 +69,11 @@
         </span>
       </template>
     </el-table-column>
+      <el-table-column label="按钮组">
+        <template slot-scope="scope">
+          <el-button @click="removeKpi(scope.row)" type="danger" size="mini" slot="reference" label="移除指标">移除指标</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-pagination
@@ -121,12 +127,9 @@ import {
     getKpiEvaluation,
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import {
-    removeEvaluationKpi,
-} from "@/api/pas/evaluation";
-import {
     setUserEvaluation,
     createEvaluationKpi,
-    deleteEvaluationKpi
+    removeEvaluationKpi
 } from "@/api/pas/evaluationKpi";
 import {
     getUserList,
@@ -193,20 +196,10 @@ export default {
   },
   methods: {
     async openDialog() {
+        const life = await getKpiList({ID:Number(this.row.ID)});
+        this.kpiList = life.data.list;
         this.dialogFormVisible = true;
     },
-    async removeEvaluationKpi() {
-        const res = await removeEvaluationKpi({ID:Number(this.row.ID)})
-        if (res.code == 0) {
-          this.$message({
-            type: 'success',
-            message: '删除成功'
-          })
-          this.deleteVisible = false
-          this.getKpiScoreByIds()
-          this.refreshEvalutationKpi()
-        }
-      },
     nodeChange(){
           this.needConfirm = true
       },
@@ -225,7 +218,7 @@ export default {
       this.multipleSelection = val
     },
     handleOptionChange(val,row) {
-      const arr = this.$steamrollArray(val)
+     // const arr = this.$steamrollArray(val)
       //console.log(arr,row.ID)
       this.multipleOption = val
       const ID = row.ID
@@ -304,12 +297,27 @@ export default {
         this.$message({ type: "success", message: "角色设置成功" });
         this.refreshEvalutationKpi()
       }
-    }
+    },
+    
+    async removeKpi(row) {
+      await setUserEvaluation({
+        id: Number(row.ID),
+        users: []
+      });
+      const res = await removeEvaluationKpi({
+        ID: Number(row.ID)
+        });
+      if (res.code == 0) {
+        this.$message({
+          type: "success",
+          message: "移除成功"
+        });
+        this.refreshEvalutationKpi()
+      }
+    },
   },
   async created() {
     //const life = await getKpiScoreByIds({ID:Number(this.row.ID)});
-    const life = await getKpiList({ID:Number(this.row.ID)});
-      this.kpiList = life.data.list;
     const user = await getUserList({ page: 1, pageSize: 999 });
     //载入Users
     this.setOptions(user.data.list);
