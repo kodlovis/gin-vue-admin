@@ -20,7 +20,7 @@
       @selection-change="handleSelectionChange"
       white-space: pre-line
     >
-    <el-table-column label="指标名称">
+    <el-table-column label="指标名称" width="90">
       <template slot-scope="scope">
         <p v-for="(item,index) in scope.row.Kpis"
         :key="index">{{item.Name}}<br/></p>
@@ -41,7 +41,7 @@
       </template>
     </el-table-column>
     
-    <el-table-column label="指标分数" prop="KpiScore" width="120"></el-table-column>
+    <el-table-column label="指标分数" prop="KpiScore" width="80"></el-table-column>
 
     <!-- <el-table-column label="评分人" width="120">
       <template slot-scope="scope">
@@ -51,16 +51,21 @@
       </template>
     </el-table-column> -->
     
-    <el-table-column label="评分人" width="120">
+    <el-table-column label="评分人" width="230">
       <template slot-scope="scope">
           <el-cascader
             @change="(val)=>{handleOptionChange(val,scope.row)}"
+            :v-model="scope.id"
             :options="userOptions"
             :rules="rules"
             clearable
             :props="{ checkStrictly: true,label:'nickName',value:'id',multiple: true,}"
             filterable
           ></el-cascader>
+          <span><br/>已选：<br/></span>
+          <span v-for="(item,index) in scope.row.Users"
+        :key="index">{{item.nickName}}、
+        </span>
       </template>
     </el-table-column>
     </el-table>
@@ -221,10 +226,10 @@ export default {
     },
     handleOptionChange(val,row) {
       const arr = this.$steamrollArray(val)
-      console.log(arr,row.ID)
+      //console.log(arr,row.ID)
       this.multipleOption = val
       const ID = row.ID
-      this.$message(ID+"123")
+      //this.$message(ID+"123")
       this.changeUser(ID)
     },
     async kpiDataEnter(row){
@@ -284,7 +289,7 @@ export default {
           //}
         });
     },
-    async changeUser() {
+    async changeUser(ID) {
       const ids = [];
       this.multipleOption &&
           this.multipleOption.map(item => {
@@ -292,7 +297,7 @@ export default {
           })
       const checkArr = await getUserByIds({ ids })
       const res = await setUserEvaluation({
-        id: this.KpiData.ID,
+        id: ID,
         users: checkArr.data.list
       });
       if (res.code == 0) {
@@ -304,12 +309,11 @@ export default {
   async created() {
     //const life = await getKpiScoreByIds({ID:Number(this.row.ID)});
     const life = await getKpiList({ID:Number(this.row.ID)});
-    const res = await getKpiEvaluation({ID:Number(this.row.ID)});
-      this.KpiData = res.data.list;
       this.kpiList = life.data.list;
     const user = await getUserList({ page: 1, pageSize: 999 });
-      this.setOptions(user.data.list);
-      this.refreshEvalutationKpi()
+    //载入Users
+    this.setOptions(user.data.list);
+    this.refreshEvalutationKpi()
   }
 }
 

@@ -1,7 +1,7 @@
 package pas
 
 import (
-	"gorm.io/gorm"
+	//"gorm.io/gorm"
 	"gin-vue-admin/global"
 	mp "gin-vue-admin/model/pas"
 	rp "gin-vue-admin/model/request/pas"
@@ -118,23 +118,23 @@ func GetKpiScoreByIds(id rp.GetEvaluationId,info rp.KpiSearch) (err error, list 
 }
 
 //暂时不用
-func AssignedKpiEvaluation(Kpis []mp.Kpi, ID uint,KpiScore float64) (err error) {
-	var evaluation mp.EvaluationKpi
-	evaluation.EvaluationId = ID
-	evaluation.Kpis = Kpis
-	evaluation.KpiScore= KpiScore
-	var s mp.EvaluationKpi
-	global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Preload("Kpis").Find(&s).Where("evaluation_id = ?", evaluation.EvaluationId).Error; err != nil {
-			return err
-		  }
-		if err := tx.Model(&s).Association("Kpis").Replace(&evaluation.Kpis); err != nil {
-		 	return err
-		  }
-		return nil
-		})
-		return err
-}
+// func AssignedKpiEvaluation(Kpis []mp.Kpi, ID uint,KpiScore float64) (err error) {
+// 	var evaluation mp.EvaluationKpi
+// 	evaluation.EvaluationId = ID
+// 	evaluation.Kpis = Kpis
+// 	evaluation.KpiScore= KpiScore
+// 	var s mp.EvaluationKpi
+// 	global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+// 		if err := tx.Preload("Kpis").Find(&s).Where("evaluation_id = ?", evaluation.EvaluationId).Error; err != nil {
+// 			return err
+// 		  }
+// 		if err := tx.Model(&s).Association("Kpis").Replace(&evaluation.Kpis); err != nil {
+// 		 	return err
+// 		  }
+// 		return nil
+// 		})
+// 		return err
+// }
 
 
 func GetKpiEvaluation(id *rp.GetEvaluationId,info rp.EvaluationSearch) (err error, list interface{}, total int64) {

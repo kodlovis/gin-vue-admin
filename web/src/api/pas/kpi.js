@@ -121,13 +121,13 @@ export const getKpiScoreByIds = (data) => {
      })
  }
 
- export const assignedKpiEvaluation = (data) => {
-    return service({
-        url: "/Kpi/assignedKpiEvaluation",
-        method: 'post',
-        data
-    })
-}
+//  export const assignedKpiEvaluation = (data) => {
+//     return service({
+//         url: "/Kpi/assignedKpiEvaluation",
+//         method: 'post',
+//         data
+//     })
+// }
 
 export const getKpiEvaluation = (data) => {
     return service({
