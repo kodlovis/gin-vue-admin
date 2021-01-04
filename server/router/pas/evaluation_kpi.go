@@ -13,5 +13,6 @@ func InitEvaluationKpiRouter(Router *gin.RouterGroup) {
 		EvaluationKpiRouter.POST("setUserEvaluation", pas.SetUserEvaluation)
 		EvaluationKpiRouter.POST("createEvaluationKpi", pas.CreateEvaluationKpi)   // 新建Kpi
 		EvaluationKpiRouter.DELETE("removeEvaluationKpi", pas.RemoveEvaluationKpi) // 删除Kpi
+		EvaluationKpiRouter.DELETE("removeEvaluationKpiByIds", pas.RemoveEvaluationKpiByIds) 
 	}
 }

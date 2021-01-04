@@ -5,14 +5,14 @@
         <el-form-item>
           <div>
             <el-button @click="openDialog" type="primary" size="mini" slot="reference">添加指标</el-button>
-            <el-button icon="el-icon-confirm" size="mini" slot="reference" type="danger" @click="removeEvaluationKpi">清空指标</el-button>
-          </div>
-          <div>
-            <el-form :model="formData" label-position="right" label-width="80px">
-              <el-form-item label="总分">
-                <el-input v-model="formData.totalScore"></el-input>
-              </el-form-item>
-            </el-form>
+            <el-popover placement="top" v-model="deleteVisible" width="160">
+            <p>确定要清空吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button @click="deleteVisible = false" size="mini" type="text">取消</el-button>
+                <el-button @click="removeEvaluationKpiByIds" size="mini" type="primary">确定</el-button>
+              </div>
+            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">清空指标</el-button>
+          </el-popover>
           </div>
         </el-form-item>
       </el-form>
@@ -27,6 +27,9 @@
       @selection-change="handleSelectionChange"
       white-space: pre-line
     >
+    
+    <el-table-column type="selection" width="55"></el-table-column>
+
     <el-table-column label="指标名称" width="90">
       <template slot-scope="scope">
         <p v-for="(item,index) in scope.row.Kpis"
@@ -126,18 +129,19 @@ import {
 import {
     setUserEvaluation,
     createEvaluationKpi,
-    removeEvaluationKpi
+    removeEvaluationKpi,
+    removeEvaluationKpiByIds,
 } from "@/api/pas/evaluationKpi";
 import {
     getUserList,
     getUserByIds
 } from "@/api/user";
 import {
-    findEvaluationKpiUser
+    findEvaluationKpiUser,
+    removeEvaluationUsersByIds,
 } from "@/api/pas/evaluationKpiUser";
 import {
     updateEvaluation,
-    getEvaluationList
 } from "@/api/pas/evaluation";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -321,10 +325,12 @@ export default {
     },
     
     async removeKpi(row) {
-      await setUserEvaluation({
-        id: Number(row.ID),
-        users: []
-      });
+      if (row.Users!=null) {
+        await setUserEvaluation({
+           id: Number(row.ID),
+           users: []
+        });
+      }
       const res = await removeEvaluationKpi({
         ID: Number(row.ID)
         });
@@ -333,8 +339,31 @@ export default {
           type: "success",
           message: "移除成功"
         });
-        this.refreshEvalutationKpi()
+        this.setTotalScore()
       }
+    },
+    async removeEvaluationKpiByIds(){
+      const ids = []
+        if(this.multipleSelection.length == 0){
+          this.$message({
+            type: 'warning',
+            message: '请选择要删除的数据'
+          })
+          return
+        }
+        this.multipleSelection &&
+          this.multipleSelection.map(item => {
+            ids.push(item.ID)
+          })
+        const res = await removeEvaluationKpiByIds({ ids })
+        if (res.code == 0) {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+        this.deleteVisible = false
+        this.setTotalScore()
+        }
     },
   },
   async created() {

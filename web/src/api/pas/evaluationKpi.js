@@ -38,3 +38,11 @@ export const createEvaluationKpi = (data) => {
          data
      })
  }
+ 
+ export const removeEvaluationKpiByIds = (data) => {
+    return service({
+        url: "/EvaluationKpi/removeEvaluationKpiByIds",
+        method: 'delete',
+        data
+    })
+}
