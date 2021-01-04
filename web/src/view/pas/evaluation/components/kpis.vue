@@ -6,7 +6,13 @@
           <div>
             <el-button @click="openDialog" type="primary" size="mini" slot="reference">添加指标</el-button>
             <el-button icon="el-icon-confirm" size="mini" slot="reference" type="danger" @click="removeEvaluationKpi">清空指标</el-button>
-
+          </div>
+          <div>
+            <el-form :model="formData" label-position="right" label-width="80px">
+              <el-form-item label="总分">
+                <el-input v-model="formData.totalScore"></el-input>
+              </el-form-item>
+            </el-form>
           </div>
         </el-form-item>
       </el-form>
@@ -43,20 +49,12 @@
     </el-table-column>
     
     <el-table-column label="指标分数" prop="KpiScore" width="80"></el-table-column>
-
-    <!-- <el-table-column label="评分人" width="120">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Users"
-        :key="index">{{item.nickName}}
-        </span>
-      </template>
-    </el-table-column> -->
     
     <el-table-column label="评分人" width="230">
       <template slot-scope="scope">
           <el-cascader
             @change="(val)=>{handleOptionChange(val,scope.row)}"
-            :v-model="scope.id"
+            :v-model="scope.row.Users.ID"
             :options="userOptions"
             :rules="rules"
             clearable
@@ -106,7 +104,6 @@
     <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column> 
 
      <el-table-column label="指标分数">
-       
       <template slot-scope="scope">
           <el-input v-model="scope.row.EvaluationKpis.KpiScore" clearable placeholder="请输入"></el-input>
       </template>
@@ -135,6 +132,13 @@ import {
     getUserList,
     getUserByIds
 } from "@/api/user";
+import {
+    findEvaluationKpiUser
+} from "@/api/pas/evaluationKpiUser";
+import {
+    updateEvaluation,
+    getEvaluationList
+} from "@/api/pas/evaluation";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -159,6 +163,9 @@ export default {
       multipleOption: [],
       multipleSelection: [],
       KpiData: [],
+      formData:{
+        totalScore:""
+      },
       kpiList:{
             Name:"",
             ID:"",
@@ -170,11 +177,14 @@ export default {
               kpi_id:"",
         },
       },
+      evaluationData:{
+            Score: "",
+      },
       rules: {
         id: [
           { required: true, message: "请选择用户角色", trigger: "blur" }
         ]
-      }
+      },
     };
   },
   filters: {
@@ -221,9 +231,9 @@ export default {
      // const arr = this.$steamrollArray(val)
       //console.log(arr,row.ID)
       this.multipleOption = val
-      const ID = row.ID
+      const evaluationKpiId = row.ID
       //this.$message(ID+"123")
-      this.changeUser(ID)
+      this.changeUser(evaluationKpiId)
     },
     async kpiDataEnter(row){
         const res = await createEvaluationKpi({...this.row.EvaluationKpis,
@@ -234,7 +244,7 @@ export default {
           if(res.code == 0){
               this.$message({ type: 'success', message: "添加成功" })
           }
-          this.refreshEvalutationKpi()
+          this.setTotalScore()
       },
     async refreshEvalutationKpi(){
       const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
@@ -242,6 +252,16 @@ export default {
         this.KpiData = ref.data.list;
         }
     },
+    async setTotalScore(){
+      const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
+        this.KpiData = ref.data.list;
+        var totalScore = 0
+        for (let num = 0; num < this.KpiData.length; num++) {
+          totalScore = totalScore + this.KpiData[num].KpiScore
+        }
+      updateEvaluation({...this.row,Score:Number(totalScore),ID:Number(this.row.ID)});
+    },
+
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
@@ -282,7 +302,7 @@ export default {
           //}
         });
     },
-    async changeUser(ID) {
+    async changeUser(evaluationKpiId) {
       const ids = [];
       this.multipleOption &&
           this.multipleOption.map(item => {
@@ -290,12 +310,13 @@ export default {
           })
       const checkArr = await getUserByIds({ ids })
       const res = await setUserEvaluation({
-        id: ID,
+        id: evaluationKpiId,
         users: checkArr.data.list
       });
       if (res.code == 0) {
-        this.$message({ type: "success", message: "角色设置成功" });
+        findEvaluationKpiUser({evaluationkpiUserId:evaluationKpiId})
         this.refreshEvalutationKpi()
+        this.$message({ type: "success", message: "角色设置成功" });
       }
     },
     

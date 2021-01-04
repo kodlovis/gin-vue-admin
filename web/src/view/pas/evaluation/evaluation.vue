@@ -101,7 +101,7 @@
       </div>
     </el-dialog>
 
-    <el-drawer :visible.sync="drawer" :with-header="false" size="60%" title="方案配置" v-if="drawer">
+    <el-drawer :visible.sync="drawer" :with-header="false" size="80%" title="方案配置" v-if="drawer">
       <el-tabs :before-leave="autoEnter" class="role-box" type="border-card">
         <el-tab-pane label="已添加的指标">
           <Kpis :evaluation="tableData" :row="activeRow" ref="kpis" />
@@ -121,9 +121,6 @@ import {
     findEvaluation,
     getEvaluationList,
 } from "@/api/pas/evaluation";  //  此处请自行替换地址
-import{
-    getKpiEvaluation
-} from "@/api/pas/kpi";
 import Kpis from "@/view/pas/evaluation/components/kpis";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
