@@ -3,17 +3,17 @@
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item>
-          <div>
-            <el-button @click="openDialog" type="primary" size="mini" slot="reference">添加指标</el-button>
-            <el-popover placement="top" v-model="deleteVisible" width="160">
+          <el-button @click="openDialog" type="primary" size="mini">添加指标</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-popover placement="top" v-model="deleteVisible" width="160">
             <p>确定要清空吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button @click="deleteVisible = false" size="mini" type="text">取消</el-button>
                 <el-button @click="removeEvaluationKpiByIds" size="mini" type="primary">确定</el-button>
               </div>
-            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">清空指标</el-button>
+            <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量移除</el-button>
           </el-popover>
-          </div>
         </el-form-item>
       </el-form>
     </div>
@@ -138,7 +138,6 @@ import {
 } from "@/api/user";
 import {
     findEvaluationKpiUser,
-    removeEvaluationUsersByIds,
 } from "@/api/pas/evaluationKpiUser";
 import {
     updateEvaluation,
