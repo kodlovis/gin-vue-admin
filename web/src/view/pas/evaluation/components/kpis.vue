@@ -140,7 +140,7 @@ import {
     findEvaluationKpiUser,
 } from "@/api/pas/evaluationKpiUser";
 import {
-    updateEvaluation,
+    updateEvaluationByInfo
 } from "@/api/pas/evaluation";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -239,7 +239,7 @@ export default {
       this.changeUser(evaluationKpiId)
     },
     async kpiDataEnter(row){
-        const res = await createEvaluationKpi({...this.row.EvaluationKpis,
+        const res = await createEvaluationKpi({
         KpiScore: Number(row.EvaluationKpis.KpiScore),
         EvaluationId: this.row.ID,
         KpiId: row.ID,
@@ -262,7 +262,7 @@ export default {
         for (let num = 0; num < this.KpiData.length; num++) {
           totalScore = totalScore + this.KpiData[num].KpiScore
         }
-      updateEvaluation({...this.row,Score:Number(totalScore),ID:Number(this.row.ID)});
+      updateEvaluationByInfo({...this.row,Score:Number(totalScore),ID:Number(this.row.ID)});
     },
 
     closeDialog() {
@@ -360,8 +360,8 @@ export default {
             type: 'success',
             message: '删除成功'
           })
-        this.deleteVisible = false
         this.setTotalScore()
+        this.deleteVisible = false
         }
     },
   },

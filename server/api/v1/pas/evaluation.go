@@ -85,7 +85,16 @@ func UpdateEvaluation(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
-
+func UpdateEvaluationByInfo(c *gin.Context) {
+	var Evaluation rp.EvaluationInfo
+	_ = c.ShouldBindJSON(&Evaluation)
+	if err := sp.UpdateEvaluationByInfo(Evaluation.ID,Evaluation.TotalScore); err != nil {
+        global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
 // @Tags Evaluation
 // @Summary 用id查询Evaluation
 // @Security ApiKeyAuth

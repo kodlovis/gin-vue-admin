@@ -59,6 +59,11 @@ func UpdateEvaluation(Evaluation *mp.Evaluation) (err error) {
 	return err
 }
 
+func UpdateEvaluationByInfo(id uint , score float64 )(err error){
+	err = global.GVA_DB.Model(&mp.Evaluation{}).Where("id = ?", id).Update("Score", score).Error
+	return err
+}
+
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetEvaluation
 //@description: 根据id获取Evaluation记录

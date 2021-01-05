@@ -97,3 +97,11 @@ export const createEvaluation = (data) => {
          params
      })
  }
+
+ export const updateEvaluationByInfo = (data) => {
+    return service({
+        url: "/Evaluation/updateEvaluationByInfo",
+        method: 'post',
+        data
+    })
+}
