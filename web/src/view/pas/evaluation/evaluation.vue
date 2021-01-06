@@ -35,15 +35,15 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column> -->
     <!-- <el-table-column label="方案ID" prop="ID" width="120"></el-table-column>  -->
-    <el-table-column label="方案名称" prop="Name" width="120"></el-table-column> 
+    <el-table-column label="方案名称" prop="name" width="120"></el-table-column> 
     
     <!-- <el-table-column label="方案类型" prop="Category" width="120"></el-table-column>  -->
     
-    <el-table-column label="方案状态" prop="Status" width="120"></el-table-column> 
+    <el-table-column label="方案状态" prop="status" width="120"></el-table-column> 
     
-    <el-table-column label="方案描述" prop="Description" width="120"></el-table-column> 
+    <el-table-column label="方案描述" prop="description" width="120"></el-table-column> 
     
-    <el-table-column label="方案总分" prop="Score" width="120"></el-table-column> 
+    <el-table-column label="方案总分" prop="score" width="120"></el-table-column> 
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
@@ -76,11 +76,11 @@
       <el-form :model="formData" label-position="right" label-width="80px">
         
          <el-form-item label="方案名称:">
-            <el-input v-model="formData.Name" clearable placeholder="请输入" ></el-input>
+            <el-input v-model="formData.name" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
          <el-form-item label="方案类型:">
-            <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
+            <el-input v-model="formData.category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
          <!-- <el-form-item label="方案状态:">
@@ -88,11 +88,11 @@
       </el-form-item> -->
        
          <el-form-item label="方案描述:">
-            <el-input v-model="formData.Description" clearable placeholder="请输入" ></el-input>
+            <el-input v-model="formData.description" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
          <el-form-item label="方案总分:">
-            <el-input v-model="formData.Score" clearable placeholder="请输入" ></el-input>
+            <el-input v-model="formData.score" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        </el-form>
       <div class="dialog-footer" slot="footer">
@@ -139,11 +139,11 @@ export default {
       deleteVisible: false,
       multipleSelection: [],formData: {
             ID:"",
-            Name:"",
-            Category:"",
-            Status:"",
-            Description:"",
-            Score: "",
+            name:"",
+            category:"",
+            status:"",
+            description:"",
+            score: "",
             Kpis:0,
             
       },

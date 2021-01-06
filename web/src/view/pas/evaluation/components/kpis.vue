@@ -32,26 +32,26 @@
 
     <el-table-column label="指标名称" width="90">
       <template slot-scope="scope">
-        <p v-for="(item,index) in scope.row.Kpis"
-        :key="index">{{item.Name}}<br/></p>
+        <p v-for="(item,index) in scope.row.kpis"
+        :key="index">{{item.name}}<br/></p>
       </template>
     </el-table-column>
 
     <el-table-column label="指标说明" width="360" type="textarea">
       <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Kpis"
-        :key="index">{{item.Description}}<br/></span>
+        <span v-for="(item,index) in scope.row.kpis"
+        :key="index">{{item.description}}<br/></span>
       </template>
     </el-table-column>
 
     <el-table-column label="指标算法" width="360" type="textarea">
       <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Kpis"
-        :key="index">{{item.Category}}<br/></span>
+        <span v-for="(item,index) in scope.row.kpis"
+        :key="index">{{item.category}}<br/></span>
       </template>
     </el-table-column>
     
-    <el-table-column label="指标分数" prop="KpiScore" width="80"></el-table-column>
+    <el-table-column label="指标分数" prop="kpiScore" width="80"></el-table-column>
     
     <el-table-column label="评分人" width="230">
       <template slot-scope="scope">
@@ -98,17 +98,17 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
+    <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 
     
     <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
     
-    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
 
      <el-table-column label="指标分数">
       <template slot-scope="scope">
-          <el-input v-model="scope.row.EvaluationKpis.KpiScore" clearable placeholder="请输入"></el-input>
+          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
       </template>
     </el-table-column>
       <el-table-column label="按钮组">
@@ -170,18 +170,18 @@ export default {
         totalScore:""
       },
       kpiList:{
-            Name:"",
+            name:"",
             ID:"",
-            Category:"",
-            KpiScore:"",
-            EvaluationKpis:{
-              KpiScore:"",
+            category:"",
+            kpiScore:"",
+            evaluationKpis:{
+              kpiScore:"",
               evaluation_id:"",
               kpi_id:"",
         },
       },
       evaluationData:{
-            Score: "",
+            kcore: "",
       },
       rules: {
         id: [
@@ -240,7 +240,7 @@ export default {
     },
     async kpiDataEnter(row){
         const res = await createEvaluationKpi({
-        KpiScore: Number(row.EvaluationKpis.KpiScore),
+        KpiScore: Number(row.evaluationKpis.kpiScore),
         EvaluationId: this.row.ID,
         KpiId: row.ID,
           })
@@ -260,7 +260,7 @@ export default {
         this.KpiData = ref.data.list;
         var totalScore = 0
         for (let num = 0; num < this.KpiData.length; num++) {
-          totalScore = totalScore + this.KpiData[num].KpiScore
+          totalScore = totalScore + this.KpiData[num].kpiScore
         }
       updateEvaluationByInfo({...this.row,Score:Number(totalScore),ID:Number(this.row.ID)});
     },

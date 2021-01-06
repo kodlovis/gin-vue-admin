@@ -34,13 +34,13 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column> -->
     
-    <el-table-column label="指标名称" prop="Name" width="120"></el-table-column> 
+    <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="指标说明" prop="Description" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 
     
     <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
     
-    <el-table-column label="指标算法" prop="Category" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
 
     <el-table-column label="标签名称">
       <template slot-scope="scope">
@@ -148,20 +148,20 @@ export default {
       type: "",
       deleteVisible: false,
       multipleSelection: [],formData: {
-            Name:"",
-            Description:"",
-            Status:"",
-            Category:"",
+            name:"",
+            description:"",
+            status:"",
+            category:"",
             Tags: 1,
       },
       tagData:{
-           Name:"",
+           name:"",
            ID:"",
-           Category:"",
-           Parentid:"",
+           category:"",
+           parentid:"",
       }, 
       tagColumn:{
-           Name:"",
+           name:"",
       },
       rules: {
         Tags:[{

@@ -34,9 +34,9 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column> -->
     
-    <el-table-column label="标签名称" prop="Name" width="120"></el-table-column> 
+    <el-table-column label="标签名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="标签分类" prop="Category" width="120"></el-table-column> 
+    <el-table-column label="标签分类" prop="category" width="120"></el-table-column> 
     
     <!-- <el-table-column label="树形结构" prop="Parentid" width="120"></el-table-column>  -->
     
@@ -69,11 +69,11 @@
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="编辑标签">
       <el-form :model="formData" label-position="right" label-width="80px">
          <el-form-item label="标签名称:">
-            <el-input v-model="formData.Name" clearable placeholder="请输入" ></el-input>
+            <el-input v-model="formData.name" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
          <el-form-item label="标签分类:">
-            <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
+            <el-input v-model="formData.category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
          <!-- <el-form-item label="树形结构:"><el-input v-model.number="formData.Parentid" clearable placeholder="请输入"></el-input>
@@ -109,9 +109,9 @@ export default {
       type: "",
       deleteVisible: false,
       multipleSelection: [],formData: {
-            Name:"",
-            Category:"",
-            Parentid:0,
+            name:"",
+            category:"",
+            parentid:0,
             
       }
     };
