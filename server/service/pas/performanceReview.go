@@ -75,6 +75,6 @@ func GetPerformanceReviewInfoList(info rp.PerformanceReviewSearch) (err error, l
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
-	err = db.Preload("EvaluationKpi").Find(&PerformanceReviews).Error
+	err = db.Preload("Evaluation").Preload("User").Find(&PerformanceReviews).Error
 	return err, PerformanceReviews, total
 }
