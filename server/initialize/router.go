@@ -45,10 +45,11 @@ func Routers() *gin.Engine {
 	router.InitEmailRouter(ApiGroup)                 // 邮件相关路由
 	pas.InitKpiRouter(ApiGroup)
 	pas.InitTagRouter(ApiGroup)
-	pas.InitAllocationRouter(ApiGroup)
+	pas.InitPerformanceReviewRouter(ApiGroup)
 	pas.InitEvaluationRouter(ApiGroup)
 	pas.InitEvaluationFormRouter(ApiGroup)
 	pas.InitEvaluationKpiRouter(ApiGroup)
+	pas.InitEvaluationKpiUserRouter(ApiGroup)
 	
 	
 	

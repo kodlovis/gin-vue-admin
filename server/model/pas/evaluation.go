@@ -14,7 +14,7 @@ type Evaluation struct {
       Description  string `json:"description" form:"description" gorm:"column:Description;comment:方案描述;type:varchar(255);size:255;"`
       Score  float64 `json:"score" form:"score" gorm:"column:Score;comment:方案总分;type:float;"`
       Kpis []Kpi `gorm:"many2many:evaluation_kpi;"`
-      EvaluationKpis  []EvaluationKpi  `json:"evaluationKpis" gorm:"ForeignKey:EvaluationId;AssociationForeignKey:ID"`
+      //EvaluationKpis  []EvaluationKpi  `json:"evaluationKpis" gorm:"ForeignKey:EvaluationId;AssociationForeignKey:ID"`
 }
 
 

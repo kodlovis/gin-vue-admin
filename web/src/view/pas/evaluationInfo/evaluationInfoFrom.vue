@@ -1,7 +1,7 @@
 <template>
 <div>
     <el-form :model="formData" label-position="right" label-width="80px">
-             <el-form-item label="AllocationId字段:"><el-input v-model.number="formData.AllocationId" clearable placeholder="请输入"></el-input>
+             <el-form-item label="PerformanceReviewId字段:"><el-input v-model.number="formData.PerformanceReviewId" clearable placeholder="请输入"></el-input>
           </el-form-item>
            
              <el-form-item label="Score字段:"><el-input v-model.number="formData.Score" clearable placeholder="请输入"></el-input>
@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       type: "",formData: {
-            AllocationId:0,
+            PerformanceReviewId:0,
             Score:0,
             ScoreDate:new Date(),
             

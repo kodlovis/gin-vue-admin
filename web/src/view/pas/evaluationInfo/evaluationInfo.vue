@@ -34,7 +34,7 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column>
     
-    <el-table-column label="AllocationId字段" prop="AllocationId" width="120"></el-table-column> 
+    <el-table-column label="PerformanceReviewId字段" prop="PerformanceReviewId" width="120"></el-table-column> 
     
     <el-table-column label="已得分" prop="Score" width="120"></el-table-column> 
     
@@ -68,7 +68,7 @@
 
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
       <el-form :model="formData" label-position="right" label-width="80px">
-         <el-form-item label="AllocationId字段:"><el-input v-model.number="formData.AllocationId" clearable placeholder="请输入"></el-input>
+         <el-form-item label="PerformanceReviewId字段:"><el-input v-model.number="formData.PerformanceReviewId" clearable placeholder="请输入"></el-input>
       </el-form-item>
        
          <el-form-item label="Score字段:"><el-input v-model.number="formData.Score" clearable placeholder="请输入"></el-input>
@@ -108,7 +108,7 @@ export default {
       type: "",
       deleteVisible: false,
       multipleSelection: [],formData: {
-            AllocationId:0,
+            PerformanceReviewId:0,
             Score:0,
             ScoreDate:new Date(),
             
@@ -176,7 +176,7 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-          AllocationId:0,
+          PerformanceReviewId:0,
           Score:0,
           ScoreDate:new Date(),
           

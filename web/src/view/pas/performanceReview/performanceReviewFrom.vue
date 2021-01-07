@@ -38,13 +38,13 @@
 
 <script>
 import {
-    createAllocation,
-    updateAllocation,
-    findAllocation
-} from "@/api/pas/allocation";  //  此处请自行替换地址
+    createPerformanceReview,
+    updatePerformanceReview,
+    findPerformanceReview
+} from "@/api/pas/performanceReview";  //  此处请自行替换地址
 import infoList from "@/mixins/infoList";
 export default {
-  name: "Allocation",
+  name: "PerformanceReview",
   mixins: [infoList],
   data() {
     return {
@@ -65,13 +65,13 @@ export default {
       let res;
       switch (this.type) {
         case "create":
-          res = await createAllocation(this.formData);
+          res = await createPerformanceReview(this.formData);
           break;
         case "update":
-          res = await updateAllocation(this.formData);
+          res = await updatePerformanceReview(this.formData);
           break;
         default:
-          res = await createAllocation(this.formData);
+          res = await createPerformanceReview(this.formData);
           break;
       }
       if (res.code == 0) {
@@ -88,9 +88,9 @@ export default {
   async created() {
    // 建议通过url传参获取目标数据ID 调用 find方法进行查询数据操作 从而决定本页面是create还是update 以下为id作为url参数示例
     if(this.$route.query.id){
-    const res = await findAllocation({ ID: this.$route.query.id })
+    const res = await findPerformanceReview({ ID: this.$route.query.id })
     if(res.code == 0){
-       this.formData = res.data.reAllocation
+       this.formData = res.data.rePerformanceReview
        this.type == "update"
      }
     }else{
