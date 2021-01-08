@@ -153,7 +153,8 @@ import {
     deletePerformanceReviewByIds,
     updatePerformanceReview,
     findPerformanceReview,
-    getPerformanceReviewList
+    getPerformanceReviewList,
+    updatePerformanceReviewByInfo
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 import {
     getEvaluationList
@@ -182,9 +183,11 @@ export default {
             evaluationId:"",
             employeeId:"",
             user:{
+              ID:"",
               nickName:"",
             },
             evaluation:{
+              ID:"",
               name:"",
             }
       },
@@ -344,7 +347,7 @@ export default {
           res = await createPerformanceReview({...this.formData,evaluationId:Number(this.formData.evaluationId),employeeId:Number(this.formData.employeeId)});
           break;
         case "update":
-          res = await updatePerformanceReview(this.formData);
+          res = await updatePerformanceReviewByInfo({...this.formData,evaluationId:Number(this.formData.evaluationId),employeeId:Number(this.formData.employeeId)});
           break;
         default:
           res = await createPerformanceReview(this.formData);

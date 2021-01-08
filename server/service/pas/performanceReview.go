@@ -23,7 +23,8 @@ func CreatePerformanceReview(PerformanceReview mp.PerformanceReview) (err error)
 //@return: err error
 
 func DeletePerformanceReview(PerformanceReview mp.PerformanceReview) (err error) {
-	err = global.GVA_DB.Delete(PerformanceReview).Error
+	//err = global.GVA_DB.Delete(PerformanceReview).Error
+	err = global.GVA_DB.Delete(&[]mp.PerformanceReview{},"id = ?",PerformanceReview.ID).Error
 	return err
 }
 
@@ -77,4 +78,16 @@ func GetPerformanceReviewInfoList(info rp.PerformanceReviewSearch) (err error, l
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 	err = db.Preload("Evaluation").Preload("User").Find(&PerformanceReviews).Error
 	return err, PerformanceReviews, total
+}
+
+func UpdatePerformanceReviewByInfo(PRInfo rp.PerformanceReviewInfo)(err error){
+	err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?", PRInfo.ID).Updates(mp.PerformanceReview{
+		EmployeeId:PRInfo.EmployeeId,
+		EvaluationId:PRInfo.EvaluationId,
+		Name:PRInfo.Name,
+		Status:PRInfo.Status,
+		StartDate:PRInfo.StartDate,
+		EndingDate:PRInfo.EndingDate,
+		}).Error
+	return err
 }

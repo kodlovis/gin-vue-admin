@@ -98,3 +98,11 @@ export const createPerformanceReview = (data) => {
          params
      })
  }
+
+ export const updatePerformanceReviewByInfo = (data) => {
+    return service({
+        url: "/PerformanceReview/updatePerformanceReviewByInfo",
+        method: 'post',
+        data
+    })
+}
