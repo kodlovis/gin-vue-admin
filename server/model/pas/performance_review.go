@@ -15,7 +15,7 @@ type PerformanceReview struct {
       User model.SysUser `json:"user" gorm:"foreignKey:id;References:employee_id;AssociationForeignKey:EmployeeId;"`
       EmployeeId  uint `json:"employeeId" gorm:"column:employee_id;primarykey;comment:员工ID关联User表"`
 
-      PRItemId  uint  `json:"pRItemId" form:"pRItemId" gorm:"column:pRItem_id;comment:关联prItem表"`
+      PRItem  PerformanceReviewItem  `json:"pRItem" gorm:"foreignKey:PRId;References:ID;AssociationForeignKey:ID;"`
       StartDate  time.Time `json:"startDate" form:"startDate" gorm:"column:startDate;comment:开始日期;type:datetime;"`
       EndingDate  time.Time `json:"endingDate" form:"endingDate" gorm:"column:endingDate;comment:结束日期;type:datetime;"`
       //
