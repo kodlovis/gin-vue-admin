@@ -46,3 +46,11 @@ export const createEvaluationKpi = (data) => {
         data
     })
 }
+
+export const getEvaluationKpiById = (data) => {
+    return service({
+        url: "/EvaluationKpi/getEvaluationKpiById",
+        method: 'post',
+        data
+    })
+}

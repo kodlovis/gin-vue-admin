@@ -69,3 +69,14 @@ func RemoveEvaluationKpiByIds(c *gin.Context) {
 		response.OkWithMessage("批量删除成功", c)
 	}
 }
+
+func GetEvaluationKpiById(c *gin.Context) {
+	var EvaluationKpi mp.EvaluationKpi
+    _ = c.ShouldBindJSON(&EvaluationKpi)
+	if err, reEvaluationKpi := sp.GetEvaluationKpiById(EvaluationKpi.ID); err != nil {
+        global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"reEvaluation": reEvaluationKpi}, c)
+	}
+	}

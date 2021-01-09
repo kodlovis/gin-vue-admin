@@ -6,7 +6,7 @@
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item> -->
         <el-form-item>
-          <el-button @click="openDialog" type="primary">选择方案</el-button>
+          <el-button @click="openDialog" type="primary">创建考核表</el-button>
         </el-form-item>
         <!-- <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
@@ -36,9 +36,11 @@
     
     <el-table-column label="考核表状态" prop="status" width="120"></el-table-column>
 
-    <el-table-column label="被考核人" width="120" prop="user.nickName"></el-table-column>
-
     <el-table-column label="方案名称" width="120" prop="evaluation.name"></el-table-column>
+
+    <el-table-column label="方案总分" width="120" prop="evaluation.score"></el-table-column>
+
+    <el-table-column label="被考核人" width="120" prop="user.nickName"></el-table-column>
     
     <el-table-column label="开始时间" prop="startDate" width="120"></el-table-column>
 
@@ -71,7 +73,7 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
-      <el-form :model="formData" label-position="right" label-width="80px">
+      <el-form :model="formData" label-position="right" label-width="120px">
        
          <el-form-item label="考核表名称:">
             <el-input v-model="formData.name" clearable placeholder="请输入" :style="{width: '60%'}"></el-input>
@@ -92,7 +94,7 @@
              filterable
           ></el-cascader>
       </el-form-item>
-          <el-form-item label="被考核人选择:" v-model="formData.employeeId">
+          <el-form-item label="被考核人选择:">
            <el-cascader
              @change="(val)=>{handleOptionChange(val)}"
              v-model="formData.employeeId"
@@ -115,7 +117,7 @@
         <el-button @click="enterDialog" type="primary">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :before-close="closeEvaluationDialog" :visible.sync="dialogEvaluationForm" title="弹窗操作">
+    <!-- <el-dialog :before-close="closeEvaluationDialog" :visible.sync="dialogEvaluationForm" title="弹窗操作">
       <el-table
       :data="evaluationData"
       @selection-change="handleSelectionChange"
@@ -141,7 +143,7 @@
         </template>
       </el-table-column>
     </el-table>
-    </el-dialog>
+    </el-dialog> -->
 
   </div>
 </template>
@@ -151,7 +153,6 @@ import {
     createPerformanceReview,
     deletePerformanceReview,
     deletePerformanceReviewByIds,
-    updatePerformanceReview,
     findPerformanceReview,
     getPerformanceReviewList,
     updatePerformanceReviewByInfo
@@ -162,6 +163,12 @@ import {
 import {
     getUserList,
 } from "@/api/user";
+import {
+    getEvaluationKpiById
+} from "@/api/pas/evaluationKpi";
+// import {
+//     createPerformanceReview,
+// } from "@/api/pas/evaluationKpi";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -176,6 +183,7 @@ export default {
       deleteVisible: false,
       Selection: "",
       multipleSelection: [],formData: {
+            id:"",
             name:"",
             status:"",
             startDate:new Date(),
@@ -189,7 +197,13 @@ export default {
             evaluation:{
               ID:"",
               name:"",
-            }
+              score:"",
+            },
+            pRItem:{
+              user:{
+                nickName:"",
+              }
+            },
       },
       evaluationData:{
             ID:"",
@@ -354,6 +368,13 @@ export default {
           break;
       }
       if (res.code == 0) {
+        const res = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
+        const evaluationKpiData = res.data.list
+        const score = []
+        for (let i = 0; i < evaluationKpiData.length; i++) {
+          score.push(evaluationKpiData[i].KpiScore);
+          this.$message(score)
+        }
         this.$message({
           type:"success",
           message:"创建/更改成功"
