@@ -63,6 +63,6 @@ func RemoveEvaluationKpiByIds(ids rp.IdsReq) (err error) {
 }
 
 func GetEvaluationKpiById(id uint) (err error, EvaluationKpi mp.EvaluationKpi) {
-	err = global.GVA_DB.Where("evaluation_id = ?", id).First(&EvaluationKpi).Error
+	err = global.GVA_DB.Preload("Users").Where("evaluation_id = ?", id).First(&EvaluationKpi).Error
 	return
 }

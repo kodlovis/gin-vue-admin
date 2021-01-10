@@ -214,6 +214,11 @@ export default {
             score: "",
             Kpis:0,
       },
+      evaluationKpiData:{
+            ID:"",
+            kpiId:"",
+            kpiScore:"",
+      },
     };
   },
   filters: {
@@ -368,19 +373,26 @@ export default {
           break;
       }
       if (res.code == 0) {
-        const res = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
-        const evaluationKpiData = res.data.list
+        this.evaluationKpiData = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
         const score = []
-        for (let i = 0; i < evaluationKpiData.length; i++) {
-          score.push(evaluationKpiData[i].KpiScore);
-          this.$message(score)
+        const kpi = []
+        const user= []
+          this.$message(this.evaluationKpiData.length+"start")
+        for (let i = 0; i < this.evaluationKpiData.length; i++) {
+          this.$message("ap")
+          score.push(this.evaluationKpiData.kpiScore);
+          kpi.push(this.evaluationKpiData.kpiId)
+          user.push(this.evaluationKpiData.Users.sys_user_id)
+
+          this.$message(score+kpi+user)
         }
-        this.$message({
-          type:"success",
-          message:"创建/更改成功"
-        })
-        this.closeDialog();
-        this.getTableData();
+          this.$message("over")
+        // this.$message({
+        //   type:"success",
+        //   message:"创建/更改成功"
+        // })
+        // this.closeDialog();
+        // this.getTableData();
       }
     },
     openDialog() {
