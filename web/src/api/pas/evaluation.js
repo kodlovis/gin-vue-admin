@@ -73,11 +73,11 @@ export const createEvaluation = (data) => {
 // @Param data body model.Evaluation true "用id查询Evaluation"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
 // @Router /Evaluation/findEvaluation [get]
- export const findEvaluation = (params) => {
+ export const findEvaluation = (data) => {
      return service({
          url: "/Evaluation/findEvaluation",
-         method: 'get',
-         params
+         method: 'post',
+         data
      })
  }
 

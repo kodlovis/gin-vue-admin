@@ -13,6 +13,7 @@ type EvaluationKpi struct {
       KpiScore  float64 `json:"kpiScore" form:"kpiScore" gorm:"column:KpiScore;comment:指标分数;type:float;"`
       UserId uint `json:"userId" gorm:"column:user_id;primarykey;comment:用户ID"`
       User  model.SysUser  `json:"user" gorm:"ForeignKey:id;AssociationForeignKey:UserId;References:user_id"`
+      Evaluation  Evaluation  `json:"evaluation" gorm:"ForeignKey:id;AssociationForeignKey:EvaluationId;References:evaluation_id"`
     }
 
 

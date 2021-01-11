@@ -13,7 +13,7 @@ func InitEvaluationRouter(Router *gin.RouterGroup) {
 		EvaluationRouter.DELETE("deleteEvaluation", pas.DeleteEvaluation) // 删除Evaluation
 		EvaluationRouter.DELETE("deleteEvaluationByIds", pas.DeleteEvaluationByIds) // 批量删除Evaluation
 		EvaluationRouter.PUT("updateEvaluation", pas.UpdateEvaluation)    // 更新Evaluation
-		EvaluationRouter.GET("findEvaluation", pas.FindEvaluation)        // 根据ID获取Evaluation
+		EvaluationRouter.POST("findEvaluation", pas.FindEvaluation)        // 根据ID获取Evaluation
 		EvaluationRouter.GET("getEvaluationList",pas.GetEvaluationList)  // 获取Evaluation列表
 		EvaluationRouter.POST("updateEvaluationByInfo",pas.UpdateEvaluationByInfo)
 		

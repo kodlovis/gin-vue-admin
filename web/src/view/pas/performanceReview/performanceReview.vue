@@ -158,7 +158,8 @@ import {
     updatePerformanceReviewByInfo
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 import {
-    getEvaluationList
+    getEvaluationList,
+    findEvaluation
 } from "@/api/pas/evaluation";
 import {
     getUserList,
@@ -182,28 +183,15 @@ export default {
       type: "",
       deleteVisible: false,
       Selection: "",
+      totalScore:0,
       multipleSelection: [],formData: {
-            id:"",
             name:"",
             status:"",
             startDate:new Date(),
             endingDate:new Date(),
             evaluationId:"",
             employeeId:"",
-            user:{
-              ID:"",
-              nickName:"",
-            },
-            evaluation:{
-              ID:"",
-              name:"",
-              score:"",
-            },
-            pRItem:{
-              user:{
-                nickName:"",
-              }
-            },
+            score:0,
       },
       evaluationData:{
             ID:"",
@@ -218,12 +206,6 @@ export default {
             ID:"",
             kpiId:"",
             kpiScore:"",
-      },
-      PerformanceReviewItemData:{
-            PRId:"",
-            kpiId:"",
-            userId:"",
-            score:"",
       },
     };
   },
@@ -365,37 +347,43 @@ export default {
         this.getTableData();
       }
     },
+    async createPerformanceReviewItem(){
+        const ref = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
+        this.evaluationKpiData = ref.data.list
+        const item = []
+        for (let i = 0; i < this.evaluationKpiData.length; i++) {
+          item.push({
+            score:Number(this.evaluationKpiData[i].kpiScore),
+            kpiId:Number(this.evaluationKpiData[i].kpiId),
+            userId:Number(this.evaluationKpiData[i].userId),
+            PRId:Number(this.evaluationKpiData[i].ID)
+            })
+        } 
+        createPerformanceReviewItem({item})
+        return this.totalScore
+    },
     async enterDialog() {
       let res;
       switch (this.type) {
         case "create":
-          res = await createPerformanceReview({...this.formData,evaluationId:Number(this.formData.evaluationId),employeeId:Number(this.formData.employeeId)});
+          createPerformanceReviewItem()
+          var ref = await findEvaluation({ID:Number(this.formData.evaluationId)})
+          var evaluationData = ref.data.reEvaluation;
+          res = await createPerformanceReview({...this.formData,evaluationId:Number(this.formData.evaluationId),employeeId:Number(this.formData.employeeId),score:Number(evaluationData.score)});
           break;
         case "update":
           res = await updatePerformanceReviewByInfo({...this.formData,evaluationId:Number(this.formData.evaluationId),employeeId:Number(this.formData.employeeId)});
           break;
         default:
+          createPerformanceReviewItem()
           res = await createPerformanceReview(this.formData);
           break;
       }
       if (res.code == 0) {
-        const ref = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
-        this.evaluationKpiData = ref.data.list
-        const item = []
-          this.$message(Number(this.evaluationKpiData[0].kpiScore)+"start")
-        for (let i = 0; i < this.evaluationKpiData.length; i++) {
-          item.push(
-            {score:Number(this.evaluationKpiData[i].kpiScore),
-            kpiId:Number(this.evaluationKpiData[i].kpiId),
-            userId:Number(this.evaluationKpiData[i].userId),
-            PRId:Number(this.evaluationKpiData[i].ID)
-            })
-        }
-        createPerformanceReviewItem({item})
-         this.$message({
-          type:"success",
-          message:"创建/更改成功"
-        })
+        //  this.$message({
+        //   type:"success",
+        //   message:"创建/更改成功"
+        // })
         this.closeDialog();
         this.getTableData();
       }

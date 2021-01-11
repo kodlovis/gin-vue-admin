@@ -105,7 +105,7 @@ func UpdateEvaluationByInfo(c *gin.Context) {
 // @Router /Evaluation/findEvaluation [get]
 func FindEvaluation(c *gin.Context) {
 	var Evaluation mp.Evaluation
-	_ = c.ShouldBindQuery(&Evaluation)
+	_ = c.ShouldBindJSON(&Evaluation)
 	if err, reEvaluation := sp.GetEvaluation(Evaluation.ID); err != nil {
         global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
