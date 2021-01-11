@@ -11,7 +11,8 @@ type EvaluationKpi struct {
       KpiId uint `json:"kpiId" gorm:"column:kpi_id;primarykey;comment:指标ID"`
       EvaluationId uint  `json:"evaluationId"  gorm:"column:evaluation_id;primarykey;comment:方案ID"`
       KpiScore  float64 `json:"kpiScore" form:"kpiScore" gorm:"column:KpiScore;comment:指标分数;type:float;"`
-      Users []model.SysUser  `gorm:"many2many:evaluationKpi_user;foreignKey:ID;References:ID"`
+      UserId uint `json:"userId" gorm:"column:user_id;primarykey;comment:用户ID"`
+      User  model.SysUser  `json:"user" gorm:"ForeignKey:id;AssociationForeignKey:UserId;References:user_id"`
     }
 
 

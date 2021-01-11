@@ -8,7 +8,7 @@ import (
 	"gin-vue-admin/global"
 )
 
-func AddUserEvaluationKpi(Users []model.SysUser, ID uint) (err error){
+func AddUserEvaluationKpi(User model.SysUser, ID uint) (err error){
 	var evaluation mp.EvaluationKpi
 	evaluation.EvaluationId = ID
 	//evaluation.Users = Users
@@ -25,7 +25,7 @@ func GetEvaluationKpiInfoList(info rp.EvaluationKpiSearch) (err error, list inte
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&EvaluationKpis).Error
-	err = db.Preload("Kpis").Preload("Users").Find(&EvaluationKpis).Error
+	err = db.Preload("Kpis").Preload("User").Find(&EvaluationKpis).Error
 	return err, EvaluationKpis, total
 }
 // func SetUserEvaluation(evaluation *mp.EvaluationKpi) error {
@@ -36,13 +36,13 @@ func GetEvaluationKpiInfoList(info rp.EvaluationKpiSearch) (err error, list inte
 // }
 
 
-func SetUserEvaluation(ID uint,Users []model.SysUser)error{
+func SetUserEvaluation(ID uint,User model.SysUser)error{
 	var evaluation mp.EvaluationKpi
 	evaluation.EvaluationId = ID
-	evaluation.Users = Users
+	evaluation.User = User
 	var s mp.EvaluationKpi
-	global.GVA_DB.Preload("Users").First(&s, "id = ?", evaluation.EvaluationId)
-	err := global.GVA_DB.Model(&s).Association("Users").Replace(&evaluation.Users)
+	global.GVA_DB.Preload("User").First(&s, "id = ?", evaluation.EvaluationId)
+	err := global.GVA_DB.Model(&s).Association("User").Replace(&evaluation.User)
 	return err
 }
 
@@ -71,6 +71,6 @@ func GetEvaluationKpiById(id uint, info rp.EvaluationKpiSearch) (err error, list
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&EvaluationKpis).Error
-	err = db.Preload("Users").Find(&EvaluationKpis).Error
+	err = db.Preload("User").Find(&EvaluationKpis).Error
 	return err, EvaluationKpis, total
 }

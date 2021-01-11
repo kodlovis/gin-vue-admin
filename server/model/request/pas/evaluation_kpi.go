@@ -10,7 +10,7 @@ type EvaluationKpiSearch struct{
 
 type AssignedKpiEvaluationInfo struct{
     ID uint `json:"id"`
-    Users []model.SysUser   `json:"users"`
+    User model.SysUser   `json:"user"`
     Kpis []pas.Kpi  `json:"kpis"`
     KpiScore float64  `json:"score"`
 }
