@@ -207,6 +207,12 @@ export default {
             kpiId:"",
             kpiScore:"",
       },
+      PerformanceReviewItemData:{
+            PRId:"",
+            kpiId:"",
+            userId:"",
+            score:"",
+      },
     };
   },
   filters: {
@@ -347,43 +353,43 @@ export default {
         this.getTableData();
       }
     },
-    async createPerformanceReviewItem(){
-        const ref = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
-        this.evaluationKpiData = ref.data.list
-        const item = []
-        for (let i = 0; i < this.evaluationKpiData.length; i++) {
-          item.push({
-            score:Number(this.evaluationKpiData[i].kpiScore),
-            kpiId:Number(this.evaluationKpiData[i].kpiId),
-            userId:Number(this.evaluationKpiData[i].userId),
-            PRId:Number(this.evaluationKpiData[i].ID)
-            })
-        } 
-        createPerformanceReviewItem({item})
-        return this.totalScore
-    },
     async enterDialog() {
       let res;
       switch (this.type) {
         case "create":
-          createPerformanceReviewItem()
           var ref = await findEvaluation({ID:Number(this.formData.evaluationId)})
           var evaluationData = ref.data.reEvaluation;
-          res = await createPerformanceReview({...this.formData,evaluationId:Number(this.formData.evaluationId),employeeId:Number(this.formData.employeeId),score:Number(evaluationData.score)});
+          res = await createPerformanceReview({...this.formData,
+            evaluationId:Number(this.formData.evaluationId),
+            employeeId:Number(this.formData.employeeId),
+            score:Number(evaluationData.score
+          )});
+          //查询出ID，循环将默认数据组合转入一个list
+          var evaluationKpi = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
+          this.evaluationKpiData = evaluationKpi.data.list
+          var item = []
+          for (let i = 0; i < this.evaluationKpiData.length; i++) {
+            item.push({
+              score:Number(this.evaluationKpiData[i].kpiScore),
+              kpiId:Number(this.evaluationKpiData[i].kpiId),
+              userId:Number(this.evaluationKpiData[i].userId),
+              PRId:Number(this.evaluationKpiData[i].ID)
+              })
+          } 
+        createPerformanceReviewItem({item})
           break;
         case "update":
           res = await updatePerformanceReviewByInfo({...this.formData,evaluationId:Number(this.formData.evaluationId),employeeId:Number(this.formData.employeeId)});
           break;
         default:
-          createPerformanceReviewItem()
           res = await createPerformanceReview(this.formData);
           break;
       }
       if (res.code == 0) {
-        //  this.$message({
-        //   type:"success",
-        //   message:"创建/更改成功"
-        // })
+         this.$message({
+          type:"success",
+          message:"创建/更改成功"
+        })
         this.closeDialog();
         this.getTableData();
       }
