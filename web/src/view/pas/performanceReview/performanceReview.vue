@@ -166,9 +166,9 @@ import {
 import {
     getEvaluationKpiById
 } from "@/api/pas/evaluationKpi";
-// import {
-//     createPerformanceReview,
-// } from "@/api/pas/evaluationKpi";
+import {
+    createPerformanceReviewItem
+} from "@/api/pas/performanceReviewItem";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -373,20 +373,14 @@ export default {
           break;
       }
       if (res.code == 0) {
-        this.evaluationKpiData = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
-        const score = []
-        const kpi = []
-        const user= []
-          this.$message(this.evaluationKpiData.length+"start")
+        const ref = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
+        this.evaluationKpiData = ref.data.list
+        const item = []
+          this.$message(Number(this.evaluationKpiData[0].kpiScore)+"start")
         for (let i = 0; i < this.evaluationKpiData.length; i++) {
-          this.$message("ap")
-          score.push(this.evaluationKpiData.kpiScore);
-          kpi.push(this.evaluationKpiData.kpiId)
-          user.push(this.evaluationKpiData.Users.sys_user_id)
-
-          this.$message(score+kpi+user)
+          item.push([Number(this.evaluationKpiData[i].kpiScore),Number(this.evaluationKpiData[i].kpiId),Number(this.evaluationKpiData[i].Users[0].ID)])
         }
-          this.$message("over")
+        createPerformanceReviewItem({item})
         // this.$message({
         //   type:"success",
         //   message:"创建/更改成功"

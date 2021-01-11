@@ -61,7 +61,7 @@
             :options="userOptions"
             :rules="rules"
             clearable
-            :props="{ checkStrictly: true,label:'nickName',value:'id',multiple: true,}"
+            :props="{ checkStrictly: true,label:'nickName',value:'id',}"
             filterable
           ></el-cascader>
           <span><br/>已选：<br/></span>
@@ -165,9 +165,13 @@ export default {
       deleteVisible: false,
       multipleOption: [],
       multipleSelection: [],
-      KpiData: [],
       formData:{
-        totalScore:""
+        totalScore:"",
+      },
+      KpiData: {
+        Users:{
+          nickName:"",
+        }
       },
       kpiList:{
             name:"",

@@ -62,7 +62,15 @@ func RemoveEvaluationKpiByIds(ids rp.IdsReq) (err error) {
 	return err
 }
 
-func GetEvaluationKpiById(id uint) (err error, EvaluationKpi mp.EvaluationKpi) {
-	err = global.GVA_DB.Preload("Users").Where("evaluation_id = ?", id).First(&EvaluationKpi).Error
-	return
+func GetEvaluationKpiById(id uint, info rp.EvaluationKpiSearch) (err error, list interface{}, total int64){
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+    // 创建db
+	db := global.GVA_DB.Model(&mp.EvaluationKpi{}).Where("evaluation_id = ?", id)
+	var EvaluationKpis []mp.EvaluationKpi
+    // 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&EvaluationKpis).Error
+	err = db.Preload("Users").Find(&EvaluationKpis).Error
+	return err, EvaluationKpis, total
 }
