@@ -2,10 +2,12 @@ package pas
 
 import (
 	"gin-vue-admin/global"
-	mp "gin-vue-admin/model/pas"
+	"gin-vue-admin/model/pas"
 )
 
-func CreatePerformanceReviewItem(PerformanceReviewItem mp.PerformanceReviewItem) (err error) {
-	err = global.GVA_DB.Create(&PerformanceReviewItem).Error
+func CreatePerformanceReviewItem(list []pas.PerformanceReviewItem) (err error) {
+	for i := 0; i < len(list); i++ {
+		err = global.GVA_DB.Create(&list[i]).Error
+	}
 	return err
 }

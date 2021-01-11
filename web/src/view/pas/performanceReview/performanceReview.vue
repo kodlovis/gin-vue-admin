@@ -219,6 +219,12 @@ export default {
             kpiId:"",
             kpiScore:"",
       },
+      PerformanceReviewItemData:{
+            PRId:"",
+            kpiId:"",
+            userId:"",
+            score:"",
+      },
     };
   },
   filters: {
@@ -378,15 +384,20 @@ export default {
         const item = []
           this.$message(Number(this.evaluationKpiData[0].kpiScore)+"start")
         for (let i = 0; i < this.evaluationKpiData.length; i++) {
-          item.push([Number(this.evaluationKpiData[i].kpiScore),Number(this.evaluationKpiData[i].kpiId),Number(this.evaluationKpiData[i].Users[0].ID)])
+          item.push(
+            {score:Number(this.evaluationKpiData[i].kpiScore),
+            kpiId:Number(this.evaluationKpiData[i].kpiId),
+            userId:Number(this.evaluationKpiData[i].userId),
+            PRId:Number(this.evaluationKpiData[i].ID)
+            })
         }
         createPerformanceReviewItem({item})
-        // this.$message({
-        //   type:"success",
-        //   message:"创建/更改成功"
-        // })
-        // this.closeDialog();
-        // this.getTableData();
+         this.$message({
+          type:"success",
+          message:"创建/更改成功"
+        })
+        this.closeDialog();
+        this.getTableData();
       }
     },
     openDialog() {
