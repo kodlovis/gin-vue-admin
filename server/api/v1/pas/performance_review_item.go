@@ -31,3 +31,14 @@ func DeletePerformanceReviewItem(c *gin.Context) {
 		response.OkWithMessage("删除成功", c)
 	}
 }
+
+func DeletePerformanceReviewItemByIds(c *gin.Context) {
+	var IDS rp.IdsReq
+    _ = c.ShouldBindJSON(&IDS)
+	if err := sp.DeletePerformanceReviewItemByIds(IDS); err != nil {
+        global.GVA_LOG.Error("批量删除失败!", zap.Any("err", err))
+		response.FailWithMessage("批量删除失败", c)
+	} else {
+		response.OkWithMessage("批量删除成功", c)
+	}
+}

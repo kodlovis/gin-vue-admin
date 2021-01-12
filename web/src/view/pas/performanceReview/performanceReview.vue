@@ -8,7 +8,7 @@
         <el-form-item>
           <el-button @click="openDialog" type="primary">创建考核表</el-button>
         </el-form-item>
-        <!-- <el-form-item>
+        <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
             <p>确定要删除吗？</p>
               <div style="text-align: right; margin: 0">
@@ -17,7 +17,7 @@
               </div>
             <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量删除</el-button>
           </el-popover>
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
     </div>
     <el-table
@@ -170,7 +170,8 @@ import {
 } from "@/api/pas/evaluationKpi";
 import {
     createPerformanceReviewItem,
-    deletePerformanceReviewItem
+    deletePerformanceReviewItem,
+    deletePerformanceReviewItemByIds
 } from "@/api/pas/performanceReviewItem";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -320,6 +321,7 @@ export default {
             ids.push(item.ID)
           })
         const res = await deletePerformanceReviewByIds({ ids })
+        deletePerformanceReviewItemByIds({ ids })
         if (res.code == 0) {
           this.$message({
             type: 'success',

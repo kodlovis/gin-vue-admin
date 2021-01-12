@@ -15,3 +15,11 @@ export const deletePerformanceReviewItem = (data) => {
         data
     })
 }
+
+export const deletePerformanceReviewItemByIds = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/deletePerformanceReviewItemByIds",
+        method: 'delete',
+        data
+    })
+}
