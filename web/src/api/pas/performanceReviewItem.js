@@ -7,3 +7,11 @@ export const createPerformanceReviewItem = (data) => {
         data
     })
 }
+
+export const deletePerformanceReviewItem = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/deletePerformanceReviewItem",
+        method: 'delete',
+        data
+    })
+}

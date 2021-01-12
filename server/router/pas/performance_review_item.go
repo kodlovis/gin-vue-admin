@@ -9,6 +9,7 @@ import (
 func InitPerformanceReviewItemRouter(Router *gin.RouterGroup) {
 	PerformanceReviewItemRouter := Router.Group("PerformanceReviewItem").Use(middleware.JWTAuth()).Use(middleware.CasbinHandler()).Use(middleware.OperationRecord())
 	{
-		PerformanceReviewItemRouter.POST("createPerformanceReviewItem", pas.CreatePerformanceReviewItem)   // 新建PerformanceReview
+		PerformanceReviewItemRouter.POST("createPerformanceReviewItem", pas.CreatePerformanceReviewItem)
+		PerformanceReviewItemRouter.DELETE("deletePerformanceReviewItem", pas.DeletePerformanceReviewItem)
 	}
 }

@@ -169,7 +169,8 @@ import {
     getEvaluationKpiById
 } from "@/api/pas/evaluationKpi";
 import {
-    createPerformanceReviewItem
+    createPerformanceReviewItem,
+    deletePerformanceReviewItem
 } from "@/api/pas/performanceReviewItem";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -347,7 +348,7 @@ export default {
     async deletePerformanceReview(row) {
       this.visible = false;
       const res = await deletePerformanceReview({ ID: row.ID });
-      deletePerformanceReview
+      deletePerformanceReviewItem({ PRId: row.ID })
       if (res.code == 0) {
         this.$message({
           type: "success",
