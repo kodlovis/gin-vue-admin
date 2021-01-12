@@ -155,7 +155,8 @@ import {
     deletePerformanceReviewByIds,
     findPerformanceReview,
     getPerformanceReviewList,
-    updatePerformanceReviewByInfo
+    updatePerformanceReviewByInfo,
+    getLastPerformanceReview,
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 import {
     getEvaluationList,
@@ -185,6 +186,7 @@ export default {
       Selection: "",
       totalScore:0,
       multipleSelection: [],formData: {
+            id:"",
             name:"",
             status:"",
             startDate:new Date(),
@@ -345,6 +347,7 @@ export default {
     async deletePerformanceReview(row) {
       this.visible = false;
       const res = await deletePerformanceReview({ ID: row.ID });
+      deletePerformanceReview
       if (res.code == 0) {
         this.$message({
           type: "success",
@@ -362,18 +365,20 @@ export default {
           res = await createPerformanceReview({...this.formData,
             evaluationId:Number(this.formData.evaluationId),
             employeeId:Number(this.formData.employeeId),
-            score:Number(evaluationData.score
-          )});
+            score:Number(evaluationData.score)
+            });
           //查询出ID，循环将默认数据组合转入一个list
           var evaluationKpi = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
           this.evaluationKpiData = evaluationKpi.data.list
+          var pr = await getLastPerformanceReview()
+          this.formData = pr.data.rePR
           var item = []
           for (let i = 0; i < this.evaluationKpiData.length; i++) {
             item.push({
               score:Number(this.evaluationKpiData[i].kpiScore),
               kpiId:Number(this.evaluationKpiData[i].kpiId),
               userId:Number(this.evaluationKpiData[i].userId),
-              PRId:Number(this.evaluationKpiData[i].ID)
+              PRId:Number(this.formData.ID)
               })
           } 
         createPerformanceReviewItem({item})

@@ -106,3 +106,11 @@ export const createPerformanceReview = (data) => {
         data
     })
 }
+
+export const getLastPerformanceReview = (params) => {
+    return service({
+        url: "/PerformanceReview/getLastPerformanceReview",
+        method: 'get',
+        params
+    })
+}

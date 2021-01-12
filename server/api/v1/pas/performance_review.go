@@ -139,3 +139,15 @@ func UpdatePerformanceReviewByInfo(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
+
+
+func GetLastPerformanceReview(c *gin.Context) {
+	var PerformanceReview mp.PerformanceReview
+	_ = c.ShouldBindQuery(&PerformanceReview)
+	if err, rePR := sp.GetLastPerformanceReview(); err != nil {
+        global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"rePR": rePR}, c)
+	}
+}

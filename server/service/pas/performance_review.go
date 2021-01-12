@@ -76,7 +76,7 @@ func GetPerformanceReviewInfoList(info rp.PerformanceReviewSearch) (err error, l
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
-	err = db.Preload("Evaluation").Preload("User").Preload("PRItem.Kpi").Preload("PRItem.User").Find(&PerformanceReviews).Error
+	err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
 	return err, PerformanceReviews, total
 }
 
@@ -90,4 +90,9 @@ func UpdatePerformanceReviewByInfo(PRInfo rp.PerformanceReviewInfo)(err error){
 		EndingDate:PRInfo.EndingDate,
 		}).Error
 	return err
+}
+
+func GetLastPerformanceReview() (err error, PerformanceReview mp.PerformanceReview) {
+	err = global.GVA_DB.Last(&PerformanceReview).Error
+	return
 }
