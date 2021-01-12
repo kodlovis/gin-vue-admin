@@ -23,3 +23,11 @@ export const deletePerformanceReviewItemByIds = (data) => {
         data
     })
 }
+
+export const getPerformanceReviewListById = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/getPerformanceReviewListById",
+        method: 'post',
+        data
+    })
+}

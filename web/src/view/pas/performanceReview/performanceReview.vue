@@ -48,7 +48,8 @@
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button class="table-button" @click="updatePerformanceReview(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
+          <el-button class="table-button" @click="updatePerformanceReview(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑考核表</el-button>
+          <el-button class="table-button" @click="updatePerformancItemeReview(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑指标</el-button>
           <el-popover placement="top" width="160" v-model="scope.row.visible">
             <p>确定要删除吗？</p>
             <div style="text-align: right; margin: 0">
@@ -71,8 +72,8 @@
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
-
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
+    <!-- 编辑考核表的弹窗 -->
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="编辑考核表">
       <el-form :model="formData" label-position="right" label-width="120px">
        
          <el-form-item label="考核表名称:">
@@ -117,9 +118,10 @@
         <el-button @click="enterDialog" type="primary">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- <el-dialog :before-close="closeEvaluationDialog" :visible.sync="dialogEvaluationForm" title="弹窗操作">
+    <!-- 编辑指标的弹窗 -->
+    <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="编辑指标" :append-to-body="true" width="80%">
       <el-table
-      :data="evaluationData"
+      :data="performanceReviewData"
       @selection-change="handleSelectionChange"
       border
       ref="multipleTable"
@@ -127,23 +129,39 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column label="方案名称" prop="name" width="120"></el-table-column> 
+    <el-table-column label="指标名称" prop="kpi.name" width="90"></el-table-column>
+
+    <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
     
-    <el-table-column label="方案类型" prop="Category" width="120"></el-table-column>
+    <!-- <el-table-column label="指标状态" prop="kpi.name" width="120"></el-table-column> -->
     
-    <el-table-column label="方案状态" prop="status" width="120"></el-table-column> 
-    
-    <el-table-column label="方案描述" prop="description" width="120"></el-table-column> 
-    
-    <el-table-column label="方案总分" prop="score" width="120"></el-table-column> 
-    
+    <el-table-column label="指标算法" prop="kpi.category" width="360" type="textarea"> </el-table-column> 
+
+    <el-table-column label="指标分数">
+      <template slot-scope="scope">
+          <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
+      </template>
+    </el-table-column> 
+    <el-table-column label="评分人" width="230">
+      <template slot-scope="scope">
+          <el-cascader
+            @change="(val)=>{handleOptionChange(val,scope.row)}"
+            v-model="scope.row.user.ID"
+            :options="userOptions"
+            :rules="rules"
+            clearable
+            :props="{ checkStrictly: true,label:'nickName',value:'id',}"
+            filterable
+          ></el-cascader>
+      </template>
+    </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button class="table-button" @click="chooseEvaluation(scope.row)" size="small" type="primary" icon="el-icon-edit">添加</el-button>
+          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="修改">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
-    </el-dialog> -->
+    </el-dialog>
 
   </div>
 </template>
@@ -171,7 +189,8 @@ import {
 import {
     createPerformanceReviewItem,
     deletePerformanceReviewItem,
-    deletePerformanceReviewItemByIds
+    deletePerformanceReviewItemByIds,
+    getPerformanceReviewListById
 } from "@/api/pas/performanceReviewItem";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -182,6 +201,7 @@ export default {
     return {
       listApi: getPerformanceReviewList,
       dialogFormVisible: false,
+      prItemDialog: false,
       visible: false,
       type: "",
       deleteVisible: false,
@@ -197,6 +217,17 @@ export default {
             employeeId:"",
             score:0,
       },
+      performanceReviewData:{
+            score:"",
+            kpi:{
+              name:"",
+              description:"",
+              category:"",
+            },
+            user:{
+              ID:"",
+            }
+      },
       evaluationData:{
             ID:"",
             name:"",
@@ -205,11 +236,6 @@ export default {
             description:"",
             score: "",
             Kpis:0,
-      },
-      evaluationKpiData:{
-            ID:"",
-            kpiId:"",
-            kpiScore:"",
       },
       PerformanceReviewItemData:{
             PRId:"",
@@ -248,15 +274,6 @@ export default {
     setEvaluationrOptionsData(evaluationData, optionsData ,ids) {
       evaluationData &&
         evaluationData.map(item => {
-          // if (item.children && item.children.length) {
-          //   const option = {
-          //     ID: item.ID,
-          //     nickName: item.nickName,
-          //     children: []
-          //   };
-          //   this.setAuthorityOptions(item.children, option.children);
-          //   optionsData.push(option);
-          // } else {
             const option = {
               id: item.ID,
               name: item.name
@@ -266,7 +283,6 @@ export default {
               id: item.ID,
             };
             ids.push(idOption)
-          //}
         });
     },
     setUserOptions(userData) {
@@ -277,15 +293,6 @@ export default {
     setUserOptionsData(UserData, optionsData ,ids) {
       UserData &&
         UserData.map(item => {
-          // if (item.children && item.children.length) {
-          //   const option = {
-          //     ID: item.ID,
-          //     nickName: item.nickName,
-          //     children: []
-          //   };
-          //   this.setAuthorityOptions(item.children, option.children);
-          //   optionsData.push(option);
-          // } else {
             const option = {
               id: item.ID,
               nickName: item.nickName
@@ -295,10 +302,8 @@ export default {
               id: item.ID,
             };
             ids.push(idOption)
-          //}
         });
     },
-  //条件搜索前端看此方法
       onSubmit() {
         this.page = 1
         this.pageSize = 10           
@@ -339,13 +344,23 @@ export default {
         this.dialogFormVisible = true;
       }
     },
+    async updatePerformancItemeReview(row) {
+      const res = await getPerformanceReviewListById({ PRId: row.ID });
+      this.type = "update";
+      if (res.code == 0) {
+        this.performanceReviewData = res.data.list;
+        this.prItemDialog = true;
+      }
+    },
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
           StartDate:new Date(),
           EndingDate:new Date(),
-          
       };
+    },
+    closeprItemDialogg() {
+      this.prItemDialog = false;
     },
     async deletePerformanceReview(row) {
       this.visible = false;

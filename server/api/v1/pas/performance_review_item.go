@@ -42,3 +42,20 @@ func DeletePerformanceReviewItemByIds(c *gin.Context) {
 		response.OkWithMessage("批量删除成功", c)
 	}
 }
+
+func GetPerformanceReviewListById(c *gin.Context) {
+	var PerformanceReviewItem mp.PerformanceReviewItem
+	var pageInfo rp.PerformanceReviewItemSearch
+    _ = c.ShouldBindJSON(&PerformanceReviewItem)
+	if err, list, total := sp.GetPerformanceReviewListById(PerformanceReviewItem.PRId,pageInfo); err != nil {
+        global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+        response.OkWithDetailed(response.PageResult{
+            List:     list,
+            Total:    total,
+            Page:     pageInfo.Page,
+            PageSize: pageInfo.PageSize,
+        }, "获取成功", c)
+	}
+}
