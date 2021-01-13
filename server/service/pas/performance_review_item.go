@@ -24,7 +24,7 @@ func DeletePerformanceReviewItemByIds(ids rp.IdsReq) (err error) {
 	return err
 }
 
-func GetPerformanceReviewListById(id uint, info rp.PerformanceReviewItemSearch) (err error, list interface{}, total int64){
+func GetPerformanceReviewItemListById(id uint, info rp.PerformanceReviewItemSearch) (err error, list interface{}, total int64){
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
     // 创建db

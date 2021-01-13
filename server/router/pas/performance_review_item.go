@@ -12,7 +12,7 @@ func InitPerformanceReviewItemRouter(Router *gin.RouterGroup) {
 		PerformanceReviewItemRouter.POST("createPerformanceReviewItem", pas.CreatePerformanceReviewItem)
 		PerformanceReviewItemRouter.DELETE("deletePerformanceReviewItem", pas.DeletePerformanceReviewItem)
 		PerformanceReviewItemRouter.DELETE("deletePerformanceReviewItemByIds", pas.DeletePerformanceReviewItemByIds)
-		PerformanceReviewItemRouter.POST("getPerformanceReviewListById", pas.GetPerformanceReviewListById) 
+		PerformanceReviewItemRouter.POST("getPerformanceReviewItemListById", pas.GetPerformanceReviewItemListById) 
 		
 		
 	}

@@ -43,11 +43,11 @@ func DeletePerformanceReviewItemByIds(c *gin.Context) {
 	}
 }
 
-func GetPerformanceReviewListById(c *gin.Context) {
+func GetPerformanceReviewItemListById(c *gin.Context) {
 	var PerformanceReviewItem mp.PerformanceReviewItem
 	var pageInfo rp.PerformanceReviewItemSearch
     _ = c.ShouldBindJSON(&PerformanceReviewItem)
-	if err, list, total := sp.GetPerformanceReviewListById(PerformanceReviewItem.PRId,pageInfo); err != nil {
+	if err, list, total := sp.GetPerformanceReviewItemListById(PerformanceReviewItem.PRId,pageInfo); err != nil {
         global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {

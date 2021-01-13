@@ -24,10 +24,19 @@ export const deletePerformanceReviewItemByIds = (data) => {
     })
 }
 
-export const getPerformanceReviewListById = (data) => {
+export const getPerformanceReviewItemListById = (data) => {
     return service({
-        url: "/PerformanceReviewItem/getPerformanceReviewListById",
+        url: "/PerformanceReviewItem/getPerformanceReviewItemListById",
         method: 'post',
+        data
+    })
+}
+
+
+export const updatePerformanceReviewItemByInfo = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/updatePerformanceReviewItemByInfo",
+        method: 'put',
         data
     })
 }
