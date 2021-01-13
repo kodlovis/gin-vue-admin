@@ -36,3 +36,9 @@ func GetPerformanceReviewItemListById(id uint, info rp.PerformanceReviewItemSear
 	err = db.Preload("User").Preload("Kpi").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
+
+func UpdatePerformanceReviewItemByInfo(id uint , score float64 ,uid uint)(err error){
+	var PerformanceReviewItem mp.PerformanceReviewItem
+	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("score","user_id").Updates(map[string]interface{}{"score": score,"user_id":uid}).Error
+	return err
+}

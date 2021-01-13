@@ -49,7 +49,7 @@
       <el-table-column label="按钮组">
         <template slot-scope="scope">
           <el-button class="table-button" @click="updatePerformanceReview(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑考核表</el-button>
-          <el-button class="table-button" @click="updatePerformancItemeReview(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑指标</el-button>
+          <el-button class="table-button" @click="updatePerformancItemReview(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑指标</el-button>
           <el-popover placement="top" width="160" v-model="scope.row.visible">
             <p>确定要删除吗？</p>
             <div style="text-align: right; margin: 0">
@@ -121,7 +121,7 @@
     <!-- 编辑指标的弹窗 -->
     <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="编辑指标" :append-to-body="true" width="80%">
       <el-table
-      :data="performanceReviewData"
+      :data="performanceReviewItemData"
       @selection-change="handleSelectionChange"
       border
       ref="multipleTable"
@@ -157,7 +157,7 @@
     </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="修改">修改</el-button>
+          <el-button @click="performanceReviewItemDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="修改">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -190,7 +190,8 @@ import {
     createPerformanceReviewItem,
     deletePerformanceReviewItem,
     deletePerformanceReviewItemByIds,
-    getPerformanceReviewListById
+    getPerformanceReviewItemListById,
+    updatePerformanceReviewItemByInfo
 } from "@/api/pas/performanceReviewItem";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -237,11 +238,19 @@ export default {
             score: "",
             Kpis:0,
       },
-      PerformanceReviewItemData:{
+      performanceReviewItemData:{
             PRId:"",
             kpiId:"",
             userId:"",
             score:"",
+            kpi:{
+              name:"",
+              description:"",
+              category:"",
+            },
+            user:{
+              ID:"",
+            }
       },
     };
   },
@@ -344,11 +353,11 @@ export default {
         this.dialogFormVisible = true;
       }
     },
-    async updatePerformancItemeReview(row) {
-      const res = await getPerformanceReviewListById({ PRId: row.ID });
+    async updatePerformancItemReview(row) {
+      const res = await getPerformanceReviewItemListById({ PRId: row.ID });
       this.type = "update";
       if (res.code == 0) {
-        this.performanceReviewData = res.data.list;
+        this.performanceReviewItemData = res.data.list;
         this.prItemDialog = true;
       }
     },
@@ -372,6 +381,19 @@ export default {
           message: "删除成功"
         });
         this.getTableData();
+      }
+    },
+    async performanceReviewItemDataEnter(row){
+        const res = await updatePerformanceReviewItemByInfo({
+        id:Number(row.ID),
+        score:Number(row.score),
+        userId:Number(row.user.ID),
+        });
+      if (res.code == 0) {
+        this.$message({
+          type: "success",
+          message: "修改成功"
+        });
       }
     },
     async enterDialog() {

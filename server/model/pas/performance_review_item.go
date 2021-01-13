@@ -6,7 +6,7 @@ import (
 
 // 如果含有time.Time 请自行import time包
 type PerformanceReviewItem struct {
-	  ID uint  `gorm:"primarykey"`
+	  ID uint `gorm:"primarykey"`
 	  PRId  uint  `json:"PRId" form:"PRId" gorm:"column:pr_id;comment:关联performanceReview表"`
 	  Kpi	Kpi  `json:"kpi" gorm:"foreignKey:ID;References:KpiId;AssociationForeignKey:KpiId;"`
 	  KpiId  uint  `json:"kpiId" form:"kpiId" gorm:"column:kpi_id;comment:关联Kpi表"`
