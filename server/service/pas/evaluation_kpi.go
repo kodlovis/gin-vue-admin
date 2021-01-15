@@ -58,7 +58,7 @@ func RemoveEvaluationKpi(ID uint) (err error) {
 
 func RemoveEvaluationKpiByIds(ids rp.IdsReq) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.EvaluationKpi{},"id in ?",ids.Ids).Error
-	global.GVA_DB.Delete(&[]mp.EvaluationKpiUser{},"evaluation_kpi_id in ?",ids.Ids)
+	//global.GVA_DB.Delete(&[]mp.EvaluationKpiUser{},"evaluation_kpi_id in ?",ids.Ids)
 	return err
 }
 
@@ -71,6 +71,6 @@ func GetEvaluationKpiById(id uint, info rp.EvaluationKpiSearch) (err error, list
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&EvaluationKpis).Error
-	err = db.Preload("User").Find(&EvaluationKpis).Error
+	err = db.Preload("User").Preload("Kpis").Find(&EvaluationKpis).Error
 	return err, EvaluationKpis, total
 }
