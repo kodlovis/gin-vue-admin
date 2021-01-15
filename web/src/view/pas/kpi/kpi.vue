@@ -1,10 +1,18 @@
 <template>
   <div>
     <div class="search-term">
-      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">        
-        <!-- <el-form-item>
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-select v-model="searchInfo.status" placeholder="请选择">
+          <el-option
+            v-for="item in dictList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>  
+        <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item>
           <el-button @click="openDialog" type="primary">新增指标表</el-button>
         </el-form-item>
@@ -38,20 +46,25 @@
     
     <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 
     
-    <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
+    <el-table-column label="指标状态" prop="status" width="120">
+      <template slot-scope="scope">
+        <!-- <span>{{scope.row.status==0?"评分人确认":""}}</span> -->
+        <span>{{filterDict(scope.row.status)}}</span>
+      </template>
+    </el-table-column>
     
     <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
 
     <el-table-column label="标签名称">
       <template slot-scope="scope">
         <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.Name}}<br/></span>
+        :key="index">{{item.name}}<br/></span>
       </template>
     </el-table-column>
     <el-table-column label="标签类型">
       <template slot-scope="scope">
         <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.Category}}<br/></span>
+        :key="index">{{item.category}}<br/></span>
       </template>
     </el-table-column>
       <el-table-column label="按钮组">
@@ -91,26 +104,45 @@
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="修改指标">
       <el-form :model="formData" label-position="right" label-width="80px" :rules="rules">
          <el-form-item label="指标名称:">
-            <el-input v-model="formData.Name" clearable placeholder="请输入"></el-input>
+            <el-input v-model="formData.name" clearable placeholder="请输入"></el-input>
       </el-form-item>
          <el-form-item label="指标说明:">
-            <el-input v-model="formData.Description" clearable placeholder="请输入"  type="textarea"
+            <el-input v-model="formData.description" clearable placeholder="请输入"  type="textarea"
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
-         <!-- <el-form-item label="指标状态:">
-            <el-input v-model="formData.Status" clearable placeholder="请输入"></el-input>
-      </el-form-item>       -->
+         <el-form-item label="指标状态:">
+        <el-select v-model="formData.status" placeholder="请选择">
+          <el-option
+            v-for="item in dictList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>  
+      </el-form-item>
          <el-form-item label="指标算法:">
-            <el-input v-model="formData.Category" clearable placeholder="请输入"  type="textarea"
+            <el-input v-model="formData.category" clearable placeholder="请输入"  type="textarea"
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
           <el-form-item label="添加标签" prop="Tags"> 
             <el-select v-model="formData.Tags" placeholder="请选择需要添加的标签" clearable
               :style="{width: '100%'}">
-              <el-option v-for="(item, index) in tagData" :key="index"
-                :value="item.ID" :disabled="item.disabled"
-                >{{item.Name}}</el-option>
+              <el-option v-for="(item, index) in tagData" 
+                :key="index"
+                :value="item.ID" 
+                :label="item.name"
+                :disabled="item.disabled"
+                >{{item.name}}</el-option>
             </el-select>
+          <el-cascader
+            @change="(val)=>{handleOptionChange(val)}"
+            v-model="formData.Tags"
+            :options="tagOptions"
+            :rules="rules"
+            clearable
+            :props="{ checkStrictly: true,label:'name',value:'id',multiple: true}"
+            filterable
+          ></el-cascader>
             <!-- <el-input v-model="formData.Tags"></el-input> -->
           </el-form-item>
       </el-form>
@@ -130,13 +162,18 @@ import {
     updateKpi,
     findKpi,
     getKpiList,
-    removeKpiTags
+    removeKpiTags,
+    getLastKpi
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import{
     getTagList,
 }from "@/api/pas/tag"; 
 import { formatTimeToStr } from "@/utils/date";
+import { getDict } from "@/utils/dictionary";
 import infoList from "@/mixins/infoList";
+import {
+    createKpiTag
+} from "@/api/pas/kpiTag"; 
 export default {
   name: "kpi",
   mixins: [infoList],
@@ -147,12 +184,15 @@ export default {
       visible: false,
       type: "",
       deleteVisible: false,
+      statusMap: {},
+      dictList:[],
+      tagOptions:[],
       multipleSelection: [],formData: {
             name:"",
             description:"",
             status:"",
             category:"",
-            Tags: 1,
+            Tags: "",
       },
       tagData:{
            name:"",
@@ -189,6 +229,37 @@ export default {
   },
   methods: {
       //条件搜索前端看此方法
+      filterDict(status){
+        console.log(status)
+        const re = this.dictList.filter(item=>{
+          return item.value == status
+        })[0]
+        if(re){
+          return re.label
+          }
+        else{
+          return""
+          }
+      },
+      setTagOptions(tagData) {
+        this.tagOptions = [];
+        this.ids = [];
+        this.setTagOptionsData(tagData, this.tagOptions ,this.ids);
+      },
+      setTagOptionsData(TagData, optionsData ,ids) {
+        TagData &&
+          TagData.map(item => {
+              const option = {
+                id: item.ID,
+                name: item.name
+              };
+              optionsData.push(option);
+              const idOption = {
+                id: item.ID,
+              };
+              ids.push(idOption)
+          });
+      },
       onSubmit() {
         this.page = 1
         this.pageSize = 10        
@@ -269,10 +340,20 @@ export default {
       let res;
       switch (this.type) {
         case "create":
-          res = await createKpi({...this.formData,Tags:[{ID:this.formData.Tags}]});
+          res = await createKpi({...this.formData,Tags:[]});
+          var kpi = await getLastKpi()
+          var lastKpi = kpi.data.reKpi
+          var item = []
+          for (let i = 0; i < this.formData.Tags.length; i++) {
+            item.push({
+              tagId:Number(this.formData.Tags[i]),
+              kpiId:Number(lastKpi.ID),
+              })
+          } 
+          createKpiTag({item})
           break;
         case "update":
-          res = await updateKpi({...this.formData,Tags:[{ID:this.formData.Tags}]});
+          res = await updateKpi(this.formData);
           break;
         default:
           res = await createKpi({...this.formData,Tags:[{ID:this.formData.Tags}]});
@@ -296,7 +377,12 @@ export default {
   },
   async created() {
     await this.getTableData();
-  
+    const res = await getDict("kpiLibrary");
+    res.map(item=>item.value = String(item.value))
+    this.dictList = res
+    const tag = await getTagList({ page: 1, pageSize: 999 });
+    //载入Users
+    this.setTagOptions(tag.data.list);
 }
 };
 

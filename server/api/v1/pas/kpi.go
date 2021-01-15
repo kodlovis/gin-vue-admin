@@ -197,3 +197,14 @@ func GetKpiEvaluation(c *gin.Context) {
             PageSize: pageInfo.PageSize,}, "获取成功", c)
 	}
 }
+
+func GetLastKpi(c *gin.Context) {
+	var Kpi mp.Kpi
+	_ = c.ShouldBindQuery(&Kpi)
+	if err, reKpi := sp.GetLastKpi(); err != nil {
+        global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"reKpi": reKpi}, c)
+	}
+}

@@ -273,11 +273,11 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-          Name:"",
-          Description:"",
-          Status:"",
-          Category:"",
-          Tags: 1,
+          name:"",
+          description:"",
+          status:"",
+          category:"",
+          tags: 1,
       };
     },
     

@@ -20,5 +20,6 @@ func InitKpiRouter(Router *gin.RouterGroup) {
 		KpiRouter.POST("getKpiEvaluation", pas.GetKpiEvaluation)
 		KpiRouter.POST("getKpiByIds", pas.GetKpiByIds)
 		KpiRouter.POST("getKpiScoreByIds", pas.GetKpiScoreByIds)
+		KpiRouter.GET("getLastKpi", pas.GetLastKpi) 
 	}
 }

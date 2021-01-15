@@ -136,3 +136,11 @@ export const getKpiEvaluation = (data) => {
         data
     })
 }
+
+export const getLastKpi = (params) => {
+    return service({
+        url: "/Kpi/getLastKpi",
+        method: 'get',
+        params
+    })
+}

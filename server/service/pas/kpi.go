@@ -42,7 +42,7 @@ func RemoveKpiTags(Kpi mp.Kpi) (err error) {
 
 func DeleteKpiByIds(ids rp.IdsReq) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.Kpi{},"id in ?",ids.Ids).Error
-	err = global.GVA_DB.Table("kpi_tag").Where("kpi_id = ?",ids.Ids).Delete(&[]mp.KpiTag{}).Error
+	err = global.GVA_DB.Table("kpi_tag").Where("kpi_id in ?",ids.Ids).Delete(&[]mp.KpiTag{}).Error
 	return err
 }
 
@@ -81,7 +81,10 @@ func GetKpiInfoList(info rp.KpiSearch) (err error, list interface{}, total int64
     // 创建db
 	db := global.GVA_DB.Model(&mp.Kpi{})
 	var Kpis []mp.Kpi
-    // 如果有条件搜索 下方会自动创建搜索语句
+	// 如果有条件搜索 下方会自动创建搜索语句
+	if info.Status != "" {
+		db = db.Where("status = ?",info.Status)
+	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
 	err = db.Preload("Tags").Preload("EvaluationKpis","evaluation_id = ?",info.ID).Find(&Kpis).Error
@@ -148,4 +151,9 @@ func GetKpiEvaluation(id *rp.GetEvaluationId,info rp.EvaluationSearch) (err erro
 	err = db.Limit(limit).Offset(offset).Find(&Evaluations).Error
 	err = db.Preload("Kpis").Preload("User").Preload("Evaluation").Find(&Evaluations).Error
 	return err, Evaluations, total
+}
+
+func GetLastKpi() (err error, Kpi mp.Kpi) {
+	err = global.GVA_DB.Last(&Kpi).Error
+	return
 }
