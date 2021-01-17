@@ -125,7 +125,7 @@
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
           <el-form-item label="添加标签" prop="Tags"> 
-            <el-select v-model="formData.Tags" placeholder="请选择需要添加的标签" clearable
+            <!-- <el-select v-model="formData.Tags" placeholder="请选择需要添加的标签" clearable
               :style="{width: '100%'}">
               <el-option v-for="(item, index) in tagData" 
                 :key="index"
@@ -133,7 +133,7 @@
                 :label="item.name"
                 :disabled="item.disabled"
                 >{{item.name}}</el-option>
-            </el-select>
+            </el-select> -->
           <el-cascader
             @change="(val)=>{handleOptionChange(val)}"
             v-model="formData.Tags"
@@ -159,7 +159,6 @@ import {
     createKpi,
     deleteKpi,
     deleteKpiByIds,
-    updateKpi,
     findKpi,
     getKpiList,
     removeKpiTags,
@@ -338,22 +337,32 @@ export default {
     },
     async enterDialog() {
       let res;
+      let ref;
+      var item = []
       switch (this.type) {
         case "create":
-          res = await createKpi({...this.formData,Tags:[]});
+          createKpi({...this.formData,Tags:[]});
           var kpi = await getLastKpi()
           var lastKpi = kpi.data.reKpi
-          var item = []
           for (let i = 0; i < this.formData.Tags.length; i++) {
             item.push({
               tagId:Number(this.formData.Tags[i]),
               kpiId:Number(lastKpi.ID),
               })
           } 
-          createKpiTag({item})
+          res = await createKpiTag({item})
           break;
         case "update":
-          res = await updateKpi(this.formData);
+          ref = await removeKpiTags({ID: this.formData.ID})
+          if (ref.code == 0) {
+          for (let i = 0; i < this.formData.Tags.length; i++) {
+            item.push({
+              tagId:Number(this.formData.Tags[i]),
+              kpiId:Number(this.formData.ID),
+              })
+            }
+          } 
+          res = await createKpiTag({item})
           break;
         default:
           res = await createKpi({...this.formData,Tags:[{ID:this.formData.Tags}]});
