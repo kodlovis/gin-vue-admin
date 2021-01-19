@@ -10,7 +10,7 @@ import (
 type PerformanceReview struct {
       ID  uint `gorm:"primarykey"`
       Name  string `json:"name" form:"name" gorm:"column:name;comment:绩效考核表名称;"`
-      Status  string `json:"status" form:"status" gorm:"column:status;comment:考核表状态;type:varchar(255);size:255;"`
+      Status  uint `json:"status" form:"status" gorm:"column:status;comment:考核表状态;type:varchar(255);size:255;"`
       //
       User model.SysUser `json:"user" gorm:"foreignKey:id;References:employee_id;AssociationForeignKey:EmployeeId;"`
       EmployeeId  uint `json:"employeeId" gorm:"column:employee_id;comment:员工ID关联User表"`

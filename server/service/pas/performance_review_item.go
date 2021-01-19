@@ -61,3 +61,9 @@ func UpdatePRItemStatusById(id uint , status uint)(err error){
 	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Update("status", status).Error
 	return err
 }
+
+func GetPRItemCount(prid uint , status uint)(err error,count int64){
+	var PerformanceReviewItem mp.PerformanceReviewItem
+	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("pr_id = ? AND status = ?",prid, status).Count(&count).Error
+	return err,count
+}

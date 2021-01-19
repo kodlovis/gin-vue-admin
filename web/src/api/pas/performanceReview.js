@@ -114,3 +114,10 @@ export const getLastPerformanceReview = (params) => {
         params
     })
 }
+export const updatePRStatusById = (data) => {
+    return service({
+        url: "/PerformanceReview/updatePRStatusById",
+        method: 'put',
+        data
+    })
+}

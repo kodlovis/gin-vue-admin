@@ -151,3 +151,14 @@ func GetLastPerformanceReview(c *gin.Context) {
 		response.OkWithData(gin.H{"rePR": rePR}, c)
 	}
 }
+
+func UpdatePRStatusById(c *gin.Context) {
+	var PRInfo  mp.PerformanceReview
+	_ = c.ShouldBindJSON(&PRInfo)
+	if err := sp.UpdatePRStatusById(PRInfo.ID,PRInfo.Status); err != nil {
+        global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}

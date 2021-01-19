@@ -98,3 +98,16 @@ func UpdatePRItemStatusById(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
+
+func GetPRItemCount(c *gin.Context) {
+	var PRItem mp.PerformanceReviewItem
+	_ = c.ShouldBindJSON(&PRItem)
+	if err,count := sp.GetPRItemCount(PRItem.PRId,PRItem.Status); err != nil {
+        global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
+		response.FailWithMessage("创建失败", c)
+	} else {
+        response.OkWithDetailed(response.PageResult{
+            Total:     count,
+        }, "获取成功", c)
+	}
+}

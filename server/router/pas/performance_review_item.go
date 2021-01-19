@@ -16,6 +16,8 @@ func InitPerformanceReviewItemRouter(Router *gin.RouterGroup) {
 		PerformanceReviewItemRouter.PUT("updatePerformanceReviewItemByInfo", pas.UpdatePerformanceReviewItemByInfo)
 		PerformanceReviewItemRouter.POST("getPRItemListByUser", pas.GetPRItemListByUser)
 		PerformanceReviewItemRouter.PUT("updatePRItemStatusById", pas.UpdatePRItemStatusById)
+		PerformanceReviewItemRouter.POST("getPRItemCount", pas.GetPRItemCount)
+		
 		
 		
 		

@@ -96,3 +96,8 @@ func GetLastPerformanceReview() (err error, PerformanceReview mp.PerformanceRevi
 	err = global.GVA_DB.Last(&PerformanceReview).Error
 	return
 }
+
+func UpdatePRStatusById(id uint, status uint)(err error){
+	err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?",id).Update("status",status).Error
+	return err
+}

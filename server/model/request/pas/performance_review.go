@@ -12,7 +12,7 @@ type PerformanceReviewInfo struct {
     EmployeeId uint `json:"employeeId"`
     EvaluationId uint `json:"evaluationId"` 
     Name string `json:"name"`
-    Status string `json:"status"`
+    Status uint `json:"status"`
     StartDate time.Time `json:"startDate"`
     EndingDate time.Time `json:"endingDate"`
 

@@ -63,8 +63,13 @@
 <script>
 import {
     getPRItemListByUser,
-    updatePRItemStatusById
+    updatePRItemStatusById,
+    getPRItemCount
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
+import {    
+    updatePRStatusById
+} from "@/api/pas/performanceReview";  //  此处请自行替换地址
+
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 import { mapGetters } from "vuex";
@@ -76,6 +81,7 @@ export default {
       listApi: getPRItemListByUser,
       type: "",
       multipleSelection: [],
+      countData:9,
       acData:{
         score:0,
         kpi:{
@@ -121,7 +127,20 @@ export default {
       })
       if(res.code == 0){
           this.getPRItemListByUser()
-          this.$message("确认成功")
+          this.$message({
+          type: "success",
+          message: "确认成功"})
+        const count = await getPRItemCount({
+            PRId:row.PRId,
+            status: 1,
+        })
+        this.countData = count.data.total;
+        if(this.countData == 0){
+            updatePRStatusById({
+                ID:row.PRId,
+                status: 2,
+            })
+        }
       }
     },
     async rejectKpi(row){
@@ -131,7 +150,9 @@ export default {
       })
       if(res.code == 0){
           this.getPRItemListByUser()
-          this.$message("驳回成功")
+          this.$message({
+          type: "success",
+          message: "驳回成功"})
       }
     },
     async getPRItemListByUser(){
