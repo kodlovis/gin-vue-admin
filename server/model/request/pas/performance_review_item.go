@@ -10,3 +10,7 @@ type PerformanceReviewItemSearch struct{
 type PerformanceReviewItemList struct{
 	PerformanceReviewItemList []pas.PerformanceReviewItem `json:"item"`
 }
+type PRItemInfo struct{
+    ID uint `json:"ID"`
+    Status uint `json:"status"`
+}

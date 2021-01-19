@@ -42,3 +42,22 @@ func UpdatePerformanceReviewItemByInfo(id uint , score float64 ,uid uint)(err er
 	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("score","user_id").Updates(map[string]interface{}{"score": score,"user_id":uid}).Error
 	return err
 }
+
+func GetPRItemListByUser(id uint,status uint,info rp.PerformanceReviewItemSearch) (err error, list interface{}, total int64){
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+    // 创建db
+	db := global.GVA_DB.Model(&mp.PerformanceReviewItem{}).Where("user_id = ? AND status = ?", id,status)
+	var PerformanceReviewItems []mp.PerformanceReviewItem
+    // 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
+	err = db.Preload("User").Preload("Kpi").Find(&PerformanceReviewItems).Error
+	return err, PerformanceReviewItems, total
+}
+
+func UpdatePRItemStatusById(id uint , status uint)(err error){
+	var PerformanceReviewItem mp.PerformanceReviewItem
+	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Update("status", status).Error
+	return err
+}

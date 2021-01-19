@@ -2,7 +2,7 @@
   <div>
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-select v-model="searchInfo.status" placeholder="请选择">
+        <el-select v-model="searchInfo.status" placeholder="请选择" clearable>
           <el-option
             v-for="item in dictList"
             :key="item.value"

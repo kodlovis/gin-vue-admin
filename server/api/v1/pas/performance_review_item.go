@@ -70,3 +70,31 @@ func UpdatePerformanceReviewItemByInfo(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
+
+func GetPRItemListByUser(c *gin.Context) {
+	var info rp.PRItemInfo
+	var pageInfo rp.PerformanceReviewItemSearch
+    _ = c.ShouldBindJSON(&info)
+	if err, list, total := sp.GetPRItemListByUser(info.ID,info.Status,pageInfo); err != nil {
+        global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+        response.OkWithDetailed(response.PageResult{
+            List:     list,
+            Total:    total,
+            Page:     pageInfo.Page,
+            PageSize: pageInfo.PageSize,
+        }, "获取成功", c)
+	}
+}
+
+func UpdatePRItemStatusById(c *gin.Context) {
+	var PRItem mp.PerformanceReviewItem
+	_ = c.ShouldBindJSON(&PRItem)
+	if err := sp.UpdatePRItemStatusById(PRItem.ID,PRItem.Status); err != nil {
+        global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}

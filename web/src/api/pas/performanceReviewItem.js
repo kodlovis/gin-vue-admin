@@ -41,3 +41,19 @@ export const updatePerformanceReviewItemByInfo = (data) => {
     })
 }
 
+
+export const getPRItemListByUser = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/getPRItemListByUser",
+        method: 'post',
+        data
+    })
+}
+
+export const updatePRItemStatusById = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/updatePRItemStatusById",
+        method: 'put',
+        data
+    })
+}
