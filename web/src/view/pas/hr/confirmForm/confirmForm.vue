@@ -16,7 +16,7 @@
       </el-form>
     </div> -->
       <el-table
-          :data="acData"
+          :data="prData"
           @selection-change="handleSelectionChange"
           border
           ref="multipleTable"
@@ -25,11 +25,16 @@
           tooltip-effect="dark"
         >
         
-        <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column> 
+        <el-table-column label="考核表名称" prop="name" width="120"></el-table-column> 
         
-        <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
-        <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
-        <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
+        <el-table-column label="考核表状态" prop="status" width="460">
+          <template slot-scope="scope">
+            <!-- <span>{{scope.row.status==0?"评分人确认":""}}</span> -->
+            <span>{{filterDict(scope.row.status)}}</span>
+          </template>
+          </el-table-column> 
+        <el-table-column label="被考核人" prop="user.nickName" width="460"></el-table-column> 
+        <el-table-column label="考核表权重分值" prop="score" width="120"></el-table-column>
         
           <el-table-column label="按钮组">
             <template slot-scope="scope">
@@ -67,12 +72,14 @@ import {
     getPRItemCount
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
 import {    
-    updatePRStatusById
+    updatePRStatusById,
+    getPRBystatus
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 import { mapGetters } from "vuex";
+import { getDict } from "@/utils/dictionary";
 export default {
   name: "confirm",
   mixins: [infoList],
@@ -80,11 +87,13 @@ export default {
     return {
       listApi: getPRItemListByUser,
       type: "",
-      multipleSelection: [],formData:[],
+      multipleSelection: [],
       countData:9,
-      acData:{
+      dictList:[],
+      prData:{
         score:0,
-        kpi:{
+        name:"",
+        evaluation:{
           name:"",
           category:"",
           description:"",
@@ -116,6 +125,18 @@ export default {
     }
   },
   methods: {
+      filterDict(status){
+        console.log(status)
+        const re = this.dictList.filter(item=>{
+          return item.value == status
+        })[0]
+        if(re){
+          return re.label
+          }
+        else{
+          return""
+          }
+      },
       //条件搜索前端看此方法
       handleSelectionChange(val) {
         this.multipleSelection = val
@@ -155,17 +176,18 @@ export default {
           message: "驳回成功"})
       }
     },
-    async getPRItemListByUser(){
-      const res = await getPRItemListByUser({
-          ID:this.userInfo.ID,
-          status:1,
+    async getPRBystatus(){
+      const res = await getPRBystatus({
+          status:3,
           })
-      this.acData = res.data.list
-      console.log(this.acData.score)
+      this.prData = res.data.list
     },
   },
   async created() {
-    this.getPRItemListByUser()
+    this.getPRBystatus()
+    const res = await getDict("PR");
+    res.map(item=>item.value = String(item.value))
+    this.dictList = res
 }
 };
 </script>

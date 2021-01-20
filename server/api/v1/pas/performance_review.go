@@ -105,6 +105,22 @@ func FindPerformanceReview(c *gin.Context) {
 	}
 }
 
+func GetPRBystatus(c *gin.Context) {
+	var PerformanceReview mp.PerformanceReview
+	var pageInfo rp.PerformanceReviewSearch
+	_ = c.ShouldBindQuery(&PerformanceReview)
+	if err, list, total := sp.GetPRBystatus(PerformanceReview.Status,pageInfo); err != nil {
+        global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+        response.OkWithDetailed(response.PageResult{
+            List:     list,
+            Total:    total,
+            Page:     pageInfo.Page,
+            PageSize: pageInfo.PageSize,
+        }, "获取成功", c)
+	}
+}
 // @Tags PerformanceReview
 // @Summary 分页获取PerformanceReview列表
 // @Security ApiKeyAuth

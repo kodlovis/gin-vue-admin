@@ -21,6 +21,7 @@ type PerformanceReview struct {
       //
       Evaluation Evaluation `json:"evaluation" gorm:"foreignKey:id;References:evaluation_id;AssociationForeignKey:EvaluationId;"`
       EvaluationId  uint `json:"evaluationId" form:"evaluationId" gorm:"column:evaluation_id;comment:关联EvaluationKpi表"`
+      Score float64  `json:"score" form:"score" gorm:"column:score;comment:更改后的分数"`
 
 }
 

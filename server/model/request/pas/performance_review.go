@@ -15,5 +15,5 @@ type PerformanceReviewInfo struct {
     Status uint `json:"status"`
     StartDate time.Time `json:"startDate"`
     EndingDate time.Time `json:"endingDate"`
-
+    Score float64 `json:"score"`
 }

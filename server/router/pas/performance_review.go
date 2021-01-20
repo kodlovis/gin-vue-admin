@@ -18,6 +18,8 @@ func InitPerformanceReviewRouter(Router *gin.RouterGroup) {
 		PerformanceReviewRouter.POST("updatePerformanceReviewByInfo", pas.UpdatePerformanceReviewByInfo)   // 新建PerformanceReview
 		PerformanceReviewRouter.GET("getLastPerformanceReview", pas.GetLastPerformanceReview)  
 		PerformanceReviewRouter.PUT("updatePRStatusById", pas.UpdatePRStatusById)
+		PerformanceReviewRouter.GET("getPRBystatus", pas.GetPRBystatus)        // 根据ID获取PerformanceReview
+		
 		
 		
 

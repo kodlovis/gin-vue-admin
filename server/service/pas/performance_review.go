@@ -60,7 +60,16 @@ func GetPerformanceReview(id uint) (err error, PerformanceReview mp.PerformanceR
 	err = global.GVA_DB.Where("id = ?", id).First(&PerformanceReview).Error
 	return
 }
-
+func GetPRBystatus(status uint,info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	db := global.GVA_DB.Model(&mp.PerformanceReview{}).Where("status = ?", status)
+    var PerformanceReviews []mp.PerformanceReview
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
+	err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
+	return err, PerformanceReviews, total
+}
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetPerformanceReviewInfoList
 //@description: 分页获取PerformanceReview记录
@@ -88,6 +97,7 @@ func UpdatePerformanceReviewByInfo(PRInfo rp.PerformanceReviewInfo)(err error){
 		Status:PRInfo.Status,
 		StartDate:PRInfo.StartDate,
 		EndingDate:PRInfo.EndingDate,
+		Score:PRInfo.Score,
 		}).Error
 	return err
 }
