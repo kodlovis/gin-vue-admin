@@ -31,14 +31,16 @@
     >
     <el-table-column type="selection" width="55"></el-table-column>
     <el-table-column label="考核表名称" prop="name" width="120"></el-table-column>
-    
-    <!-- <el-table-column label="方案类型" prop="Category" width="120"></el-table-column>  -->
-    
-    <el-table-column label="考核表状态" prop="status" width="120"></el-table-column>
+    <el-table-column label="考核表状态" prop="status" width="120">
+      <template slot-scope="scope">
+        <!-- <span>{{scope.row.status==0?"评分人确认":""}}</span> -->
+        <span>{{filterDict(scope.row.status)}}</span>
+      </template>
+      </el-table-column>
 
     <el-table-column label="方案名称" width="120" prop="evaluation.name"></el-table-column>
 
-    <el-table-column label="方案总分" width="120" prop="evaluation.score"></el-table-column>
+    <el-table-column label="方案总分" width="120" prop="score"></el-table-column>
 
     <el-table-column label="被考核人" width="120" prop="user.nickName"></el-table-column>
     
@@ -81,7 +83,14 @@
       </el-form-item>
        
          <el-form-item label="考核表状态:">
-            <el-input v-model="formData.status" clearable placeholder="请输入" :style="{width: '60%'}"></el-input>
+          <el-select v-model="searchInfo.status" placeholder="请选择" clearable>
+            <el-option
+              v-for="item in dictList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>  
       </el-form-item>
        
          <el-form-item label="方案选择:" v-model="formData.evaluationId">
@@ -132,8 +141,6 @@
     <el-table-column label="指标名称" prop="kpi.name" width="90"></el-table-column>
 
     <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
-    
-    <!-- <el-table-column label="指标状态" prop="kpi.name" width="120"></el-table-column> -->
     
     <el-table-column label="指标算法" prop="kpi.category" width="360" type="textarea"> </el-table-column> 
 
@@ -194,6 +201,7 @@ import {
     updatePerformanceReviewItemByInfo
 } from "@/api/pas/performanceReviewItem";
 import { formatTimeToStr } from "@/utils/date";
+import { getDict } from "@/utils/dictionary";
 import infoList from "@/mixins/infoList";
 export default {
   name: "PerformanceReview",
@@ -212,6 +220,7 @@ export default {
             id:"",
             name:"",
             status:"",
+            dictList:[],
             startDate:new Date(),
             endingDate:new Date(),
             evaluationId:"",
@@ -219,7 +228,7 @@ export default {
             score:0,
       },
       performanceReviewData:{
-            score:"",
+            score:0,
             kpi:{
               name:"",
               description:"",
@@ -272,6 +281,18 @@ export default {
     }
   },
   methods: {
+      filterDict(status){
+        console.log(status)
+        const re = this.dictList.filter(item=>{
+          return item.value == status
+        })[0]
+        if(re){
+          return re.label
+          }
+        else{
+          return""
+          }
+      },
     handleOptionChange(val){
       this.Selection = val
     },
@@ -355,6 +376,8 @@ export default {
     },
     async updatePerformancItemReview(row) {
       const res = await getPerformanceReviewItemListById({ PRId: row.ID });
+      const pr = await findPerformanceReview({ ID: row.ID });
+      this.formData = pr.data.rePerformanceReview;
       this.type = "update";
       if (res.code == 0) {
         this.performanceReviewItemData = res.data.list;
@@ -389,11 +412,24 @@ export default {
         score:Number(row.score),
         userId:Number(row.user.ID),
         });
+        const prlist = await getPerformanceReviewItemListById({ PRId: this.formData.ID })
+        this.performanceReviewItemData = prlist.data.list
+        var totalScore = 0
+        for (let num = 0; num < this.performanceReviewItemData.length; num++) {
+          totalScore = totalScore + this.performanceReviewItemData[num].score
+        }
+        const ref = await updatePerformanceReviewByInfo({...this.formData,
+        evaluationId:Number(this.formData.evaluationId),
+        score:Number(totalScore),
+        employeeId:Number(this.formData.employeeId)});
       if (res.code == 0) {
         this.$message({
           type: "success",
           message: "修改成功"
         });
+        if (ref.code == 0){
+        this.getTableData();
+        }
       }
     },
     async enterDialog() {
@@ -424,7 +460,10 @@ export default {
         createPerformanceReviewItem({item})
           break;
         case "update":
-          res = await updatePerformanceReviewByInfo({...this.formData,evaluationId:Number(this.formData.evaluationId),employeeId:Number(this.formData.employeeId)});
+          res = await updatePerformanceReviewByInfo({...this.formData,
+          evaluationId:Number(this.formData.evaluationId),
+          status:Number(this.formData.status),
+          employeeId:Number(this.formData.employeeId)});
           break;
         default:
           res = await createPerformanceReview(this.formData);
@@ -445,6 +484,9 @@ export default {
     }
   },
   async created() {
+    const res = await getDict("PR");
+    res.map(item=>item.value = String(item.value))
+    this.dictList = res
     await this.getTableData();
     const evaluations = await getEvaluationList({ page: 1, pageSize: 999 });
     //载入Evaluations
