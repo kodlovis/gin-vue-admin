@@ -83,15 +83,15 @@
       </el-form-item>
        
          <el-form-item label="考核表状态:">
-          <el-select v-model="searchInfo.status" placeholder="请选择" clearable>
+          <el-select v-model="formData.status" placeholder="请选择" clearable>
             <el-option
               v-for="item in dictList"
               :key="item.value"
               :label="item.label"
               :value="item.value">
-            </el-option>
-          </el-select>  
-      </el-form-item>
+              </el-option>
+            </el-select>  
+        </el-form-item>
        
          <el-form-item label="方案选择:" v-model="formData.evaluationId">
            <el-cascader
@@ -143,7 +143,18 @@
     <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
     
     <el-table-column label="指标算法" prop="kpi.category" width="360" type="textarea"> </el-table-column> 
-
+    <el-table-column label="指标状态" prop="kpi.status" width="360">
+      <template slot-scope="scope">
+      <el-select v-model="scope.row.status" placeholder="请选择" clearable>
+        <el-option
+          v-for="item in kpiDictList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      </template>
+    </el-table-column>
     <el-table-column label="指标分数">
       <template slot-scope="scope">
           <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
@@ -213,6 +224,8 @@ export default {
       prItemDialog: false,
       visible: false,
       type: "",
+      kpiDictList:[],
+      dictList:[],
       deleteVisible: false,
       Selection: "",
       totalScore:0,
@@ -233,6 +246,7 @@ export default {
               name:"",
               description:"",
               category:"",
+              status:0,
             },
             user:{
               ID:"",
@@ -374,12 +388,16 @@ export default {
         this.dialogFormVisible = true;
       }
     },
+    //打开编辑指标的弹窗并传参
     async updatePerformancItemReview(row) {
       const res = await getPerformanceReviewItemListById({ PRId: row.ID });
       const pr = await findPerformanceReview({ ID: row.ID });
       this.formData = pr.data.rePerformanceReview;
       this.type = "update";
       if (res.code == 0) {
+        const kpi = await getDict("kpi");
+        kpi.map(item=>item.value = String(item.value))
+        this.kpiDictList = kpi
         this.performanceReviewItemData = res.data.list;
         this.prItemDialog = true;
       }
@@ -478,7 +496,13 @@ export default {
         this.getTableData();
       }
     },
-    openDialog() {
+    async openDialog() {
+      const evaluations = await getEvaluationList({ page: 1, pageSize: 999 });
+      //载入Evaluations
+      this.setEvaluationOptions(evaluations.data.list);
+      const user = await getUserList({ page: 1, pageSize: 999 });
+      //载入Users
+      this.setUserOptions(user.data.list);
       this.type = "create";
       this.dialogFormVisible = true;
     }
@@ -488,12 +512,6 @@ export default {
     res.map(item=>item.value = String(item.value))
     this.dictList = res
     await this.getTableData();
-    const evaluations = await getEvaluationList({ page: 1, pageSize: 999 });
-    //载入Evaluations
-    this.setEvaluationOptions(evaluations.data.list);
-    const user = await getUserList({ page: 1, pageSize: 999 });
-    //载入Users
-    this.setUserOptions(user.data.list);
 }
 };
 </script>
