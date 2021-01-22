@@ -319,17 +319,6 @@ export default {
           return""
           }
       },
-      filterKpiDict(status){
-        const re = this.kpiDictList.filter(item=>{
-          return item.value == status
-        })[0]
-        if(re){
-          return re.label
-          }
-        else{
-          return""
-          }
-      },
     handleOptionChange(val){
       this.Selection = val
     },
