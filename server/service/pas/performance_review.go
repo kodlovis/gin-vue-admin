@@ -111,3 +111,10 @@ func UpdatePRStatusById(id uint, status uint)(err error){
 	err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?",id).Update("status",status).Error
 	return err
 }
+
+func UpdatePRStatysByIds(Ids []int,status uint)(err error){
+	for i := 0; i < len(Ids); i++ {
+		err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?",Ids[i]).Update("status",status).Error
+	}
+	return err
+}

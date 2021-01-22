@@ -18,6 +18,16 @@
             <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量删除</el-button>
           </el-popover>
         </el-form-item>
+        <el-form-item>
+          <el-popover placement="top" v-model="confirmVisible" width="160">
+            <p>要开始确认考核吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button @click="confirmVisible = false" size="mini" type="text">取消</el-button>
+                <el-button @click="onConfirm" size="mini" type="primary">确定</el-button>
+              </div>
+            <el-button size="mini" slot="reference" type="primary">开始确认考核</el-button>
+          </el-popover>
+        </el-form-item>
       </el-form>
     </div>
     <el-table
@@ -143,7 +153,7 @@
     <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
     
     <el-table-column label="指标算法" prop="kpi.category" width="360" type="textarea"> </el-table-column> 
-    <el-table-column label="指标状态" prop="kpi.status" width="360">
+    <el-table-column label="指标状态" prop="kpi.status" width="160">
       <template slot-scope="scope">
       <el-select v-model="scope.row.status" placeholder="请选择" clearable>
         <el-option
@@ -193,6 +203,7 @@ import {
     getPerformanceReviewList,
     updatePerformanceReviewByInfo,
     getLastPerformanceReview,
+    updatePRStatysByIds
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 import {
     getEvaluationList,
@@ -209,7 +220,8 @@ import {
     deletePerformanceReviewItem,
     deletePerformanceReviewItemByIds,
     getPerformanceReviewItemListById,
-    updatePerformanceReviewItemByInfo
+    updatePerformanceReviewItemByInfo,
+    updatePRItemStatysByIds
 } from "@/api/pas/performanceReviewItem";
 import { formatTimeToStr } from "@/utils/date";
 import { getDict } from "@/utils/dictionary";
@@ -227,6 +239,7 @@ export default {
       kpiDictList:[],
       dictList:[],
       deleteVisible: false,
+      confirmVisible: false,
       Selection: "",
       totalScore:0,
       multipleSelection: [],formData: {
@@ -296,8 +309,18 @@ export default {
   },
   methods: {
       filterDict(status){
-        console.log(status)
         const re = this.dictList.filter(item=>{
+          return item.value == status
+        })[0]
+        if(re){
+          return re.label
+          }
+        else{
+          return""
+          }
+      },
+      filterKpiDict(status){
+        const re = this.kpiDictList.filter(item=>{
           return item.value == status
         })[0]
         if(re){
@@ -395,9 +418,6 @@ export default {
       this.formData = pr.data.rePerformanceReview;
       this.type = "update";
       if (res.code == 0) {
-        const kpi = await getDict("kpi");
-        kpi.map(item=>item.value = String(item.value))
-        this.kpiDictList = kpi
         this.performanceReviewItemData = res.data.list;
         this.prItemDialog = true;
       }
@@ -429,6 +449,7 @@ export default {
         id:Number(row.ID),
         score:Number(row.score),
         userId:Number(row.user.ID),
+        status:Number(row.status),
         });
         const prlist = await getPerformanceReviewItemListById({ PRId: this.formData.ID })
         this.performanceReviewItemData = prlist.data.list
@@ -459,7 +480,8 @@ export default {
           res = await createPerformanceReview({...this.formData,
             evaluationId:Number(this.formData.evaluationId),
             employeeId:Number(this.formData.employeeId),
-            score:Number(evaluationData.score)
+            score:Number(evaluationData.score),
+            status:Number(this.formData.status),
             });
           //查询出ID，循环将默认数据组合转入一个list
           var evaluationKpi = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
@@ -472,7 +494,8 @@ export default {
               score:Number(this.evaluationKpiData[i].kpiScore),
               kpiId:Number(this.evaluationKpiData[i].kpiId),
               userId:Number(this.evaluationKpiData[i].userId),
-              PRId:Number(this.formData.ID)
+              PRId:Number(this.formData.ID),
+              status:100,
               })
           } 
         createPerformanceReviewItem({item})
@@ -496,22 +519,56 @@ export default {
         this.getTableData();
       }
     },
+    async onConfirm(){
+      const ids = []
+        if(this.multipleSelection.length == 0){
+          this.$message({
+            type: 'warning',
+            message: '请选择要开始确认的考核'
+          })
+          return
+        }
+        if (this.multipleSelection.status!=100) {
+          this.$message({
+            type: 'warning',
+            message: '选中了已开始的考核'
+          })
+          return
+        }
+        this.multipleSelection &&
+          this.multipleSelection.map(item => {
+            ids.push(item.ID)
+          })
+        const res = await updatePRStatysByIds({ids:ids,status:1})
+        if (res.code == 0) {
+          this.$message({
+            type: 'success',
+            message: '发布成功'
+          })
+          updatePRItemStatysByIds({ids:ids,status:1})
+          this.deleteVisible = false
+          this.getTableData()
+        }
+    },
     async openDialog() {
-      const evaluations = await getEvaluationList({ page: 1, pageSize: 999 });
-      //载入Evaluations
-      this.setEvaluationOptions(evaluations.data.list);
-      const user = await getUserList({ page: 1, pageSize: 999 });
-      //载入Users
-      this.setUserOptions(user.data.list);
       this.type = "create";
       this.dialogFormVisible = true;
     }
   },
   async created() {
     const res = await getDict("PR");
-    res.map(item=>item.value = String(item.value))
+    res.map(item=>item.value)
     this.dictList = res
     await this.getTableData();
+    const user = await getUserList({ page: 1, pageSize: 999 });
+    //载入Users
+    this.setUserOptions(user.data.list);
+    const kpi = await getDict("kpi");
+    kpi.map(item=>item.value)
+    this.kpiDictList = kpi
+    const evaluations = await getEvaluationList({ page: 1, pageSize: 999 });
+    //载入Evaluations
+    this.setEvaluationOptions(evaluations.data.list);
 }
 };
 </script>

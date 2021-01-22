@@ -16,4 +16,5 @@ type PerformanceReviewInfo struct {
     StartDate time.Time `json:"startDate"`
     EndingDate time.Time `json:"endingDate"`
     Score float64 `json:"score"`
+    Ids []int `json:"ids"`
 }

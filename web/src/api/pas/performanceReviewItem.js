@@ -64,3 +64,10 @@ export const getPRItemCount = (data) => {
         data
     })
 }
+export const updatePRItemStatysByIds = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/updatePRItemStatysByIds",
+        method: 'post',
+        data
+    })
+}

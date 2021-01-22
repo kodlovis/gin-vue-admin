@@ -13,4 +13,5 @@ type PerformanceReviewItemList struct{
 type PRItemInfo struct{
     ID uint `json:"ID"`
     Status uint `json:"status"`
+    Ids int `json:"ids"`
 }

@@ -128,3 +128,11 @@ export const getPRBystatus = (params) => {
         params
     })
 }
+
+export const updatePRStatysByIds = (data) => {
+    return service({
+        url: "/PerformanceReview/updatePRStatysByIds",
+        method: 'post',
+        data
+    })
+}

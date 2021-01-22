@@ -61,9 +61,9 @@ func GetPerformanceReviewItemListById(c *gin.Context) {
 }
 
 func UpdatePerformanceReviewItemByInfo(c *gin.Context) {
-	var PerformanceReviewItem mp.PerformanceReviewItem
-	_ = c.ShouldBindJSON(&PerformanceReviewItem)
-	if err := sp.UpdatePerformanceReviewItemByInfo(PerformanceReviewItem.ID,PerformanceReviewItem.Score,PerformanceReviewItem.UserId); err != nil {
+	var PRI mp.PerformanceReviewItem
+	_ = c.ShouldBindJSON(&PRI)
+	if err := sp.UpdatePerformanceReviewItemByInfo(PRI.ID,PRI.Score,PRI.UserId,PRI.Status); err != nil {
         global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -109,5 +109,15 @@ func GetPRItemCount(c *gin.Context) {
         response.OkWithDetailed(response.PageResult{
             Total:     count,
         }, "获取成功", c)
+	}
+}
+func UpdatePRItemStatysByIds(c *gin.Context) {
+	var PRItemInfo rp.PerformanceReviewInfo
+	_ = c.ShouldBindJSON(&PRItemInfo)
+	if err := sp.UpdatePRItemStatysByIds(PRItemInfo.Ids,PRItemInfo.Status); err != nil {
+        global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
 	}
 }

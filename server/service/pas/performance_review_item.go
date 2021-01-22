@@ -37,9 +37,9 @@ func GetPerformanceReviewItemListById(id uint, info rp.PerformanceReviewItemSear
 	return err, PerformanceReviewItems, total
 }
 
-func UpdatePerformanceReviewItemByInfo(id uint , score float64 ,uid uint)(err error){
+func UpdatePerformanceReviewItemByInfo(id uint , score float64 ,uid uint,status uint)(err error){
 	var PerformanceReviewItem mp.PerformanceReviewItem
-	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("score","user_id").Updates(map[string]interface{}{"score": score,"user_id":uid}).Error
+	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("score","user_id","status").Updates(map[string]interface{}{"score": score,"user_id":uid,"status":status}).Error
 	return err
 }
 
@@ -66,4 +66,10 @@ func GetPRItemCount(prid uint , status uint)(err error,count int64){
 	var PerformanceReviewItem mp.PerformanceReviewItem
 	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("pr_id = ? AND status = ?",prid, status).Count(&count).Error
 	return err,count
+}
+func UpdatePRItemStatysByIds(Ids []int,status uint)(err error){
+	for i := 0; i < len(Ids); i++ {
+		err = global.GVA_DB.Model(&mp.PerformanceReviewItem{}).Where("pr_id = ?",Ids[i]).Update("status",status).Error
+	}
+	return err
 }
