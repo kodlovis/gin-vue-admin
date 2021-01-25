@@ -31,15 +31,16 @@
       tooltip-effect="dark"
     >
     <el-table-column type="selection" width="55"></el-table-column>
-    <!-- <el-table-column label="日期" width="180">
-         <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
-    </el-table-column> -->
-    <!-- <el-table-column label="方案ID" prop="ID" width="120"></el-table-column>  -->
     <el-table-column label="方案名称" prop="name" width="120"></el-table-column> 
     
     <!-- <el-table-column label="方案类型" prop="Category" width="120"></el-table-column>  -->
     
-    <el-table-column label="方案状态" prop="status" width="120"></el-table-column> 
+    <el-table-column label="方案状态" prop="status" width="120">
+      <template slot-scope="scope">
+        <!-- <span>{{scope.row.status==0?"评分人确认":""}}</span> -->
+        <span>{{filterDict(scope.row.status)}}</span>
+      </template>
+      </el-table-column> 
     
     <el-table-column label="方案描述" prop="description" width="120"></el-table-column> 
     
@@ -83,16 +84,19 @@
             <el-input v-model="formData.category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <!-- <el-form-item label="方案状态:">
-            <el-input v-model="formData.Status" clearable placeholder="请输入" ></el-input>
-      </el-form-item> -->
+         <el-form-item label="方案状态:">
+          <el-select v-model="formData.status" placeholder="请选择">
+            <el-option
+              v-for="item in dictList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>  
+       </el-form-item>
        
          <el-form-item label="方案描述:">
             <el-input v-model="formData.description" clearable placeholder="请输入" ></el-input>
-      </el-form-item>
-       
-         <el-form-item label="方案总分:">
-            <el-input v-model="formData.score" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        </el-form>
       <div class="dialog-footer" slot="footer">
@@ -123,6 +127,7 @@ import {
 } from "@/api/pas/evaluation";  //  此处请自行替换地址
 import Kpis from "@/view/pas/hr/evaluation/components/kpis";
 import { formatTimeToStr } from "@/utils/date";
+import { getDict } from "@/utils/dictionary";
 import infoList from "@/mixins/infoList";
 export default {
   name: "Evaluation",
@@ -192,6 +197,18 @@ export default {
       handleSelectionChange(val) {
         this.multipleSelection = val
       },
+      filterDict(status){
+        console.log(status)
+        const re = this.dictList.filter(item=>{
+          return item.value == status
+        })[0]
+        if(re){
+          return re.label
+          }
+        else{
+          return""
+          }
+      },
       async onDelete() {
         const ids = []
         if(this.multipleSelection.length == 0){
@@ -226,11 +243,11 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-          Name:"",
-          Category:"",
-          Status:"",
-          Description:"",
-          Score:"",
+          name:"",
+          category:"",
+          status:"",
+          description:"",
+          score:"",
           
       };
     },
@@ -249,13 +266,13 @@ export default {
       let res;
       switch (this.type) {
         case "create":
-          res = await createEvaluation({...this.formData,Score:Number(this.formData.Score)});
+          res = await createEvaluation({...this.formData,score:Number(this.formData.score)});
           break;
         case "update":
-          res = await updateEvaluation({...this.formData,Score:Number(this.formData.Score)});
+          res = await updateEvaluation({...this.formData,score:Number(this.formData.score)});
           break;
         default:
-          res = await createEvaluation({...this.formData,Score:Number(this.formData.Score)});
+          res = await createEvaluation({...this.formData,score:Number(this.formData.score)});
           break;
       }
       if (res.code == 0) {
@@ -273,6 +290,9 @@ export default {
     }
   },
   async created() {
+    const res = await getDict("evaluation");
+    res.map(item=>item.value)
+    this.dictList = res
     await this.getTableData();
   
 }
