@@ -165,6 +165,7 @@ export default {
     },
   },
   async created() {
+    await this.getTableData();
     this.getPRItemListByUser()
 }
 };

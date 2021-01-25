@@ -57,6 +57,13 @@ export const updatePRItemStatusById = (data) => {
         data
     })
 }
+export const updatePRItemStatusByPrId = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/updatePRItemStatusByPrId",
+        method: 'put',
+        data
+    })
+}
 export const getPRItemCount = (data) => {
     return service({
         url: "/PerformanceReviewItem/getPRItemCount",

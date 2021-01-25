@@ -1,20 +1,19 @@
 <template>
   <div>
-    <!-- <div class="search-term">
+    <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item label="绩效考核表名称">
-          <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
-        <el-form-item label="考核表状态">
-          <el-input placeholder="搜索条件" v-model="searchInfo.status"></el-input>
-        </el-form-item>   
-        </el-form-item>          
         <el-form-item>
-          <el-button @click="onSubmit" type="primary">查询</el-button>
-        </el-form-item>
-        <el-form-item>
+          <el-popover placement="top" v-model="confirmVisible" width="160">
+            <p>要批量确认吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button @click="confirmVisible = false" size="mini" type="text">取消</el-button>
+                <el-button @click="onConfirm" size="mini" type="primary">确定</el-button>
+              </div>
+            <el-button size="mini" slot="reference" type="primary">批量确认</el-button>
+          </el-popover>
         </el-form-item>
       </el-form>
-    </div> -->
+    </div>
       <el-table
           :data="prData"
           @selection-change="handleSelectionChange"
@@ -24,6 +23,7 @@
           style="width: 100%"
           tooltip-effect="dark"
         >
+        <el-table-column type="selection" width="55"></el-table-column>
         
         <el-table-column label="考核表名称" prop="name" width="120"></el-table-column> 
         
@@ -39,14 +39,6 @@
           <el-table-column label="按钮组">
             <template slot-scope="scope">
               <el-button class="table-button" @click="confirmKpi(scope.row)" size="small" type="primary" icon="el-icon-edit">确认</el-button>
-              <el-popover placement="top" width="160" v-model="scope.row.visible">
-                <p>确定要驳回吗？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="rejectKpi(scope.row)">确定</el-button>
-                </div>
-                <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">驳回</el-button>
-              </el-popover>
             </template>
           </el-table-column>
         </el-table>
@@ -68,12 +60,13 @@
 <script>
 import {
     getPRItemListByUser,
-    updatePRItemStatusById,
-    getPRItemCount
+    updatePRItemStatusByPrId,
+    updatePRItemStatysByIds
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
 import {    
+    getPRBystatus,
+    updatePRStatysByIds,
     updatePRStatusById,
-    getPRBystatus
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 
 import { formatTimeToStr } from "@/utils/date";
@@ -142,38 +135,16 @@ export default {
         this.multipleSelection = val
       },
     async confirmKpi(row) {
-      const res = await updatePRItemStatusById({
+      const res = await updatePRStatusById({
           ID:row.ID,
-          status:2,
+          status:5,
       })
       if(res.code == 0){
-          this.getPRItemListByUser()
+          this.getPRBystatus()
           this.$message({
           type: "success",
           message: "确认成功"})
-        const count = await getPRItemCount({
-            PRId:row.PRId,
-            status: 1,
-        })
-        this.countData = count.data.total;
-        if(this.countData == 0){
-            updatePRStatusById({
-                ID:row.PRId,
-                status: 2,
-            })
-        }
-      }
-    },
-    async rejectKpi(row){
-      const res = await updatePRItemStatusById({
-          ID:row.ID,
-          status:99,
-      })
-      if(res.code == 0){
-          this.getPRItemListByUser()
-          this.$message({
-          type: "success",
-          message: "驳回成功"})
+          updatePRItemStatusByPrId({ID:row.ID,status:4})
       }
     },
     async getPRBystatus(){
@@ -182,12 +153,37 @@ export default {
           })
       this.prData = res.data.list
     },
+    async onConfirm(){
+      const ids = []
+        if(this.multipleSelection.length == 0){
+          this.$message({
+            type: 'warning',
+            message: '请选择要开始确认的考核'
+          })
+          return
+        }
+        this.multipleSelection &&
+          this.multipleSelection.map(item => {
+            ids.push(item.ID)
+          })
+        const res = await updatePRStatysByIds({ids:ids,status:5})
+        if (res.code == 0) {
+          this.$message({
+            type: 'success',
+            message: '发布成功'
+          })
+          updatePRItemStatysByIds({ids:ids,status:4})
+          this.confirmVisible = false
+          this.getPRBystatus()
+        }
+    },
   },
   async created() {
     this.getPRBystatus()
     const res = await getDict("PR");
     res.map(item=>item.value = String(item.value))
     this.dictList = res
+    await this.getTableData();
 }
 };
 </script>

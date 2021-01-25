@@ -98,7 +98,16 @@ func UpdatePRItemStatusById(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
-
+func UpdatePRItemStatusByPrId(c *gin.Context) {
+	var PRItem mp.PerformanceReviewItem
+	_ = c.ShouldBindJSON(&PRItem)
+	if err := sp.UpdatePRItemStatusByPrId(PRItem.ID,PRItem.Status); err != nil {
+        global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
 func GetPRItemCount(c *gin.Context) {
 	var PRItem mp.PerformanceReviewItem
 	_ = c.ShouldBindJSON(&PRItem)
