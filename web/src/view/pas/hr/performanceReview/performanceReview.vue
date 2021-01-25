@@ -93,7 +93,7 @@
       </el-form-item>
        
          <el-form-item label="考核表状态:">
-          <el-select v-model="formData.status" placeholder="请选择" clearable>
+          <el-select v-model="formData.status" placeholder="请选择">
             <el-option
               v-for="item in dictList"
               :key="item.value"
@@ -515,14 +515,18 @@ export default {
             type: 'warning',
             message: '请选择要开始确认的考核'
           })
+          this.confirmVisible = false
           return
         }
-        if (this.multipleSelection.status!=100) {
-          this.$message({
-            type: 'warning',
-            message: '选中了已开始的考核'
-          })
-          return
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+            if (this.multipleSelection[i].status!=100) {
+              this.$message({
+                type: 'warning',
+                message: '考核已经开始'
+              })
+              this.confirmVisible = false
+              return
+            }
         }
         this.multipleSelection &&
           this.multipleSelection.map(item => {
@@ -534,8 +538,8 @@ export default {
             type: 'success',
             message: '发布成功'
           })
+          this.confirmVisible = false
           updatePRItemStatysByIds({ids:ids,status:1})
-          this.deleteVisible = false
           this.getTableData()
         }
     },
@@ -545,13 +549,15 @@ export default {
     }
   },
   async created() {
-    const res = await getDict("PR");
-    res.map(item=>item.value)
-    this.dictList = res
     await this.getTableData();
-    const user = await getUserList({ page: 1, pageSize: 999 });
+    //获取考核状态字典
+    const pr = await getDict("PR");
+    pr.map(item=>item.value)
+    this.dictList = pr
     //载入Users
+    const user = await getUserList({ page: 1, pageSize: 999 });
     this.setUserOptions(user.data.list);
+    //获取指标状态字典
     const kpi = await getDict("kpi");
     kpi.map(item=>item.value)
     this.kpiDictList = kpi

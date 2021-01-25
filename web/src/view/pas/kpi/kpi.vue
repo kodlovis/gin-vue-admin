@@ -389,7 +389,7 @@ export default {
   async created() {
     await this.getTableData();
     const res = await getDict("kpiLibrary");
-    res.map(item=>item.value = String(item.value))
+    res.map(item=>item.value)
     this.dictList = res
     const tag = await getTagList({ page: 1, pageSize: 999 });
     //载入Users
