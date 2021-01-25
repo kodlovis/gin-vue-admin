@@ -81,7 +81,7 @@
           <el-popover placement="top" width="160" v-model="scope.row.vis">
             <p>确定要清空标签吗？</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
+              <el-button size="mini" type="text" @click="scope.row.vis = false">取消</el-button>
               <el-button type="primary" size="mini" @click="removeKpiTags(scope.row)">确定</el-button>
             </div>
             <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">清除标签</el-button>
@@ -162,7 +162,8 @@ import {
     findKpi,
     getKpiList,
     removeKpiTags,
-    getLastKpi
+    getLastKpi,
+    updateKpi
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import{
     getTagList,
@@ -354,15 +355,16 @@ export default {
           break;
         case "update":
           ref = await removeKpiTags({ID: this.formData.ID})
-          if (ref.code == 0) {
-          for (let i = 0; i < this.formData.Tags.length; i++) {
-            item.push({
-              tagId:Number(this.formData.Tags[i]),
-              kpiId:Number(this.formData.ID),
-              })
-            }
-          } 
-          res = await createKpiTag({item})
+          if (ref.code == 0 && this.formData.Tags != null) {
+            for (let i = 0; i < this.formData.Tags.length; i++) {
+              item.push({
+                tagId:Number(this.formData.Tags[i]),
+                kpiId:Number(this.formData.ID),
+                })
+              }
+          createKpiTag({item})
+          }
+          res = await updateKpi({...this.formData,Tags:[]});
           break;
         default:
           res = await createKpi({...this.formData,Tags:[{ID:this.formData.Tags}]});
