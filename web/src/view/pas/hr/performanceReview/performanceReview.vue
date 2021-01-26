@@ -108,7 +108,6 @@
              @change="(val)=>{handleOptionChange(val)}"
              v-model="formData.evaluationId"
              :options="evaluationOptions"
-             :rules="rules"
              clearable
              :props="{ checkStrictly: true,label:'name',value:'id',}"
              filterable
@@ -119,7 +118,6 @@
              @change="(val)=>{handleOptionChange(val)}"
              v-model="formData.employeeId"
              :options="userOptions"
-             :rules="rules"
              clearable
              :props="{ checkStrictly: true,label:'nickName',value:'id',}"
           ></el-cascader>
@@ -176,7 +174,6 @@
             @change="(val)=>{handleOptionChange(val,scope.row)}"
             v-model="scope.row.user.ID"
             :options="userOptions"
-            :rules="rules"
             clearable
             :props="{ checkStrictly: true,label:'nickName',value:'id',}"
             filterable
@@ -237,6 +234,8 @@ export default {
       visible: false,
       type: "",
       kpiDictList:[],
+      userOptions:[],
+      evaluationOptions:[],
       dictList:[],
       deleteVisible: false,
       confirmVisible: false,
@@ -246,7 +245,6 @@ export default {
             id:"",
             name:"",
             status:"",
-            dictList:[],
             startDate:new Date(),
             endingDate:new Date(),
             evaluationId:"",
@@ -418,7 +416,7 @@ export default {
           EndingDate:new Date(),
       };
     },
-    closeprItemDialogg() {
+    closeprItemDialog() {
       this.prItemDialog = false;
     },
     async deletePerformanceReview(row) {
@@ -549,11 +547,11 @@ export default {
     }
   },
   async created() {
-    await this.getTableData();
     //获取考核状态字典
     const pr = await getDict("PR");
     pr.map(item=>item.value)
     this.dictList = pr
+    await this.getTableData();
     //载入Users
     const user = await getUserList({ page: 1, pageSize: 999 });
     this.setUserOptions(user.data.list);
@@ -561,8 +559,8 @@ export default {
     const kpi = await getDict("kpi");
     kpi.map(item=>item.value)
     this.kpiDictList = kpi
-    const evaluations = await getEvaluationList({ page: 1, pageSize: 999 });
     //载入Evaluations
+    const evaluations = await getEvaluationList({ page: 1, pageSize: 999 });
     this.setEvaluationOptions(evaluations.data.list);
 }
 };

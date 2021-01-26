@@ -121,11 +121,11 @@ export const updatePRStatusById = (data) => {
         data
     })
 }
-export const getPRBystatus = (params) => {
+export const getPRBystatus = (data) => {
     return service({
         url: "/PerformanceReview/getPRBystatus",
-        method: 'get',
-        params
+        method: 'post',
+        data
     })
 }
 

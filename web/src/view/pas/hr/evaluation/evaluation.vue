@@ -141,6 +141,7 @@ export default {
       kpiFormVisible: false,
       visible: false,
       type: "",
+      dictList:[],
       deleteVisible: false,
       multipleSelection: [],formData: {
             ID:"",

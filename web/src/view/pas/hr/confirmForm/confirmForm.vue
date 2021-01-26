@@ -82,7 +82,8 @@ export default {
       type: "",
       multipleSelection: [],
       countData:9,
-      dictList:[],
+      confirmVisible:false,
+      dictList:[],formData: [],
       prData:{
         score:0,
         name:"",
@@ -181,7 +182,7 @@ export default {
   async created() {
     this.getPRBystatus()
     const res = await getDict("PR");
-    res.map(item=>item.value = String(item.value))
+    res.map(item=>item.value)
     this.dictList = res
     await this.getTableData();
 }

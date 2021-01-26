@@ -5,6 +5,8 @@ import "gin-vue-admin/model/pas"
 type PerformanceReviewItemSearch struct{
     pas.PerformanceReviewItem
     PageInfo
+    ID uint `json:"ID"`
+    Status uint `json:"status"`
 }
 
 type PerformanceReviewItemList struct{

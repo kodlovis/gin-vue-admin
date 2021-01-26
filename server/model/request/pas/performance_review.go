@@ -6,6 +6,7 @@ import "time"
 type PerformanceReviewSearch struct{
     pas.PerformanceReview
     PageInfo
+    Status uint `json:"status"`
 }
 type PerformanceReviewInfo struct {
     ID uint `json:"ID"`

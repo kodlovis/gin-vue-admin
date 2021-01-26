@@ -106,10 +106,9 @@ func FindPerformanceReview(c *gin.Context) {
 }
 
 func GetPRBystatus(c *gin.Context) {
-	var PerformanceReview mp.PerformanceReview
 	var pageInfo rp.PerformanceReviewSearch
-	_ = c.ShouldBindQuery(&PerformanceReview)
-	if err, list, total := sp.GetPRBystatus(PerformanceReview.Status,pageInfo); err != nil {
+	_ = c.ShouldBindJSON(&pageInfo)
+	if err, list, total := sp.GetPRBystatus(pageInfo.Status,pageInfo); err != nil {
         global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
@@ -171,7 +170,7 @@ func GetLastPerformanceReview(c *gin.Context) {
 func UpdatePRStatusById(c *gin.Context) {
 	var PRInfo  mp.PerformanceReview
 	_ = c.ShouldBindJSON(&PRInfo)
-	if err := sp.UpdatePRStatusById(PRInfo.ID,PRInfo.Status); err != nil {
+	if err := sp.UpdatePRStatusById(PRInfo.ID,PRInfo.Status,PRInfo.Result); err != nil {
         global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
