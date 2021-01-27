@@ -24,10 +24,10 @@
                   <i class="el-icon-data-analysis"></i>上海杉杉贸易有限公司
                 </li>
                 <li>
-                  <i class="el-icon-video-camera-solid"></i>中国·上海·浦东新区
+                  <i class="el-icon-video-camera-solid"></i>
                 </li>
                 <li>
-                  <i class="el-icon-medal-1"></i>杉贸绩效考核系统
+                  <i class="el-icon-medal-1"></i>
                 </li>
               </ul>
             </div>
@@ -42,14 +42,14 @@
                 <li>
                   <p class="title">密保手机</p>
                   <p class="desc">
-                    已绑定手机:123456
+                    已绑定手机:
                     <a href="#">立即修改</a>
                   </p>
                 </li>
                 <li>
                   <p class="title">密保邮箱</p>
                   <p class="desc">
-                    已绑定邮箱：fanyunjie@ssres.com.cn
+                    已绑定邮箱：
                     <a href="#">立即修改</a>
                   </p>
                 </li>

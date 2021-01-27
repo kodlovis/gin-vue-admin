@@ -4,15 +4,15 @@
              <div class="car-left">
                  <div>
                     <span class="card-img"> <img :src="userInfo.headerImg"  alt="" > </span>   
-                    <div class="text"><h4>早安，管理员， 请开始您一天的工作吧！</h4>
+                    <div class="text"><h4>早安，{{this.userInfo.nickName}}， 请开始您一天的工作吧！</h4>
                         <p class="tips-text">
                             <i class="el-icon-sunny el-icon"></i>
-                            <span>今日晴，0℃ - 10℃，天气寒冷，注意添加衣物。</span>
+                            <span>祝你每天都有好心情！^。^</span>
                         </p>
                     </div>
                  </div>
              </div>
-             <div class="car-right">
+             <!-- <div class="car-right">
                  <el-row>
                     <el-col :span="8"><div class="car-item">
                         <span class="flow"><i class="el-icon-s-grid"></i></span>
@@ -34,7 +34,7 @@
                         <b>98%</b>
                         </div></el-col>
                  </el-row>
-             </div>
+             </div> -->
          </div>
          <div class="shadow">
              <el-row :gutter="20">
@@ -53,11 +53,11 @@
                      <musicPlayer />
                  </div>
              </el-col>
-             <el-col :xs="24" :sm="24" :lg="12">
+             <!-- <el-col :xs="24" :sm="24" :lg="12">
                  <div  class="chart-player">
                      <todo-list />
                  </div>
-             </el-col>
+             </el-col> -->
          </el-row>
      </div>
  </div>
@@ -74,41 +74,53 @@ export default {
     return {
         toolCards:[
             {
-                label:"用户管理",
+                label:"我的考核--考核确认",
                 icon:"el-icon el-icon-monitor",
-                name:"user",
+                name:"confirmForm",
                 color:"#ff9c6e"
             },
             {
-                label:"角色管理",
+                label:"我的考核--考核结果",
+                icon:"el-icon el-icon-monitor",
+                name:"result",
+                color:"#ff9c6e"
+            },
+            {
+                label:"个人信息",
                 icon:"el-icon el-icon-setting",
-                name:"authority",
-                color:"#69c0ff"
+                name:"person",
+                color:"#ff9c6e"
             },
-            {
-                label:"菜单管理",
-                icon:"el-icon el-icon-menu",
-                name:"menu",
-                color:"#b37feb"
-            },
-            {
-                label:"代码生成器",
-                icon:"el-icon el-icon-cpu",
-                name:"autoCode",
-                color:"#ffd666"
-            },
-            {
-                label:"表单生成器",
-                icon:"el-icon el-icon-document-checked",
-                name:"formCreate",
-                color:"#ff85c0"
-            },
-            {
-                label:"关于我们",
-                icon:"el-icon el-icon-user",
-                name:"about",
-                color:"#5cdbd3"
-            }
+            // {
+            //     label:"角色管理",
+            //     icon:"el-icon el-icon-setting",
+            //     name:"authority",
+            //     color:"#69c0ff"
+            // },
+            // {
+            //     label:"菜单管理",
+            //     icon:"el-icon el-icon-menu",
+            //     name:"menu",
+            //     color:"#b37feb"
+            // },
+            // {
+            //     label:"代码生成器",
+            //     icon:"el-icon el-icon-cpu",
+            //     name:"autoCode",
+            //     color:"#ffd666"
+            // },
+            // {
+            //     label:"表单生成器",
+            //     icon:"el-icon el-icon-document-checked",
+            //     name:"formCreate",
+            //     color:"#ff85c0"
+            // },
+            // {
+            //     label:"关于我们",
+            //     icon:"el-icon el-icon-user",
+            //     name:"about",
+            //     color:"#5cdbd3"
+            // }
 
         ]
     }
