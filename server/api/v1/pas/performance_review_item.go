@@ -90,7 +90,7 @@ func GetPRItemListByUser(c *gin.Context) {
 func UpdatePRItemStatusById(c *gin.Context) {
 	var PRItem mp.PerformanceReviewItem
 	_ = c.ShouldBindJSON(&PRItem)
-	if err := sp.UpdatePRItemStatusById(PRItem.ID,PRItem.Status,PRItem.Result); err != nil {
+	if err := sp.UpdatePRItemStatusById(PRItem.ID,PRItem.Status,PRItem.Result,PRItem.Comment); err != nil {
         global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {

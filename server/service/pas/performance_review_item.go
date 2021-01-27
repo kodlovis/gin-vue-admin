@@ -56,9 +56,9 @@ func GetPRItemListByUser(id uint,status uint,info rp.PerformanceReviewItemSearch
 	return err, PerformanceReviewItems, total
 }
 
-func UpdatePRItemStatusById(id uint , status uint,result float64)(err error){
+func UpdatePRItemStatusById(id uint , status uint,result float64,comment string)(err error){
 	var PerformanceReviewItem mp.PerformanceReviewItem
-	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("result","status").Updates(map[string]interface{}{"result": result,"status":status}).Error
+	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("result","status","comment").Updates(map[string]interface{}{"result": result,"status":status,"comment":comment}).Error
 	return err
 }
 
