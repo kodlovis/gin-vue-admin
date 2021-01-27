@@ -70,7 +70,8 @@
 import {
     getPRItemListByUser,
     updatePRItemStatusById,
-    getPRItemCount
+    getPRItemCount,
+    updatePRItemStatusByPrId
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
 import {    
     updatePRStatusById,
@@ -152,25 +153,32 @@ export default {
           this.$message({
           type: "success",
           message: "确认成功"})
-        const count = await getPRItemCount({
-            PRId:row.PRId,
-            status: 5,
+        const pr = await findPerformanceReview({ID:row.PRId})
+        this.prData = pr.data.rePerformanceReview
+        const total=Number(row.result)+Number(this.prData.result)
+        const update = await updatePRStatusById({
+          ID:row.PRId,
+          result:Number(total),
+          status:5,
         })
-        this.countData = count.data.total;
-        if(this.countData == 0){
-            updatePRStatusById({
+        if(update.code==0){
+          const count = await getPRItemCount({
+              PRId:row.PRId,
+              status: 4,
+          })
+          this.countData = count.data.total;
+          if(this.countData == 0){
+              updatePRStatusById({
+                  ID:row.PRId,
+                  status: 7,
+              })
+              updatePRItemStatusByPrId({
                 ID:row.PRId,
-                status: 6,
+                status:6,
             })
+          }
         }
       }
-      const pr = await findPerformanceReview({ID:row.PRId})
-      this.prData = pr.data.rePerformanceReview
-      var count=Number(row.result)+Number(this.prData.result)
-      updatePRStatusById({
-        ID:row.PRId,
-        result:Number(count)
-      })
           this.loading=false
     },
     async getPRItemListByUser(){
@@ -179,7 +187,6 @@ export default {
           status:4,
           })
       this.acData = res.data.list
-      console.log(this.acData.score)
     },
   },
   async created() {
