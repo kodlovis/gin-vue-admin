@@ -33,7 +33,7 @@ func GetPerformanceReviewItemListById(id uint, info rp.PerformanceReviewItemSear
     // 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
-	err = db.Preload("User").Preload("Kpi").Find(&PerformanceReviewItems).Error
+	err = db.Preload("User").Preload("Kpi").Preload("Kpi.Tags").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
 

@@ -133,35 +133,37 @@ export default {
             ID:row.ID,
             status:7,
             result:Number(row.result),
+            comment:"无"
         })
-        if(res.code == 0){
-            //查询已反馈的数量
-            const count = await getPRItemCount({
-                PRId:row.PRId,
-                status: 7,
-            })
-            this.countData = count.data.total;
-            //如果全都提交反馈
-            if(this.countData == 0){
-                //查询这条指标的考核表
-                const pr = await findPerformanceReview({ID:row.PRId})
-                this.prData = pr.data.rePerformanceReview
-                //如果考核表的状态为已确认
-                if (this.prData.status==8) {
-                    //将考核表设为已完成
-                    updatePRStatusById({
-                        ID:row.PRId,
-                        status: 9,
-                    })
-                }
+      if(res.code == 0){
+        //查询未反馈的数量
+        const count = await getPRItemCount({
+            PRId:row.PRId,
+            status: 6,
+        })
+        this.countData = count.data.total;
+        //查询这条指标的考核表
+        const pr = await findPerformanceReview({ID:row.PRId})
+        this.prData = pr.data.rePerformanceReview
+        //如果未考核的数量为0
+        if(this.countData == 0){
+            //如果考核表的状态为已确认
+            if (this.prData.status==8) {
+                //将考核表设为已完成
+                updatePRStatusById({
+                    result:this.prData.result,
+                    ID:row.PRId,
+                    status: 9,
+                })
             }
-            //刷新列表
-            this.getPRItemListByUser()
-            this.$message({
-            type: "success",
-            message: "确认成功"})
-            }
-            this.loading=false
+        }
+        //刷新列表
+        this.getPRItemListByUser()
+        this.$message({
+        type: "success",
+        message: "确认成功"})
+        this.loading=false
+      }
       },
     async confirmKpi(row) {
       this.loading=true
@@ -173,20 +175,22 @@ export default {
           comment:row.comment,
       })
       if(res.code == 0){
-        //查询已反馈的数量
+        //查询未反馈的数量
         const count = await getPRItemCount({
             PRId:row.PRId,
-            status: 7,
+            status: 6,
         })
         this.countData = count.data.total;
         //查询这条指标的考核表
         const pr = await findPerformanceReview({ID:row.PRId})
         this.prData = pr.data.rePerformanceReview
-        //如果考核表的状态为已确认
+        //如果未考核的数量为0
         if(this.countData == 0){
-            //将考核表设为已完成
+            //如果考核表的状态为已确认
             if (this.prData.status==8) {
+                //将考核表设为已完成
                 updatePRStatusById({
+                    result:this.prData.result,
                     ID:row.PRId,
                     status: 9,
                 })

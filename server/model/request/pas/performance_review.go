@@ -7,6 +7,8 @@ type PerformanceReviewSearch struct{
     pas.PerformanceReview
     PageInfo
     Status uint `json:"status"`
+    ID uint `json:"ID"`
+    Ids []int `json:"ids"`
 }
 type PerformanceReviewInfo struct {
     ID uint `json:"ID"`

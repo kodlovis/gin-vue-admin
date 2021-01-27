@@ -120,3 +120,21 @@ func UpdatePRStatysByIds(Ids []int,status uint)(err error){
 	}
 	return err
 }
+
+func GetPRByUser(id uint,status uint) (err error, PerformanceReview mp.PerformanceReview){
+	db := global.GVA_DB.Model(&PerformanceReview).Where("employee_id = ? AND status = ?", id,status)
+	err = db.Preload("Evaluation").Preload("User").Preload("PRItems").First(&PerformanceReview).Error
+	return
+}
+func GetPRListByUser(id uint,Ids []int,info rp.PerformanceReviewSearch) (err error, list interface{}, total int64){
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+    // 创建db
+	db := global.GVA_DB.Model(&mp.PerformanceReview{}).Where("employee_id = ? AND status in ?", id,Ids)
+	var PerformanceReviews []mp.PerformanceReview
+    // 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
+	err = db.Preload("User").Find(&PerformanceReviews).Error
+	return err, PerformanceReviews, total
+}

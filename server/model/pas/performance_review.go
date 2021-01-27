@@ -18,6 +18,7 @@ type PerformanceReview struct {
       PRItems  []PerformanceReviewItem  `json:"pRItems" gorm:"foreignKey:PRId;References:ID;AssociationForeignKey:ID;"`
       StartDate  time.Time `json:"startDate" form:"startDate" gorm:"column:startDate;comment:开始日期;type:datetime;"`
       EndingDate  time.Time `json:"endingDate" form:"endingDate" gorm:"column:endingDate;comment:结束日期;type:datetime;"`
+      Comment string  `json:"comment" form:"comment" gorm:"column:comment;comment:员工上传备注;"`
       //
       Evaluation Evaluation `json:"evaluation" gorm:"foreignKey:id;References:evaluation_id;AssociationForeignKey:EvaluationId;"`
       EvaluationId  uint `json:"evaluationId" form:"evaluationId" gorm:"column:evaluation_id;comment:关联EvaluationKpi表"`

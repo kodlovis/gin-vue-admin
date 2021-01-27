@@ -188,3 +188,28 @@ func UpdatePRStatysByIds(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
+func GetPRByUser(c *gin.Context) {
+	var info mp.PerformanceReview
+	_ = c.ShouldBindQuery(&info)
+	if err, rePR := sp.GetPRByUser(info.ID,info.Status); err != nil {
+        global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+        response.OkWithData(gin.H{"rePR": rePR}, c)
+	}
+}
+func GetPRListByUser(c *gin.Context) {
+	var info rp.PerformanceReviewSearch
+    _ = c.ShouldBindJSON(&info)
+	if err, list, total := sp.GetPRListByUser(info.ID,info.Ids,info); err != nil {
+        global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+        response.OkWithDetailed(response.PageResult{
+            List:     list,
+            Total:    total,
+            Page:     info.Page,
+            PageSize: info.PageSize,
+        }, "获取成功", c)
+	}
+}

@@ -136,3 +136,19 @@ export const updatePRStatysByIds = (data) => {
         data
     })
 }
+
+export const getPRByUser = (params) => {
+    return service({
+        url: "/PerformanceReview/getPRByUser",
+        method: 'get',
+        params
+    })
+}
+export const getPRListByUser = (data) => {
+    return service({
+        url: "/PerformanceReview/getPRListByUser",
+        method: 'post',
+        data
+    })
+}
+
