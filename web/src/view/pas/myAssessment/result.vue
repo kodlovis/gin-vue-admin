@@ -193,7 +193,7 @@ export default {
           }
         }
         //检查考核表状态，防止评分人的操作而导致的冲突录入
-        const pr = await findPerformanceReview(row.ID)
+        const pr = await findPerformanceReview({ID:row.ID})
         if(pr.data.rePerformanceReview.status==9){
           this.getPRListByUser()
           this.$message({

@@ -66,7 +66,7 @@
 
 <script>
 import musicPlayer from "./component/musicPlayer"
-import TodoList from "./component/todoList"
+// import TodoList from "./component/todoList"
 import { mapGetters } from 'vuex'
 export default {
   name: 'Dashboard',
@@ -130,7 +130,7 @@ export default {
   },
     components:{
         musicPlayer,  //音乐播放器
-        TodoList, //TodoList
+        //TodoList, //TodoList
         // RaddarChart, //雷达图
         // stackMap, //堆叠图
         // Sunburst, //旭日图
