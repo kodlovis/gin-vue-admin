@@ -3,6 +3,7 @@ package pas
 import (
 	"gin-vue-admin/api/v1/pas"
 	"gin-vue-admin/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,13 +20,7 @@ func InitPerformanceReviewItemRouter(Router *gin.RouterGroup) {
 		PerformanceReviewItemRouter.POST("getPRItemCount", pas.GetPRItemCount)
 		PerformanceReviewItemRouter.POST("updatePRItemStatysByIds", pas.UpdatePRItemStatysByIds)
 		PerformanceReviewItemRouter.PUT("updatePRItemStatusByPrId", pas.UpdatePRItemStatusByPrId)
-		
-		
-		
-		
-		
-		
-		
-		
+		PerformanceReviewItemRouter.POST("getPRItemListByStatusPrid", pas.GetPRItemListByStatusPrid)
+
 	}
 }

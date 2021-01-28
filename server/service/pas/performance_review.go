@@ -5,6 +5,7 @@ import (
 	mp "gin-vue-admin/model/pas"
 	rp "gin-vue-admin/model/request/pas"
 )
+
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: CreatePerformanceReview
 //@description: 创建PerformanceReview记录
@@ -24,7 +25,7 @@ func CreatePerformanceReview(PerformanceReview mp.PerformanceReview) (err error)
 
 func DeletePerformanceReview(PerformanceReview mp.PerformanceReview) (err error) {
 	//err = global.GVA_DB.Delete(PerformanceReview).Error
-	err = global.GVA_DB.Delete(&[]mp.PerformanceReview{},"id = ?",PerformanceReview.ID).Error
+	err = global.GVA_DB.Delete(&[]mp.PerformanceReview{}, "id = ?", PerformanceReview.ID).Error
 	return err
 }
 
@@ -35,7 +36,7 @@ func DeletePerformanceReview(PerformanceReview mp.PerformanceReview) (err error)
 //@return: err error
 
 func DeletePerformanceReviewByIds(ids rp.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]mp.PerformanceReview{},"id in ?",ids.Ids).Error
+	err = global.GVA_DB.Delete(&[]mp.PerformanceReview{}, "id in ?", ids.Ids).Error
 	return err
 }
 
@@ -60,16 +61,17 @@ func GetPerformanceReview(id uint) (err error, PerformanceReview mp.PerformanceR
 	err = global.GVA_DB.Where("id = ?", id).First(&PerformanceReview).Error
 	return
 }
-func GetPRBystatus(status uint,info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {
+func GetPRBystatus(status uint, info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&mp.PerformanceReview{}).Where("status = ?", status)
-    var PerformanceReviews []mp.PerformanceReview
+	var PerformanceReviews []mp.PerformanceReview
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 	err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
 	return err, PerformanceReviews, total
 }
+
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetPerformanceReviewInfoList
 //@description: 分页获取PerformanceReview记录
@@ -79,26 +81,26 @@ func GetPRBystatus(status uint,info rp.PerformanceReviewSearch) (err error, list
 func GetPerformanceReviewInfoList(info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-    // 创建db
+	// 创建db
 	db := global.GVA_DB.Model(&mp.PerformanceReview{})
-    var PerformanceReviews []mp.PerformanceReview
-    // 如果有条件搜索 下方会自动创建搜索语句
+	var PerformanceReviews []mp.PerformanceReview
+	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 	err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
 	return err, PerformanceReviews, total
 }
 
-func UpdatePerformanceReviewByInfo(PRInfo rp.PerformanceReviewInfo)(err error){
+func UpdatePerformanceReviewByInfo(PRInfo rp.PerformanceReviewInfo) (err error) {
 	err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?", PRInfo.ID).Updates(mp.PerformanceReview{
-		EmployeeId:PRInfo.EmployeeId,
-		EvaluationId:PRInfo.EvaluationId,
-		Name:PRInfo.Name,
-		Status:PRInfo.Status,
-		StartDate:PRInfo.StartDate,
-		EndingDate:PRInfo.EndingDate,
-		Score:PRInfo.Score,
-		}).Error
+		EmployeeId:   PRInfo.EmployeeId,
+		EvaluationId: PRInfo.EvaluationId,
+		Name:         PRInfo.Name,
+		Status:       PRInfo.Status,
+		StartDate:    PRInfo.StartDate,
+		EndingDate:   PRInfo.EndingDate,
+		Score:        PRInfo.Score,
+	}).Error
 	return err
 }
 
@@ -107,34 +109,34 @@ func GetLastPerformanceReview() (err error, PerformanceReview mp.PerformanceRevi
 	return
 }
 
-func UpdatePRStatusById(id uint, status uint,result float64)(err error){
-	err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?",id).Update("status",status).Error
+func UpdatePRStatusById(id uint, status uint, result float64) (err error) {
+	err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?", id).Update("status", status).Error
 	var pr mp.PerformanceReview
-	err = global.GVA_DB.Model(&pr).Where("id = ?", id).Select("result","status").Updates(map[string]interface{}{"result": result,"status":status}).Error
+	err = global.GVA_DB.Model(&pr).Where("id = ?", id).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
 	return err
 }
 
-func UpdatePRStatysByIds(Ids []int,status uint)(err error){
+func UpdatePRStatysByIds(Ids []int, status uint) (err error) {
 	for i := 0; i < len(Ids); i++ {
-		err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?",Ids[i]).Update("status",status).Error
+		err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?", Ids[i]).Update("status", status).Error
 	}
 	return err
 }
 
-func GetPRByUser(id uint,status uint) (err error, PerformanceReview mp.PerformanceReview){
-	db := global.GVA_DB.Model(&PerformanceReview).Where("employee_id = ? AND status = ?", id,status)
+func GetPRByUser(id uint, status uint) (err error, PerformanceReview mp.PerformanceReview) {
+	db := global.GVA_DB.Model(&PerformanceReview).Where("employee_id = ? AND status = ?", id, status)
 	err = db.Preload("Evaluation").Preload("User").Preload("PRItems").First(&PerformanceReview).Error
 	return
 }
-func GetPRListByUser(id uint,Ids []int,info rp.PerformanceReviewSearch) (err error, list interface{}, total int64){
+func GetPRListByUser(id uint, Ids []int, info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-    // 创建db
-	db := global.GVA_DB.Model(&mp.PerformanceReview{}).Where("employee_id = ? AND status in ?", id,Ids)
+	// 创建db
+	db := global.GVA_DB.Model(&mp.PerformanceReview{}).Where("employee_id = ? AND status in ?", id, Ids)
 	var PerformanceReviews []mp.PerformanceReview
-    // 如果有条件搜索 下方会自动创建搜索语句
+	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
-	err = db.Preload("User").Find(&PerformanceReviews).Error
+	err = db.Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
 	return err, PerformanceReviews, total
 }
