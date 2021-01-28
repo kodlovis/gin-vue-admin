@@ -30,7 +30,7 @@
         
         <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
-        <el-table-column label="被考评人" prop="user.nickName" width="120"></el-table-column> 
+        <el-table-column label="被考评人" prop="prs.user.nickName" width="120"></el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
         <el-table-column label="得分">
           <template slot-scope="scope">
@@ -98,6 +98,11 @@ export default {
           name:"",
           category:"",
           description:"",
+        },
+        prs:{
+          user:{
+            nickName
+          },
         },
         user:{
           nickName:"",
@@ -170,6 +175,7 @@ export default {
           if(this.countData == 0){
               updatePRStatusById({
                   ID:row.PRId,
+                  result:Number(total),
                   status: 7,
               })
               updatePRItemStatusByPrId({
