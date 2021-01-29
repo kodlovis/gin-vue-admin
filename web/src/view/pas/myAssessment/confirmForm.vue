@@ -163,7 +163,6 @@ export default {
           status:3,
       })
       if(res.code == 0){
-          this.getPRListByUser()
           this.$message({
           type: "success",
           message: "确认成功"})
@@ -179,6 +178,7 @@ export default {
             })
         }
       }
+      this.getPRListByUser()
     },
     async rejectKpi(row){
       const res = await updatePRItemStatusById({

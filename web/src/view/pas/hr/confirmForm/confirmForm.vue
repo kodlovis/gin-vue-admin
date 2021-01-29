@@ -83,6 +83,9 @@ export default {
       multipleSelection: [],
       countData:9,
       confirmVisible:false,
+      page: 1,
+      total: 10,
+      pageSize: 10,
       dictList:[],formData: [],
       prData:{
         score:0,
@@ -148,11 +151,24 @@ export default {
           updatePRItemStatusByPrId({ID:row.ID,status:4})
       }
     },
-    async getPRBystatus(){
+    async getPRBystatus(page = this.page, pageSize = this.pageSize){
       const res = await getPRBystatus({
           status:3,
+          page: page, 
+          pageSize: pageSize
           })
+      this.total = res.data.total
+      this.page = res.data.page
+      this.pageSize = res.data.pageSize
       this.prData = res.data.list
+    },
+    handleSizeChange(val) {
+        this.pageSize = val
+        this.getPRBystatus()
+    },
+    handleCurrentChange(val) {
+        this.page = val
+        this.getPRBystatus()
     },
     async onConfirm(){
       const ids = []
@@ -184,7 +200,6 @@ export default {
     const res = await getDict("PR");
     res.map(item=>item.value)
     this.dictList = res
-    await this.getTableData();
 }
 };
 </script>

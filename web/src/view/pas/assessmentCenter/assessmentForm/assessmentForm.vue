@@ -91,6 +91,9 @@ export default {
       multipleSelection: [],formData:[],
       countData:9,
       loading:false,
+      page: 1,
+      total: 10,
+      pageSize: 10,
       acData:{
         score:0,
         result:0,
@@ -101,7 +104,7 @@ export default {
         },
         prs:{
           user:{
-            nickName
+            nickName:"",
           },
         },
         user:{
@@ -187,11 +190,24 @@ export default {
       }
           this.loading=false
     },
-    async getPRItemListByUser(){
+    handleSizeChange(val) {
+        this.pageSize = val
+        this.getPRItemListByUser()
+    },
+    handleCurrentChange(val) {
+        this.page = val
+        this.getPRItemListByUser()
+    },
+    async getPRItemListByUser(page = this.page, pageSize = this.pageSize){
       const res = await getPRItemListByUser({
           ID:this.userInfo.ID,
           status:4,
+          page: page, 
+          pageSize: pageSize
           })
+      this.total = res.data.total
+      this.page = res.data.page
+      this.pageSize = res.data.pageSize
       this.acData = res.data.list
     },
   },

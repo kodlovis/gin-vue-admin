@@ -83,6 +83,9 @@ export default {
       type: "",
       multipleSelection: [],formData:[],
       countData:9,
+      page: 1,
+      total: 10,
+      pageSize: 10,
       acData:{
         score:0,
         kpi:{
@@ -161,17 +164,28 @@ export default {
           message: "驳回成功"})
       }
     },
-    async getPRItemListByUser(){
+    async getPRItemListByUser(page = this.page, pageSize = this.pageSize){
       const res = await getPRItemListByUser({
           ID:this.userInfo.ID,
           status:1,
+          page: page, 
+          pageSize: pageSize
           })
+      this.total = res.data.total
+      this.page = res.data.page
+      this.pageSize = res.data.pageSize
       this.acData = res.data.list
-      console.log(this.acData.score)
+    },
+    handleSizeChange(val) {
+        this.pageSize = val
+        this.getPRItemListByUser()
+    },
+    handleCurrentChange(val) {
+        this.page = val
+        this.getPRItemListByUser()
     },
   },
   async created() {
-    await this.getTableData();
     this.getPRItemListByUser()
 }
 };
