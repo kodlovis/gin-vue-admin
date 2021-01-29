@@ -15,6 +15,13 @@ export const deletePerformanceReviewItem = (data) => {
         data
     })
 }
+export const deletePRItemById = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/deletePRItemById",
+        method: 'delete',
+        data
+    })
+}
 
 export const deletePerformanceReviewItemByIds = (data) => {
     return service({

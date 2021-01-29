@@ -18,6 +18,10 @@ func DeletePerformanceReviewItem(PerformanceReviewItem mp.PerformanceReviewItem)
 	err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItem{}, "pr_id = ?", PerformanceReviewItem.PRId).Error
 	return err
 }
+func DeletePRItemById(PerformanceReviewItem mp.PerformanceReviewItem) (err error) {
+	err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItem{}, "id = ?", PerformanceReviewItem.ID).Error
+	return err
+}
 
 func DeletePerformanceReviewItemByIds(ids rp.IdsReq) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItem{}, "pr_id in ?", ids.Ids).Error

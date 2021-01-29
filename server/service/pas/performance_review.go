@@ -58,7 +58,7 @@ func UpdatePerformanceReview(PerformanceReview *mp.PerformanceReview) (err error
 //@return: err error, PerformanceReview model.PerformanceReview
 
 func GetPerformanceReview(id uint) (err error, PerformanceReview mp.PerformanceReview) {
-	err = global.GVA_DB.Where("id = ?", id).First(&PerformanceReview).Error
+	err = global.GVA_DB.Where("id = ?", id).Preload("User").First(&PerformanceReview).Error
 	return
 }
 func GetPRBystatus(status uint, info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {

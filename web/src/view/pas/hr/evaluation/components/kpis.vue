@@ -91,12 +91,12 @@
     
     <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
 
-     <el-table-column label="指标分数">
+     <el-table-column label="设置指标分数">
       <template slot-scope="scope">
           <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
       </template>
     </el-table-column>
-    <el-table-column label="评分人" width="230">
+    <el-table-column label="设置评分人" width="230">
       <template slot-scope="scope">
           <el-cascader
             @change="(val)=>{handleOptionChange(val,scope.row)}"

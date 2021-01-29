@@ -136,9 +136,78 @@
       </div>
     </el-dialog>
     <!-- 编辑指标的弹窗 -->
-    <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="编辑指标" :append-to-body="true" width="80%">
-      <el-table
-      :data="performanceReviewItemData"
+    <div>
+      <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="编辑指标" :append-to-body="true" width="80%">
+        <div class="search-term">
+          <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+            <el-form-item>
+              <el-button @click="openKpiDialog" type="primary" size="mini">添加指标</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+        <el-table
+        :data="performanceReviewItemData"
+        @selection-change="handleSelectionChange"
+        border
+        ref="multipleTable"
+        stripe
+        style="width: 100%"
+        tooltip-effect="dark"
+      >
+      <el-table-column label="指标名称" prop="kpi.name" width="90"></el-table-column>
+
+      <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
+      
+      <el-table-column label="指标算法" prop="kpi.category" width="360" type="textarea"> </el-table-column> 
+      <el-table-column label="指标状态" prop="kpi.status" width="160">
+        <template slot-scope="scope">
+        <el-select v-model="scope.row.status" placeholder="请选择" clearable>
+          <el-option
+            v-for="item in kpiDictList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column label="指标分数">
+        <template slot-scope="scope">
+            <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
+        </template>
+      </el-table-column> 
+      <el-table-column label="评分人" width="230">
+        <template slot-scope="scope">
+            <el-cascader
+              @change="(val)=>{handleOptionChange(val,scope.row)}"
+              v-model="scope.row.user.ID"
+              :options="userOptions"
+              clearable
+              :props="{ checkStrictly: true,label:'nickName',value:'id',}"
+              filterable
+            ></el-cascader>
+        </template>
+      </el-table-column>
+        <el-table-column label="按钮组">
+          <template slot-scope="scope">
+            <el-button @click="performanceReviewItemDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="修改">修改</el-button>
+            <el-popover placement="top" width="160" v-model="scope.row.visible">
+              <p>确定要删除吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="deletePRI(scope.row)">确定</el-button>
+              </div>
+              <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">删除</el-button>
+            </el-popover>
+          </template>
+        </el-table-column>
+      </el-table>
+      </el-dialog>
+    </div>
+    
+    <el-dialog :before-close="closeKpiDialog" :visible.sync="kpiDialog" title="添加指标" width= "90%" :append-to-body="true" >
+    <el-table
+      :data="kpiList"
       @selection-change="handleSelectionChange"
       border
       ref="multipleTable"
@@ -146,48 +215,39 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column label="指标名称" prop="kpi.name" width="90"></el-table-column>
-
-    <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
+    <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="指标算法" prop="kpi.category" width="360" type="textarea"> </el-table-column> 
-    <el-table-column label="指标状态" prop="kpi.status" width="160">
+    <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 
+    
+    <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
+    
+    <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
+     <el-table-column label="设置指标分数">
       <template slot-scope="scope">
-      <el-select v-model="scope.row.status" placeholder="请选择" clearable>
-        <el-option
-          v-for="item in kpiDictList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
+          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
       </template>
     </el-table-column>
-    <el-table-column label="指标分数">
-      <template slot-scope="scope">
-          <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
-      </template>
-    </el-table-column> 
-    <el-table-column label="评分人" width="230">
+    <el-table-column label="设置评分人" width="230">
       <template slot-scope="scope">
           <el-cascader
             @change="(val)=>{handleOptionChange(val,scope.row)}"
-            v-model="scope.row.user.ID"
+            v-model="scope.row.userId"
             :options="userOptions"
+            :rules="rules"
             clearable
             :props="{ checkStrictly: true,label:'nickName',value:'id',}"
             filterable
           ></el-cascader>
       </template>
     </el-table-column>
+
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="performanceReviewItemDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="修改">修改</el-button>
+          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
     </el-dialog>
-
   </div>
 </template>
 
@@ -218,8 +278,12 @@ import {
     deletePerformanceReviewItemByIds,
     getPerformanceReviewItemListById,
     updatePerformanceReviewItemByInfo,
-    updatePRItemStatysByIds
+    updatePRItemStatysByIds,
+    deletePRItemById
 } from "@/api/pas/performanceReviewItem";
+import {
+    getKpiList,
+} from "@/api/pas/kpi";  //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import { getDict } from "@/utils/dictionary";
 import infoList from "@/mixins/infoList";
@@ -230,8 +294,10 @@ export default {
     return {
       listApi: getPerformanceReviewList,
       dialogFormVisible: false,
+      kpiDialog:false,
       prItemDialog: false,
       visible: false,
+      dialogFlag: false,
       type: "",
       kpiDictList:[],
       userOptions:[],
@@ -251,17 +317,15 @@ export default {
             employeeId:"",
             score:0,
       },
-      performanceReviewData:{
-            score:0,
-            kpi:{
-              name:"",
-              description:"",
-              category:"",
-              status:0,
-            },
-            user:{
-              ID:"",
-            }
+      kpiList:{
+            name:"",
+            ID:"",
+            category:"",
+            kpiScore:"",
+            userId:"",
+            evaluationKpis:{
+              kpiScore:"",
+        },
       },
       evaluationData:{
             ID:"",
@@ -306,6 +370,30 @@ export default {
     }
   },
   methods: {
+      async openKpiDialog(){
+        this.kpiDialog = true;
+        const ref = await getKpiList()
+        if (ref.code == 0) {
+        this.kpiList = ref.data.list;
+        }
+      },
+      async kpiDataEnter(row){
+          var item = []
+            item.push({
+              score:Number(row.evaluationKpis.kpiScore),
+              kpiId:row.ID,
+              userId:this.formData.employeeId,
+              PRId:this.formData.ID,
+              status:1,
+              })
+        const res = await createPerformanceReviewItem({item
+        })
+        if(res.code == 0){
+            this.$message({ type: 'success', message: "添加成功" })
+            const res = await getPerformanceReviewItemListById({ PRId: this.formData.ID });
+            this.performanceReviewItemData = res.data.list;
+        }
+      },
       filterDict(status){
         const re = this.dictList.filter(item=>{
           return item.value == status
@@ -419,6 +507,9 @@ export default {
     closeprItemDialog() {
       this.prItemDialog = false;
     },
+    closeKpiDialog(){
+      this.kpiDialog = false;
+    },
     async deletePerformanceReview(row) {
       this.visible = false;
       const res = await deletePerformanceReview({ ID: row.ID });
@@ -503,7 +594,21 @@ export default {
           message:"创建/更改成功"
         })
         this.closeDialog();
-        this.getTableData();
+      }
+    },
+    //删除考核表中的指标
+    async deletePRI(row){
+      this.visible = false;
+      const res = await deletePRItemById({ ID: row.ID });
+      if (res.code == 0) {
+        this.$message({
+          type: "success",
+          message: "删除成功"
+        });
+      const res = await getPerformanceReviewItemListById({ PRId: row.PRId });
+      const pr = await findPerformanceReview({ ID: row.PRId });
+      this.formData = pr.data.rePerformanceReview;
+      this.performanceReviewItemData = res.data.list;
       }
     },
     async onConfirm(){
