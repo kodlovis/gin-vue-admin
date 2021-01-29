@@ -91,3 +91,15 @@ func GetPRItemListByStatusPrid(status uint, id uint, info rp.PerformanceReviewIt
 	err = db.Preload("User").Preload("Kpi").Preload("PRs.User").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
+func GetPRItemListByStatus(status uint, info rp.PerformanceReviewItemSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	// 创建db
+	db := global.GVA_DB.Model(&mp.PerformanceReviewItem{}).Where("Status = ?", status)
+	var PerformanceReviewItems []mp.PerformanceReviewItem
+	// 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
+	err = db.Preload("User").Preload("Kpi").Preload("PRs.User").Find(&PerformanceReviewItems).Error
+	return err, PerformanceReviewItems, total
+}

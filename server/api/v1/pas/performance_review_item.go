@@ -145,3 +145,18 @@ func GetPRItemListByStatusPrid(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+func GetPRItemListByStatus(c *gin.Context) {
+	var info rp.PerformanceReviewItemSearch
+	_ = c.ShouldBindJSON(&info)
+	if err, list, total := sp.GetPRItemListByStatus(info.Status, info); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     info.Page,
+			PageSize: info.PageSize,
+		}, "获取成功", c)
+	}
+}

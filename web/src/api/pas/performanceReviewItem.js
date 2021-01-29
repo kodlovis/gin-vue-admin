@@ -86,3 +86,11 @@ export const getPRItemListByStatusPrid = (data) => {
         data
     })
 }
+
+export const getPRItemListByStatus = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/getPRItemListByStatus",
+        method: 'post',
+        data
+    })
+}

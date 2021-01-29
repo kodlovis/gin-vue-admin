@@ -21,6 +21,7 @@ func InitPerformanceReviewItemRouter(Router *gin.RouterGroup) {
 		PerformanceReviewItemRouter.POST("updatePRItemStatysByIds", pas.UpdatePRItemStatysByIds)
 		PerformanceReviewItemRouter.PUT("updatePRItemStatusByPrId", pas.UpdatePRItemStatusByPrId)
 		PerformanceReviewItemRouter.POST("getPRItemListByStatusPrid", pas.GetPRItemListByStatusPrid)
+		PerformanceReviewItemRouter.POST("getPRItemListByStatus", pas.GetPRItemListByStatus)
 
 	}
 }
