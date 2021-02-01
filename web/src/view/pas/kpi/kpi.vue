@@ -111,12 +111,12 @@
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
          <el-form-item label="指标状态:">
-        <el-select v-model="formData.status" placeholder="请选择">
-          <el-option
-            v-for="item in dictList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+          <el-select v-model="formData.status" placeholder="请选择">
+            <el-option
+              v-for="item in dictList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
           </el-option>
         </el-select>  
       </el-form-item>
@@ -124,7 +124,7 @@
             <el-input v-model="formData.category" clearable placeholder="请输入"  type="textarea"
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
-          <el-form-item label="添加标签" prop="Tags"> 
+          <el-form-item label="添加标签"> 
             <!-- <el-select v-model="formData.Tags" placeholder="请选择需要添加的标签" clearable
               :style="{width: '100%'}">
               <el-option v-for="(item, index) in tagData" 
@@ -134,15 +134,15 @@
                 :disabled="item.disabled"
                 >{{item.name}}</el-option>
             </el-select> -->
-          <el-cascader
-            @change="(val)=>{handleOptionChange(val)}"
-            v-model="formData.Tags"
-            :options="tagOptions"
-            :rules="rules"
-            clearable
-            :props="{ checkStrictly: true,label:'name',value:'id',multiple: true}"
-            filterable
-          ></el-cascader>
+            
+              <el-cascader
+                @change="(val)=>{handleOptionChange(val)}"
+                v-model="formData.Tags"
+                :options="tagOptions"
+                clearable
+                :props="{ checkStrictly: true,label:'name',value:'id',multiple: true}"
+                filterable
+              ></el-cascader>
             <!-- <el-input v-model="formData.Tags"></el-input> -->
           </el-form-item>
       </el-form>
@@ -192,7 +192,7 @@ export default {
             description:"",
             status:"",
             category:"",
-            Tags: "",
+            Tags: [{id:"",name:""}],
       },
       tagData:{
            name:"",
@@ -202,11 +202,6 @@ export default {
       }, 
       tagColumn:{
            name:"",
-      },
-      rules: {
-        Tags:[{
-          required: true,
-        }],
       },
     };
   },
@@ -295,11 +290,14 @@ export default {
     async updateKpi(row) {
       const res = await findKpi({ ID: row.ID });
       //const tag = await findTag({ ID: row.ID });
-      const tags = await getTagList();
       this.type = "update";
       if (res.code == 0) {
         this.formData = res.data.reKpi;
-        this.tagData = tags.data.list;
+        const arr = []
+        for (let index = 0; index < this.formData.Tags.length; index++) {
+          arr.push(this.formData.Tags[index].ID)
+        }
+        this.formData.Tags = arr
         //this.tagColumn = tag.data.reTag;
         this.dialogFormVisible = true;
       }
@@ -307,11 +305,11 @@ export default {
     closeDialog() {
       this.dialogFormVisible = false;
       this.formData = {
-          Name:"",
-          Description:"",
-          Status:"",
-          Category:"",
-          Tags: 1,
+          name:"",
+          description:"",
+          status:"",
+          category:"",
+          Tags: [],
       };
     },
     async deleteKpi(row) {
@@ -342,16 +340,18 @@ export default {
       var item = []
       switch (this.type) {
         case "create":
-          createKpi({...this.formData,Tags:[]});
-          var kpi = await getLastKpi()
-          var lastKpi = kpi.data.reKpi
-          for (let i = 0; i < this.formData.Tags.length; i++) {
-            item.push({
-              tagId:Number(this.formData.Tags[i]),
-              kpiId:Number(lastKpi.ID),
-              })
-          } 
-          res = await createKpiTag({item})
+          var re = await createKpi({...this.formData,Tags:[]});
+          if(re.code == 0){
+            var kpi = await getLastKpi()
+            var lastKpi = kpi.data.reKpi
+            for (let i = 0; i < this.formData.Tags.length; i++) {
+              item.push({
+                tagId:Number(this.formData.Tags[i]),
+                kpiId:Number(lastKpi.ID),
+                })
+            } 
+            res = await createKpiTag({item})
+          }
           break;
         case "update":
           ref = await removeKpiTags({ID: this.formData.ID})
