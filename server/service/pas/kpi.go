@@ -135,11 +135,11 @@ func GetKpiScoreByIds(id rp.GetEvaluationId, info rp.KpiSearch) (err error, list
 // 		return err
 // }
 
-func GetKpiEvaluation(id *rp.GetEvaluationId, info rp.EvaluationSearch) (err error, list interface{}, total int64) {
+func GetKpiEvaluation(info rp.KpiSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&mp.EvaluationKpi{}).Where("evaluation_id = ?", id.ID)
+	db := global.GVA_DB.Model(&mp.EvaluationKpi{}).Where("evaluation_id = ?", info.ID)
 	var Evaluations []mp.EvaluationKpi
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
