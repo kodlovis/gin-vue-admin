@@ -57,7 +57,14 @@
     </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="removeKpi(scope.row)" type="danger" size="mini" slot="reference" label="移除指标"  :disabled="isDisable">移除指标</el-button>
+          <el-popover placement="top" width="160" v-model="scope.row.visible">
+              <p>确定要删除吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="removeKpi(scope.row)" :disabled="isDisable">确定</el-button>
+              </div>
+              <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" label="移除指标">移除指标</el-button>
+            </el-popover>
         </template>
       </el-table-column>
     </el-table>
@@ -65,7 +72,7 @@
     <el-pagination
       :current-page="page"
       :page-size="pageSize"
-      :page-sizes="[10,15,20]"
+      :page-sizes="[5,10,15,20]"
       :style="{float:'right',padding:'20px'}"
       :total="total"
       @current-change="handleCurrentChange"
@@ -165,7 +172,7 @@ export default {
       ids:[],
       page: 1,
       total: 10,
-      pageSize: 10,
+      pageSize: 5,
       isDisable:false,
       type: "",
       deleteVisible: false,
@@ -359,7 +366,8 @@ export default {
       //      users: []
       //   });
       //删除方案中的指标
-      this.isDisable=true,
+      row.visible = false;
+      this.isDisable=true;
       removeEvaluationKpi({
         ID: Number(row.ID)
         });
