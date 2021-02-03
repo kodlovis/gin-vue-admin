@@ -105,7 +105,7 @@
       </div>
     </el-dialog>
 
-    <el-drawer :visible.sync="drawer" :with-header="false" size="80%" title="方案配置" v-if="drawer">
+    <el-drawer :visible.sync="drawer" :with-header="false" size="80%" title="方案配置"  v-if="drawer" :before-close="autoClose">
       <el-tabs :before-leave="autoEnter" class="role-box" type="border-card">
         <el-tab-pane label="已添加的指标">
           <Kpis :evaluation="tableData" :row="activeRow" ref="kpis" />
@@ -176,7 +176,7 @@ export default {
     }
   },
   methods: {
-    autoEnter(activeName, oldActiveName) {
+    autoEnter(activeName, oldActiveName) {  
       const paneArr = ["kpis"];
       if (oldActiveName) {
         if (this.$refs[paneArr[oldActiveName]].needConfirm) {
@@ -184,6 +184,10 @@ export default {
           this.$refs[paneArr[oldActiveName]].needConfirm = false;
         }
       }
+    },
+    autoClose(){
+      this.getTableData()
+      this.drawer = false;
     },
     async opdendrawer(row) {
       this.drawer = true;
