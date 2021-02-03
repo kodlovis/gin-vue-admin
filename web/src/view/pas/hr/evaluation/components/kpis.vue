@@ -57,7 +57,7 @@
     </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="removeKpi(scope.row)" type="danger" size="mini" slot="reference" label="移除指标">移除指标</el-button>
+          <el-button @click="removeKpi(scope.row)" type="danger" size="mini" slot="reference" label="移除指标"  :disabled="isDisable">移除指标</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -65,7 +65,7 @@
     <el-pagination
       :current-page="page"
       :page-size="pageSize"
-      :page-sizes="[3, 5,10, 30, 50, 100]"
+      :page-sizes="[10,15,20]"
       :style="{float:'right',padding:'20px'}"
       :total="total"
       @current-change="handleCurrentChange"
@@ -73,7 +73,8 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right"
+     >
     <el-table
       :data="kpiList"
       @selection-change="handleSelectionChange"
@@ -129,6 +130,7 @@ import {
     createEvaluationKpi,
     removeEvaluationKpi,
     removeEvaluationKpiByIds,
+    getEvaluationKpiById
 } from "@/api/pas/evaluationKpi";
 import {
     getUserList,
@@ -138,14 +140,15 @@ import {
     findEvaluationKpiUser,
 } from "@/api/pas/evaluationKpiUser";
 import {
-    updateEvaluationByInfo
+    updateEvaluationByInfo,
+    findEvaluation
 } from "@/api/pas/evaluation";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
   name: "kpis",
   mixins: [infoList],
-  ids:[],
+  listApi: getKpiEvaluation,
   props: {
     row: {
       default: function() {
@@ -156,9 +159,14 @@ export default {
   },
   data() {
     return {
-      listApi: getKpiList,
       dialogFormVisible: false,
       visible: false,
+      loading: false,
+      ids:[],
+      page: 1,
+      total: 10,
+      pageSize: 10,
+      isDisable:false,
       type: "",
       deleteVisible: false,
       multipleOption: [],
@@ -184,12 +192,13 @@ export default {
         },
       },
       evaluationData:{
-            kcore: "",
+            score: "",
       },
       rules: {
         id: [
           { required: true, message: "请选择用户角色", trigger: "blur" }
-        ]
+        ],
+        nickName:{ required: true, message: "请选择用户角色", trigger: "blur" }
       },
     };
   },
@@ -243,6 +252,7 @@ export default {
       return userId
     },
     async kpiDataEnter(row){
+        this.loading=true
         const res = await createEvaluationKpi({
         KpiScore: Number(row.evaluationKpis.kpiScore),
         EvaluationId: this.row.ID,
@@ -250,15 +260,29 @@ export default {
         UserId: Number(row.userId),
           })
           if(res.code == 0){
+              this.loading=false
               this.$message({ type: 'success', message: "添加成功" })
           }
           this.setTotalScore()
       },
-    async refreshEvalutationKpi(){
-      const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
-        if (ref.code == 0) {
-        this.KpiData = ref.data.list;
-        }
+    async refreshEvalutationKpi(page = this.page, pageSize = this.pageSize){
+      const ref = await getKpiEvaluation({
+            ID:Number(this.row.ID),
+            page: page, 
+            pageSize: pageSize
+          })
+            this.KpiData = ref.data.list;
+            this.total = ref.data.total
+            this.page = ref.data.page
+            this.pageSize = ref.data.pageSize
+    },
+    handleSizeChange(val) {
+        this.pageSize = val
+        this.refreshEvalutationKpi()
+    },
+    handleCurrentChange(val) {
+        this.page = val
+        this.refreshEvalutationKpi()
     },
     async setTotalScore(){
       const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
@@ -329,22 +353,30 @@ export default {
     },
     
     async removeKpi(row) {
-      if (row.Users!=null) {
-        await setUserEvaluation({
-           id: Number(row.ID),
-           users: []
-        });
-      }
-      const res = await removeEvaluationKpi({
+      // if (row.Users!=null) {
+      //   await setUserEvaluation({
+      //      id: Number(row.ID),
+      //      users: []
+      //   });
+      //删除方案中的指标
+      this.isDisable=true,
+      removeEvaluationKpi({
         ID: Number(row.ID)
         });
-      if (res.code == 0) {
+      getEvaluationKpiById({ID:Number(row.ID)});
+        const ref = await findEvaluation({ID:Number(this.row.ID)})
+        if (ref.code == 0) {
+          this.evaluationData = ref.data.reEvaluation;
+          var totalScore = 0
+          totalScore = this.evaluationData.score - row.kpiScore
+          updateEvaluationByInfo({...this.row,score:Number(totalScore),ID:Number(this.row.ID)});
+        }
+        this.refreshEvalutationKpi()
         this.$message({
           type: "success",
           message: "移除成功"
         });
-        this.setTotalScore()
-      }
+      this.isDisable=false
     },
     async removeEvaluationKpiByIds(){
       const ids = []
@@ -361,12 +393,21 @@ export default {
           })
         const res = await removeEvaluationKpiByIds({ ids })
         if (res.code == 0) {
+          //拿本方案的总分一次次减去选中的分数
+          const ref = await findEvaluation({ID:Number(this.row.ID)})
+          this.evaluationData = ref.data.reEvaluation;
+          var sum = Number(this.evaluationData.score)
+          for (let i = 0; i < this.multipleSelection.length; i++) {
+            sum=sum-this.multipleSelection[i].kpiScore
+          }
+          //更新方案总分
+          updateEvaluationByInfo({...this.row,score:Number(sum),ID:Number(this.row.ID)});
           this.$message({
             type: 'success',
             message: '删除成功'
           })
-        this.setTotalScore()
-        this.deleteVisible = false
+          this.refreshEvalutationKpi()
+          this.deleteVisible = false
         }
     },
   },
