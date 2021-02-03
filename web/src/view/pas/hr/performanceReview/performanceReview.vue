@@ -85,7 +85,11 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 编辑考核表的弹窗 -->
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="编辑考核表">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="编辑考核表" 
+      v-loading="loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-form :model="formData" label-position="right" label-width="120px">
        
          <el-form-item label="考核表名称:">
@@ -195,7 +199,7 @@
               <p>确定要删除吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
-                <el-button type="primary" size="mini" @click="deletePRI(scope.row)">确定</el-button>
+                <el-button type="primary" size="mini" @click="deletePRI(scope.row)" :disabled="isDisable">确定</el-button>
               </div>
               <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">删除</el-button>
             </el-popover>
@@ -297,7 +301,9 @@ export default {
       kpiDialog:false,
       prItemDialog: false,
       visible: false,
+      isDisable:false,
       dialogFlag: false,
+      loading:false,
       type: "",
       kpiDictList:[],
       userOptions:[],
@@ -377,22 +383,27 @@ export default {
         this.kpiList = ref.data.list;
         }
       },
+      //考核增加指标
       async kpiDataEnter(row){
           var item = []
             item.push({
               score:Number(row.evaluationKpis.kpiScore),
               kpiId:row.ID,
-              userId:this.formData.employeeId,
+              userId:Number(row.userId),
               PRId:this.formData.ID,
-              status:1,
+              status:100,
               })
-        const res = await createPerformanceReviewItem({item
-        })
+        const pr = await findPerformanceReview({ID:this.formData.ID})
+        this.formData = pr.data.rePerformanceReview;
+        const res = await createPerformanceReviewItem({item})
         if(res.code == 0){
             this.$message({ type: 'success', message: "添加成功" })
+            const sum =  Number(this.formData.score) + Number(row.evaluationKpis.kpiScore)
+            updatePerformanceReviewByInfo({...this.formData,score:Number(sum)})
             const res = await getPerformanceReviewItemListById({ PRId: this.formData.ID });
             this.performanceReviewItemData = res.data.list;
         }
+        this.getTableData()
       },
       filterDict(status){
         const re = this.dictList.filter(item=>{
@@ -550,6 +561,7 @@ export default {
       }
     },
     async enterDialog() {
+      this.loading=true
       let res;
       switch (this.type) {
         case "create":
@@ -593,23 +605,28 @@ export default {
           type:"success",
           message:"创建/更改成功"
         })
+        this.loading=false
+        this.getTableData()
         this.closeDialog();
       }
     },
     //删除考核表中的指标
     async deletePRI(row){
       this.visible = false;
+      this.isDisable = true;
       const res = await deletePRItemById({ ID: row.ID });
       if (res.code == 0) {
         this.$message({
           type: "success",
           message: "删除成功"
         });
+      const sum = this.formData.score-row.score
+      updatePerformanceReviewByInfo({...this.formData,score:Number(sum)})
       const res = await getPerformanceReviewItemListById({ PRId: row.PRId });
-      const pr = await findPerformanceReview({ ID: row.PRId });
-      this.formData = pr.data.rePerformanceReview;
       this.performanceReviewItemData = res.data.list;
+      this.getTableData()
       }
+      this.isDisable = false;
     },
     async onConfirm(){
       const ids = []
