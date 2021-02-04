@@ -101,3 +101,11 @@ export const getPRItemListByStatus = (data) => {
         data
     })
 }
+export const getPRItemListByPrids = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/getPRItemListByPrids",
+        method: 'post',
+        data
+    })
+}
+

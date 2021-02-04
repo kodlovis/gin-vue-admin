@@ -65,7 +65,8 @@
 import {
     getPRItemListByUser,
     updatePRItemStatusById,
-    getPRItemCount
+    getPRItemCount,
+    updatePRItemStatusByPrId
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
 import {    
     updatePRStatusById
@@ -132,7 +133,7 @@ export default {
     async confirmKpi(row) {
       const res = await updatePRItemStatusById({
           ID:row.ID,
-          status:2,
+          status:91,
       })
       if(res.code == 0){
           this.getPRItemListByUser()
@@ -141,14 +142,18 @@ export default {
           message: "确认成功"})
         const count = await getPRItemCount({
             PRId:row.PRId,
-            status: 1,
+            status: 91,
         })
-        this.countData = count.data.total;
-        if(this.countData == 0){
+        this.countData = count.data.count;
+        if(this.countData == 1){
             updatePRStatusById({
                 ID:row.PRId,
                 status: 2,
             })
+            updatePRItemStatusByPrId({
+              PRId:row.PRId,
+              status:2,
+          })
         }
       }
     },

@@ -47,6 +47,7 @@
           style="width: 100%"
           tooltip-effect="dark"
         >
+        <el-table-column label="考核名称" prop="prs.name" width="120"></el-table-column> 
         <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column> 
         <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
@@ -75,7 +76,8 @@
 import {
     getPRItemCount,
     updatePRItemStatusById,
-    getPRItemListByStatusPrid
+    getPRItemListByStatusPrid,
+    updatePRItemStatusByPrId
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
 import {    
     updatePRStatusById,
@@ -105,6 +107,9 @@ export default {
             Tags:{
                 name:"",
             }
+        },
+        prs:{
+          name:"",
         },
       },
       acData:{
@@ -160,7 +165,7 @@ export default {
     async confirmKpi(row) {
       const res = await updatePRItemStatusById({
           ID:row.ID,
-          status:3,
+          status:92,
       })
       if(res.code == 0){
           this.$message({
@@ -168,17 +173,27 @@ export default {
           message: "确认成功"})
         const count = await getPRItemCount({
             PRId:row.PRId,
-            status: 2,
+            status: 92,
         })
-        this.countData = count.data.total;
-        if(this.countData == 0){
-            updatePRStatusById({
+        this.countData = count.data.count;
+        if(this.countData == 1){
+            const ref = await updatePRStatusById({
                 ID:row.PRId,
                 status: 3,
             })
+            updatePRItemStatusByPrId({
+              PRId:row.PRId,
+              status:3,
+          })
+            if(ref.code == 0){
+              this.getPRListByUser()
+              return
+            }
+        }
+        if(count.code==0){
+          this.getPRListByUser()
         }
       }
-      this.getPRListByUser()
     },
     async rejectKpi(row){
       const res = await updatePRItemStatusById({
@@ -198,8 +213,12 @@ export default {
           ids:[2],
           })
       this.acData = res.data.list
+      const num = [] 
+      for (let i = 0; i < this.acData.length; i++) {
+        num.push(this.acData[i].ID)
+      }
       const prItem = await getPRItemListByStatusPrid({
-          prid: Number(this.acData[0].ID),
+          ids: num,
           status:2,
           })
       this.prData = prItem.data.list 

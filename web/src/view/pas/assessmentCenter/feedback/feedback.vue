@@ -178,17 +178,17 @@ export default {
           comment:row.comment,
       })
       if(res.code == 0){
-        //查询未反馈的数量
+        //查询已反馈的数量
         const count = await getPRItemCount({
             PRId:row.PRId,
-            status: 6,
+            status: 7,
         })
-        this.countData = count.data.total;
+        this.countData = count.data.count;
         //查询这条指标的考核表
         const pr = await findPerformanceReview({ID:row.PRId})
         this.prData = pr.data.rePerformanceReview
-        //如果未考核的数量为0
-        if(this.countData == 0){
+        //如果已反馈除以总数=1
+        if(this.countData == 1){
             //如果考核表的状态为已确认
             if (this.prData.status==8) {
                 //将考核表设为已完成

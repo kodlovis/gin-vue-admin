@@ -148,7 +148,7 @@ export default {
           this.$message({
           type: "success",
           message: "确认成功"})
-          updatePRItemStatusByPrId({ID:row.ID,status:4})
+          updatePRItemStatusByPrId({PRId:row.ID,status:4})
       }
     },
     async getPRBystatus(page = this.page, pageSize = this.pageSize){

@@ -172,17 +172,17 @@ export default {
         if(update.code==0){
           const count = await getPRItemCount({
               PRId:row.PRId,
-              status: 4,
+              status: 5,
           })
-          this.countData = count.data.total;
-          if(this.countData == 0){
+          this.countData = count.data.count;
+          if(this.countData == 1){
               updatePRStatusById({
                   ID:row.PRId,
                   result:Number(total),
                   status: 7,
               })
               updatePRItemStatusByPrId({
-                ID:row.PRId,
+                PRId:row.PRId,
                 status:6,
             })
           }
