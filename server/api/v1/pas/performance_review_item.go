@@ -111,7 +111,7 @@ func UpdatePRItemStatusById(c *gin.Context) {
 func UpdatePRItemStatusByPrId(c *gin.Context) {
 	var PRItem mp.PerformanceReviewItem
 	_ = c.ShouldBindJSON(&PRItem)
-	if err := sp.UpdatePRItemStatusByPrId(PRItem.ID, PRItem.Status); err != nil {
+	if err := sp.UpdatePRItemStatusByPrId(PRItem.PRId, PRItem.Status); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -126,7 +126,7 @@ func GetPRItemCount(c *gin.Context) {
 		response.FailWithMessage("创建失败", c)
 	} else {
 		response.OkWithDetailed(response.PageResult{
-			Total: count,
+			Count: count,
 		}, "获取成功", c)
 	}
 }
@@ -143,7 +143,7 @@ func UpdatePRItemStatysByIds(c *gin.Context) {
 func GetPRItemListByStatusPrid(c *gin.Context) {
 	var info rp.PerformanceReviewItemSearch
 	_ = c.ShouldBindJSON(&info)
-	if err, list, total := sp.GetPRItemListByStatusPrid(info.Status, info.PRID, info); err != nil {
+	if err, list, total := sp.GetPRItemListByStatusPrid(info.Status, info.Ids, info); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
@@ -167,6 +167,22 @@ func GetPRItemListByStatus(c *gin.Context) {
 			Total:    total,
 			Page:     info.Page,
 			PageSize: info.PageSize,
+		}, "获取成功", c)
+	}
+}
+
+func GetPRItemListByPrids(c *gin.Context) {
+	var pageInfo rp.PerformanceReviewItemSearch
+	_ = c.ShouldBindJSON(&pageInfo)
+	if err, list, total := sp.GetPRItemListByPrids(pageInfo.Ids, pageInfo); err != nil {
+		global.GVA_LOG.Error("获取失败", zap.Any("err", err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
 		}, "获取成功", c)
 	}
 }

@@ -87,7 +87,7 @@
 <script>
 import {
     getPRItemCount,
-    getPerformanceReviewItemListById
+    getPRItemListByPrids
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
 import {    
     updatePRStatusById,
@@ -171,14 +171,14 @@ export default {
         this.multipleSelection = val
       },
     async confirmKpi(row) {
-        //查询未进行反馈的指标数量
+        //查询已进行反馈的指标数量
         const count = await getPRItemCount({
             PRId:row.ID,
-            status: 6,
+            status: 7,
         })
-        this.countData = count.data.total;
-        //如果都已经反馈，完成本次考核
-        if(this.countData == 0){
+        this.countData = count.data.count;
+        //如果都已经反馈除以总数=1，完成本次考核
+        if(this.countData == 1){
           const res = await updatePRStatusById({
                 ID:row.ID,
                 status:9,
@@ -233,7 +233,11 @@ export default {
           ids:[7,8,99],
           })
       this.acData = res.data.list
-      const prItem = await getPerformanceReviewItemListById({PRId:this.acData[0].ID})
+      const num = [] 
+      for (let i = 0; i < this.acData.length; i++) {
+        num.push(this.acData[i].ID)
+      }
+      const prItem = await getPRItemListByPrids({ids:num})
       this.prData = prItem.data.list 
     },
   },
