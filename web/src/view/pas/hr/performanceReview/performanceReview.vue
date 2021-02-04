@@ -66,7 +66,7 @@
             <p>确定要删除吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="deletePerformanceReview(scope.row)">确定</el-button>
+              <el-button type="primary" size="mini" @click="deletePerformanceReview(scope.row)" :disabled="isDisable">确定</el-button>
             </div>
             <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">删除</el-button>
           </el-popover>
@@ -247,7 +247,7 @@
 
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加">添加</el-button>
+          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -385,6 +385,7 @@ export default {
       },
       //考核增加指标
       async kpiDataEnter(row){
+        this.isDisable=true;
           var item = []
             item.push({
               score:Number(row.evaluationKpis.kpiScore),
@@ -397,13 +398,13 @@ export default {
         this.formData = pr.data.rePerformanceReview;
         const res = await createPerformanceReviewItem({item})
         if(res.code == 0){
+            this.isDisable=false;
             this.$message({ type: 'success', message: "添加成功" })
             const sum =  Number(this.formData.score) + Number(row.evaluationKpis.kpiScore)
             updatePerformanceReviewByInfo({...this.formData,score:Number(sum)})
             const res = await getPerformanceReviewItemListById({ PRId: this.formData.ID });
             this.performanceReviewItemData = res.data.list;
         }
-        this.getTableData()
       },
       filterDict(status){
         const re = this.dictList.filter(item=>{
@@ -519,17 +520,20 @@ export default {
       this.prItemDialog = false;
     },
     closeKpiDialog(){
+      this.getTableData()
       this.kpiDialog = false;
     },
     async deletePerformanceReview(row) {
-      this.visible = false;
+      this.isDisable=true;
       const res = await deletePerformanceReview({ ID: row.ID });
       deletePerformanceReviewItem({ PRId: row.ID })
+      this.visible = false;
       if (res.code == 0) {
         this.$message({
           type: "success",
           message: "删除成功"
         });
+        this.isDisable=false
         this.getTableData();
       }
     },
@@ -612,10 +616,10 @@ export default {
     },
     //删除考核表中的指标
     async deletePRI(row){
-      this.visible = false;
       this.isDisable = true;
       const res = await deletePRItemById({ ID: row.ID });
       if (res.code == 0) {
+        row.visible = false;
         this.$message({
           type: "success",
           message: "删除成功"

@@ -10,7 +10,7 @@
             <p>确定要清空吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button @click="deleteVisible = false" size="mini" type="text">取消</el-button>
-                <el-button @click="removeEvaluationKpiByIds" size="mini" type="primary">确定</el-button>
+                <el-button @click="removeEvaluationKpiByIds" size="mini" type="primary" :disabled="isDisable">确定</el-button>
               </div>
             <el-button icon="el-icon-delete" size="mini" slot="reference" type="danger">批量移除</el-button>
           </el-popover>
@@ -119,7 +119,7 @@
     </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加">添加</el-button>
+          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -259,15 +259,15 @@ export default {
       return userId
     },
     async kpiDataEnter(row){
-        this.loading=true
+        this.isDisable=true;
         const res = await createEvaluationKpi({
         KpiScore: Number(row.evaluationKpis.kpiScore),
         EvaluationId: this.row.ID,
         KpiId: row.ID,
         UserId: Number(row.userId),
           })
+        this.isDisable=false
           if(res.code == 0){
-              this.loading=false
               this.$message({ type: 'success', message: "添加成功" })
           }
           this.setTotalScore()
@@ -366,8 +366,8 @@ export default {
       //      users: []
       //   });
       //删除方案中的指标
-      row.visible = false;
       this.isDisable=true;
+      row.visible = false;
       removeEvaluationKpi({
         ID: Number(row.ID)
         });
@@ -387,6 +387,7 @@ export default {
       this.isDisable=false
     },
     async removeEvaluationKpiByIds(){
+      this.isDisable=true;
       const ids = []
         if(this.multipleSelection.length == 0){
           this.$message({
@@ -400,6 +401,8 @@ export default {
             ids.push(item.ID)
           })
         const res = await removeEvaluationKpiByIds({ ids })
+        this.deleteVisible = false
+        this.isDisable=false
         if (res.code == 0) {
           //拿本方案的总分一次次减去选中的分数
           const ref = await findEvaluation({ID:Number(this.row.ID)})
@@ -415,7 +418,6 @@ export default {
             message: '删除成功'
           })
           this.refreshEvalutationKpi()
-          this.deleteVisible = false
         }
     },
   },

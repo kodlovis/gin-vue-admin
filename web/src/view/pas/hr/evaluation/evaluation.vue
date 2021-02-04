@@ -215,6 +215,7 @@ export default {
           }
       },
       async onDelete() {
+        this.deleteVisible = false
         const ids = []
         if(this.multipleSelection.length == 0){
           this.$message({
@@ -233,7 +234,6 @@ export default {
             type: 'success',
             message: '删除成功'
           })
-          this.deleteVisible = false
           this.getTableData()
         }
       },
