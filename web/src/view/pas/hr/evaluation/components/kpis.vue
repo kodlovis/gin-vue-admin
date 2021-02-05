@@ -84,7 +84,7 @@
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
-    z
+
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right"
      >
     <el-table
@@ -148,7 +148,8 @@ import {
     createEvaluationKpi,
     removeEvaluationKpi,
     removeEvaluationKpiByIds,
-    getEvaluationKpiById
+    getEvaluationKpiById,
+    updateEvaluationKpi
 } from "@/api/pas/evaluationKpi";
 import {
     getUserList,
@@ -158,7 +159,8 @@ import {
 } from "@/api/pas/evaluationKpiUser";
 import {
     updateEvaluationByInfo,
-    findEvaluation
+    findEvaluation,
+    updateEvaluation
 } from "@/api/pas/evaluation";
 import{
     getUserListByAuthorityId
@@ -253,16 +255,33 @@ export default {
   },
   methods: {
     async userDataEnter(row){
-      createEKU({
+      const res = await createEKU({
         ekid:Number(this.kpiList.ID),
         score:Number(row.score),
         userId:row.ID,
       })
+      if(res.code == 0){
+      //计算更新当条指标分数
+      var num = Number(row.score)+Number(this.kpiList.kpiScore)
+      updateEvaluationKpi({...this.kpiList,
+        ID: Number(this.kpiList.ID),
+        kpiScore: num,
+        })
+      //计算更新当条方案分数
+      var total = Number(this.kpiList.evaluation.score)+Number(row.score)
+      this.KpiData = this.kpiList.evaluation
+      updateEvaluation({...this.KpiData,score:total})
+        this.$message({
+          type:"success",
+          message:"添加成功"
+        })
+        this.refreshEvalutationKpi()
+      }
     },
     async openUserDialog(row) {
         const res = await getUserListByAuthorityId({authorityId:"10000"})
         this.userData = res.data.list
-        this.kpiList.ID=row.ID
+        this.kpiList={...row,ID:row.ID,kpiScore:row.kpiScore}
         this.userDialog = true
       },
     async openDialog() {

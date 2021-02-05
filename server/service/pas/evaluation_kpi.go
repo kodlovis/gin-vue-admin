@@ -74,3 +74,8 @@ func GetEvaluationKpiById(id uint, info rp.EvaluationKpiSearch) (err error, list
 	err = db.Preload("EvaluationKpiUsers").Preload("Kpis").Find(&EvaluationKpis).Error
 	return err, EvaluationKpis, total
 }
+
+func UpdateEvaluationKpi(EvaluationKpi *mp.EvaluationKpi) (err error) {
+	err = global.GVA_DB.Save(EvaluationKpi).Error
+	return err
+}

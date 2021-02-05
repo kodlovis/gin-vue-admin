@@ -87,3 +87,14 @@ func GetEvaluationKpiById(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+
+func UpdateEvaluationKpi(c *gin.Context) {
+	var EvaluationKpi mp.EvaluationKpi
+	_ = c.ShouldBindJSON(&EvaluationKpi)
+	if err := sp.UpdateEvaluationKpi(&EvaluationKpi); err != nil {
+        global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}

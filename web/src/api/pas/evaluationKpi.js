@@ -54,3 +54,10 @@ export const getEvaluationKpiById = (data) => {
         data
     })
 }
+export const updateEvaluationKpi = (data) => {
+    return service({
+        url: "/EvaluationKpi/updateEvaluationKpi",
+        method: 'PUT',
+        data
+    })
+}

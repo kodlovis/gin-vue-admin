@@ -15,5 +15,7 @@ func InitEvaluationKpiRouter(Router *gin.RouterGroup) {
 		EvaluationKpiRouter.DELETE("removeEvaluationKpi", pas.RemoveEvaluationKpi) // 删除Kpi
 		EvaluationKpiRouter.DELETE("removeEvaluationKpiByIds", pas.RemoveEvaluationKpiByIds) 
 		EvaluationKpiRouter.POST("getEvaluationKpiById", pas.GetEvaluationKpiById) 
+		EvaluationKpiRouter.PUT("updateEvaluationKpi", pas.UpdateEvaluationKpi) 
+		
 	}
 }
