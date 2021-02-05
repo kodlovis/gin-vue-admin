@@ -8,11 +8,10 @@ import service from '@/utils/request'
      })
  }
 
- 
- export const removeEvaluationUsersByIds = (data) => {
+ export const createEKU = (data) => {
     return service({
-        url: "/EvaluationKpiUser/removeEvaluationUsersByIds",
-        method: 'delete',
+        url: "/EvaluationKpiUser/createEKU",
+        method: 'post',
         data
     })
 }

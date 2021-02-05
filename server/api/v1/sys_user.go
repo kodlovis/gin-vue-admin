@@ -8,11 +8,12 @@ import (
 	"gin-vue-admin/model/response"
 	"gin-vue-admin/service"
 	"gin-vue-admin/utils"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"go.uber.org/zap"
-	"time"
 )
 
 // @Tags Base
@@ -282,33 +283,48 @@ func getUserAuthorityId(c *gin.Context) string {
 
 func GetUserByNickName(c *gin.Context) {
 	var pageInfo request.UserSearch
-    _ = c.ShouldBindJSON(&pageInfo)
+	_ = c.ShouldBindJSON(&pageInfo)
 	if err, list, total := service.GetUserByNickName(pageInfo); err != nil {
-        global.GVA_LOG.Error("批量查询失败!", zap.Any("err", err))
+		global.GVA_LOG.Error("批量查询失败!", zap.Any("err", err))
 		response.FailWithMessage("批量查询失败", c)
 	} else {
 		response.OkWithDetailed(response.PageResult{
-            List:     list,
-            Total:    total,
-            Page:     pageInfo.Page,
-            PageSize: pageInfo.PageSize,
-        }, "获取成功", c)
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
 	}
 }
 
 func GetUserByIds(c *gin.Context) {
 	var IDS request.IdsReq
 	var pageInfo request.UserSearch
-    _ = c.ShouldBindJSON(&IDS)
-	if err, list, total := service.GetUserByIds(IDS,pageInfo); err != nil {
-        global.GVA_LOG.Error("批量查询失败!", zap.Any("err", err))
+	_ = c.ShouldBindJSON(&IDS)
+	if err, list, total := service.GetUserByIds(IDS, pageInfo); err != nil {
+		global.GVA_LOG.Error("批量查询失败!", zap.Any("err", err))
 		response.FailWithMessage("批量查询失败", c)
 	} else {
 		response.OkWithDetailed(response.PageResult{
-            List:     list,
-            Total:    total,
-            Page:     pageInfo.Page,
-            PageSize: pageInfo.PageSize,
-        }, "获取成功", c)
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
+	}
+}
+func GetUserListByAuthorityId(c *gin.Context) {
+	var pageInfo request.UserSearch
+	_ = c.ShouldBindJSON(&pageInfo)
+	if err, list, total := service.GetUserListByAuthorityId(pageInfo.AuthorityId, pageInfo); err != nil {
+		global.GVA_LOG.Error("批量查询失败!", zap.Any("err", err))
+		response.FailWithMessage("批量查询失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
 	}
 }

@@ -6,10 +6,10 @@ import (
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
 	"gin-vue-admin/utils"
+
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
-
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: Register
@@ -125,7 +125,7 @@ func FindUserById(id int) (err error, user *model.SysUser) {
 
 func FindUserByUuid(uuid string) (err error, user *model.SysUser) {
 	var u model.SysUser
-	if err = global.GVA_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil{
+	if err = global.GVA_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil {
 		return errors.New("用户不存在"), &u
 	}
 	return nil, &u
@@ -134,21 +134,32 @@ func FindUserByUuid(uuid string) (err error, user *model.SysUser) {
 func GetUserByNickName(info request.UserSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-    // 创建db
-	db := global.GVA_DB.Model(&model.SysUser{}).Where("nick_name in ?",info.NickName)
+	// 创建db
+	db := global.GVA_DB.Model(&model.SysUser{}).Where("nick_name in ?", info.NickName)
 	var Users []model.SysUser
-    // 如果有条件搜索 下方会自动创建搜索语句
+	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Users).Error
 	return err, Users, total
 }
-func GetUserByIds(ids request.IdsReq,info request.UserSearch) (err error, list interface{}, total int64) {
+func GetUserByIds(ids request.IdsReq, info request.UserSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-    // 创建db
-	db := global.GVA_DB.Model(&model.SysUser{}).Where("id in ?",ids.Ids)
+	// 创建db
+	db := global.GVA_DB.Model(&model.SysUser{}).Where("id in ?", ids.Ids)
 	var Users []model.SysUser
-    // 如果有条件搜索 下方会自动创建搜索语句
+	// 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&Users).Error
+	return err, Users, total
+}
+func GetUserListByAuthorityId(id string, info request.UserSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	// 创建db
+	db := global.GVA_DB.Model(&model.SysUser{}).Where("authority_id = ?", id)
+	var Users []model.SysUser
+	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Users).Error
 	return err, Users, total

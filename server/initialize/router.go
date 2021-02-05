@@ -6,10 +6,11 @@ import (
 	"gin-vue-admin/middleware"
 	"gin-vue-admin/router"
 	"gin-vue-admin/router/pas"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"net/http"
 )
 
 // 初始化总路由
@@ -48,13 +49,9 @@ func Routers() *gin.Engine {
 	pas.InitPerformanceReviewRouter(ApiGroup)
 	pas.InitPerformanceReviewItemRouter(ApiGroup)
 	pas.InitEvaluationRouter(ApiGroup)
-	pas.InitEvaluationFormRouter(ApiGroup)
 	pas.InitEvaluationKpiRouter(ApiGroup)
 	pas.InitKpiTagRouter(ApiGroup)
-	
-	
-	
-	
+	pas.InitEvaluationKpiUserRouter(ApiGroup)
 
 	global.GVA_LOG.Info("router register success")
 	return Router

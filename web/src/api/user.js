@@ -127,3 +127,11 @@ export const getUserByIds = (data) => {
         data
     })
 }
+
+export const getUserListByAuthorityId = (data) => {
+    return service({
+        url: "/user/getUserListByAuthorityId",
+        method: 'post',
+        data
+    })
+}

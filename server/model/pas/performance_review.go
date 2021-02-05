@@ -26,5 +26,5 @@ type PerformanceReview struct {
 }
 
 func (PerformanceReview) TableName() string {
-	return "performanceReview"
+	return "performance_review"
 }

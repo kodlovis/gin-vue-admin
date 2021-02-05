@@ -53,7 +53,11 @@
     
     <el-table-column label="指标分数" prop="kpiScore" width="80"></el-table-column>
     
-    <el-table-column label="评分人" prop="user.nickName" width="230">
+    <el-table-column label="评分人" width="230">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.evaluationKpiUsers"
+        :key="index">{{item.user.nickName}}<br/></span>
+      </template>
     </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
@@ -64,6 +68,7 @@
                 <el-button type="primary" size="mini" @click="removeKpi(scope.row)" :disabled="isDisable">确定</el-button>
               </div>
               <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" label="移除指标">移除指标</el-button>
+              <el-button @click="openUserDialog(scope.row)" type="primary" size="mini" slot="reference" label="添加评分人" :disabled="isDisable">添加评分人</el-button>
             </el-popover>
         </template>
       </el-table-column>
@@ -79,7 +84,7 @@
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
-
+    z
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right"
      >
     <el-table
@@ -99,27 +104,34 @@
     
     <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
 
-     <el-table-column label="设置指标分数">
-      <template slot-scope="scope">
-          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
-      </template>
-    </el-table-column>
-    <el-table-column label="设置评分人" width="230">
-      <template slot-scope="scope">
-          <el-cascader
-            @change="(val)=>{handleOptionChange(val,scope.row)}"
-            v-model="scope.row.userId"
-            :options="userOptions"
-            :rules="rules"
-            clearable
-            :props="{ checkStrictly: true,label:'nickName',value:'id',}"
-            filterable
-          ></el-cascader>
-      </template>
+      <el-table-column label="按钮组">
+        <template slot-scope="scope">
+          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>>
+        </template>
+      </el-table-column>
+    </el-table>
+    </el-dialog>
+
+    <el-dialog :before-close="closeUserDialog" :visible.sync="userDialog" title="添加评分人" :append-to-body="true" style="width: 50%,marigin:right"
+     >
+    <el-table
+      :data="userData"
+      @selection-change="handleSelectionChange"
+      border
+      ref="multipleTable"
+      stripe
+      style="width: 100%"
+      tooltip-effect="dark"
+    >
+    <el-table-column label="评分人" prop="nickName" width="120"></el-table-column> 
+    <el-table-column label="设置指标分数">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
+        </template>
     </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>
+          <el-button @click="userDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -133,7 +145,6 @@ import {
     getKpiEvaluation,
 } from "@/api/pas/kpi";  //  此处请自行替换地址
 import {
-    setUserEvaluation,
     createEvaluationKpi,
     removeEvaluationKpi,
     removeEvaluationKpiByIds,
@@ -141,15 +152,17 @@ import {
 } from "@/api/pas/evaluationKpi";
 import {
     getUserList,
-    getUserByIds
 } from "@/api/user";
 import {
-    findEvaluationKpiUser,
+    createEKU,
 } from "@/api/pas/evaluationKpiUser";
 import {
     updateEvaluationByInfo,
     findEvaluation
 } from "@/api/pas/evaluation";
+import{
+    getUserListByAuthorityId
+} from "@/api/user";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -167,6 +180,7 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
+      userDialog: false,
       visible: false,
       loading: false,
       ids:[],
@@ -182,9 +196,11 @@ export default {
         totalScore:"",
       },
       KpiData: {
-        user:{
-          nickName:"",
-        }
+        evaluationKpiUsers:[{
+          user:{
+            nickName:"",
+          }
+        }]
       },
       kpiList:{
             name:"",
@@ -193,6 +209,11 @@ export default {
             kpiScore:"",
             userId:"",
             evaluationKpis:{
+              evaluationKpiUsers:[{
+                user:{
+                  nickName:"",
+                }
+              }],
               kpiScore:"",
               evaluation_id:"",
               kpi_id:"",
@@ -200,6 +221,10 @@ export default {
       },
       evaluationData:{
             score: "",
+      },
+      userData:{
+        nickName:"",
+        score:"",
       },
       rules: {
         id: [
@@ -227,6 +252,19 @@ export default {
     }
   },
   methods: {
+    async userDataEnter(row){
+      createEKU({
+        ekid:Number(this.kpiList.ID),
+        score:Number(row.score),
+        userId:row.ID,
+      })
+    },
+    async openUserDialog(row) {
+        const res = await getUserListByAuthorityId({authorityId:"10000"})
+        this.userData = res.data.list
+        this.kpiList.ID=row.ID
+        this.userDialog = true
+      },
     async openDialog() {
         const life = await getKpiList({ID:Number(this.row.ID)});
         this.kpiList = life.data.list;
@@ -261,16 +299,13 @@ export default {
     async kpiDataEnter(row){
         this.isDisable=true;
         const res = await createEvaluationKpi({
-        KpiScore: Number(row.evaluationKpis.kpiScore),
         EvaluationId: this.row.ID,
         KpiId: row.ID,
-        UserId: Number(row.userId),
           })
         this.isDisable=false
           if(res.code == 0){
               this.$message({ type: 'success', message: "添加成功" })
           }
-          this.setTotalScore()
       },
     async refreshEvalutationKpi(page = this.page, pageSize = this.pageSize){
       const ref = await getKpiEvaluation({
@@ -311,6 +346,9 @@ export default {
           tags: 1,
       };
     },
+    closeUserDialog() {
+      this.userDialog = false;
+    },
     
     setOptions(userData) {
       this.userOptions = [];
@@ -341,23 +379,23 @@ export default {
           //}
         });
     },
-    async changeUser(evaluationKpiId) {
-      const ids = [];
-      this.multipleOption &&
-          this.multipleOption.map(item => {
-            ids.push(Number(item))
-          })
-      const checkArr = await getUserByIds({ ids })
-      const res = await setUserEvaluation({
-        id: evaluationKpiId,
-        user: checkArr.data.list
-      });
-      if (res.code == 0) {
-        findEvaluationKpiUser({evaluationkpiUserId:evaluationKpiId})
-        this.refreshEvalutationKpi()
-        this.$message({ type: "success", message: "角色设置成功" });
-      }
-    },
+    // async changeUser(evaluationKpiId) {
+    //   const ids = [];
+    //   this.multipleOption &&
+    //       this.multipleOption.map(item => {
+    //         ids.push(Number(item))
+    //       })
+    //   const checkArr = await getUserByIds({ ids })
+    //   const res = await setUserEvaluation({
+    //     id: evaluationKpiId,
+    //     user: checkArr.data.list
+    //   });
+    //   if (res.code == 0) {
+    //     findEvaluationKpiUser({evaluationkpiUserId:evaluationKpiId})
+    //     this.refreshEvalutationKpi()
+    //     this.$message({ type: "success", message: "角色设置成功" });
+    //   }
+    // },
     
     async removeKpi(row) {
       // if (row.Users!=null) {

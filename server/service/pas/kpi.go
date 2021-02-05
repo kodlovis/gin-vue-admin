@@ -144,7 +144,7 @@ func GetKpiEvaluation(info rp.KpiSearch) (err error, list interface{}, total int
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Evaluations).Error
-	err = db.Preload("Kpis").Preload("User").Preload("Evaluation").Find(&Evaluations).Error
+	err = db.Preload("Kpis").Preload("EvaluationKpiUsers.User").Preload("Evaluation").Find(&Evaluations).Error
 	return err, Evaluations, total
 }
 
