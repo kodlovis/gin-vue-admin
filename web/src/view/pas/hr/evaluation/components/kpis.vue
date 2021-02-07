@@ -67,8 +67,8 @@
                 <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
                 <el-button type="primary" size="mini" @click="removeKpi(scope.row)" :disabled="isDisable">确定</el-button>
               </div>
-              <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" label="移除指标">移除指标</el-button>
-              <el-button @click="openUserDialog(scope.row)" type="primary" size="mini" slot="reference" label="添加评分人" :disabled="isDisable">添加评分人</el-button>
+              <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" label="移除指标" :disabled="isDisable">移除指标</el-button>
+              <el-button @click="openUserDialog(scope.row)" type="primary" size="mini" slot="reference" label="修改权重">修改权重</el-button>
             </el-popover>
         </template>
       </el-table-column>
@@ -103,19 +103,36 @@
     <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
     
     <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
-
+    <el-table-column label="设置指标分数">
+      <template slot-scope="scope">
+          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="设置评分人" width="230">
+      <template slot-scope="scope">
+          <el-cascader
+            @change="(val)=>{handleOptionChange(val,scope.row)}"
+            v-model="scope.row.userId"
+            :options="userOptions"
+            :rules="rules"
+            clearable
+            :props="{ checkStrictly: true,label:'nickName',value:'id',multiple: true }"
+            filterable
+          ></el-cascader>
+      </template>
+    </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>>
+          <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
     </el-dialog>
 
-    <el-dialog :before-close="closeUserDialog" :visible.sync="userDialog" title="添加评分人" :append-to-body="true" style="width: 50%,marigin:right"
+    <el-dialog :before-close="closeUserDialog" :visible.sync="userDialog" title="修改权重" :append-to-body="true" style="width: 50%,marigin:right"
      >
     <el-table
-      :data="userData"
+      :data="ekuData"
       @selection-change="handleSelectionChange"
       border
       ref="multipleTable"
@@ -123,7 +140,9 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
-    <el-table-column label="评分人" prop="nickName" width="120"></el-table-column> 
+    <el-table-column label="评分人" prop="user.nickName" width="120">
+    </el-table-column> 
+
     <el-table-column label="设置指标分数">
         <template slot-scope="scope">
           <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
@@ -131,7 +150,7 @@
     </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="userDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>
+          <el-button @click="userDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="修改" :disabled="isDisable">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -148,23 +167,21 @@ import {
     createEvaluationKpi,
     removeEvaluationKpi,
     removeEvaluationKpiByIds,
-    getEvaluationKpiById,
-    updateEvaluationKpi
+    getLastEvaluationKpi
 } from "@/api/pas/evaluationKpi";
 import {
     getUserList,
 } from "@/api/user";
 import {
     createEKU,
+    getEKUByEKID,
+    updateEKU
 } from "@/api/pas/evaluationKpiUser";
 import {
     updateEvaluationByInfo,
     findEvaluation,
     updateEvaluation
 } from "@/api/pas/evaluation";
-import{
-    getUserListByAuthorityId
-} from "@/api/user";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
@@ -224,8 +241,13 @@ export default {
       evaluationData:{
             score: "",
       },
-      userData:{
+      ekData:{
+
+      },
+      ekuData:{
+        user:{
         nickName:"",
+        },
         score:"",
       },
       rules: {
@@ -255,33 +277,23 @@ export default {
   },
   methods: {
     async userDataEnter(row){
-      const res = await createEKU({
-        ekid:Number(this.kpiList.ID),
+      this.isDisable=true;
+      const ref = await updateEKU({...row,
         score:Number(row.score),
-        userId:row.ID,
       })
-      if(res.code == 0){
-      //计算更新当条指标分数
-      var num = Number(row.score)+Number(this.kpiList.kpiScore)
-      updateEvaluationKpi({...this.kpiList,
-        ID: Number(this.kpiList.ID),
-        kpiScore: num,
-        })
-      //计算更新当条方案分数
-      var total = Number(this.kpiList.evaluation.score)+Number(row.score)
-      this.KpiData = this.kpiList.evaluation
-      updateEvaluation({...this.KpiData,score:total})
-        this.$message({
-          type:"success",
-          message:"添加成功"
-        })
-        this.refreshEvalutationKpi()
-      }
+        if (ref.code == 0) {
+          this.$message({
+            type:"success",
+            message:"添加成功"
+          })
+          this.isDisable=false;
+          const res = await getEKUByEKID({ekid:row.ekid,authorityId:"10000"})
+          this.ekuData = res.data.list
+        }
     },
     async openUserDialog(row) {
-        const res = await getUserListByAuthorityId({authorityId:"10000"})
-        this.userData = res.data.list
-        this.kpiList={...row,ID:row.ID,kpiScore:row.kpiScore}
+        const res = await getEKUByEKID({ekid:row.ID,authorityId:"10000"})
+        this.ekuData = res.data.list
         this.userDialog = true
       },
     async openDialog() {
@@ -318,12 +330,35 @@ export default {
     async kpiDataEnter(row){
         this.isDisable=true;
         const res = await createEvaluationKpi({
-        EvaluationId: this.row.ID,
-        KpiId: row.ID,
-          })
-        this.isDisable=false
+          EvaluationId: this.row.ID,
+          KpiId: row.ID,
+          kpiScore:Number(row.evaluationKpis.kpiScore),
+        })
           if(res.code == 0){
+          var ek = await getLastEvaluationKpi()
+          this.KpiData = ek.data.reEK
+          var items= []
+          for (let i = 0; i < row.userId.length; i++) {
+            items.push({
+              userId:Number(row.userId[i]),
+              ekid:Number(this.KpiData.ID),
+              score:Number((Number(1)/Number(row.userId.length)).toFixed(5)),   
+            })
+          }
+            if(ek.code == 0){
+              createEKU({
+                items:items
+              })
+            this.isDisable=false
+            //计算更新当条方案分数
+            var total = Number(this.KpiData.evaluation.score)+Number(row.evaluationKpis.kpiScore)
+            this.KpiData = this.KpiData.evaluation
+            const ud = await updateEvaluation({...this.KpiData,score:total})
+            if(ud.code == 0){
+              this.refreshEvalutationKpi(),
               this.$message({ type: 'success', message: "添加成功" })
+              }
+            }
           }
       },
     async refreshEvalutationKpi(page = this.page, pageSize = this.pageSize){
@@ -428,7 +463,6 @@ export default {
       removeEvaluationKpi({
         ID: Number(row.ID)
         });
-      getEvaluationKpiById({ID:Number(row.ID)});
         const ref = await findEvaluation({ID:Number(this.row.ID)})
         if (ref.code == 0) {
           this.evaluationData = ref.data.reEvaluation;

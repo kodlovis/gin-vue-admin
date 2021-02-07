@@ -61,3 +61,19 @@ export const updateEvaluationKpi = (data) => {
         data
     })
 }
+
+export const getLastEvaluationKpi = (params) => {
+    return service({
+        url: "/EvaluationKpi/getLastEvaluationKpi",
+        method: 'get',
+        params
+    })
+}
+
+export const getEvaluationKpi = (params) => {
+    return service({
+        url: "/EvaluationKpi/getEvaluationKpi",
+        method: 'get',
+        params
+    })
+}

@@ -98,3 +98,24 @@ func UpdateEvaluationKpi(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
+
+func GetLastEvaluationKpi(c *gin.Context) {
+	var EvaluationKpi mp.EvaluationKpi
+	_ = c.ShouldBindQuery(&EvaluationKpi)
+	if err, reEK := sp.GetLastEvaluationKpi(); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"reEK": reEK}, c)
+	}
+}
+func GetEvaluationKpi(c *gin.Context) {
+	var EvaluationKpi mp.EvaluationKpi
+	_ = c.ShouldBindQuery(&EvaluationKpi)
+	if err, reEK := sp.GetEvaluationKpi(EvaluationKpi.ID); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"reEK": reEK}, c)
+	}
+}

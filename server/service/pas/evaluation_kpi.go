@@ -53,11 +53,13 @@ func CreateEvaluationKpi(EvaluationKpi mp.EvaluationKpi) (err error) {
 
 func RemoveEvaluationKpi(ID uint) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.EvaluationKpi{}, "id = ?", ID).Error
+	err = global.GVA_DB.Delete(&[]mp.EvaluationKpiUser{}, "ek_id = ?", ID).Error
 	return err
 }
 
 func RemoveEvaluationKpiByIds(ids rp.IdsReq) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.EvaluationKpi{}, "id in ?", ids.Ids).Error
+	err = global.GVA_DB.Delete(&[]mp.EvaluationKpiUser{}, "ek_id in ?", ids.Ids).Error
 	//global.GVA_DB.Delete(&[]mp.EvaluationKpiUser{},"evaluation_kpi_id in ?",ids.Ids)
 	return err
 }
@@ -78,4 +80,13 @@ func GetEvaluationKpiById(id uint, info rp.EvaluationKpiSearch) (err error, list
 func UpdateEvaluationKpi(EvaluationKpi *mp.EvaluationKpi) (err error) {
 	err = global.GVA_DB.Save(EvaluationKpi).Error
 	return err
+}
+
+func GetLastEvaluationKpi() (err error, EvaluationKpi mp.EvaluationKpi) {
+	err = global.GVA_DB.Preload("Evaluation").Last(&EvaluationKpi).Error
+	return
+}
+func GetEvaluationKpi(id uint) (err error, EvaluationKpi mp.EvaluationKpi) {
+	err = global.GVA_DB.Where("id = ?", id).Preload("Evaluation").First(&EvaluationKpi).Error
+	return
 }
