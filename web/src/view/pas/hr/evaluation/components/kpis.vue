@@ -59,7 +59,7 @@
         :key="index">{{item.user.nickName}}<br/></span>
       </template>
     </el-table-column>
-      <el-table-column label="按钮组">
+      <el-table-column label="按钮组" width="230">
         <template slot-scope="scope">
           <el-popover placement="top" width="160" v-model="scope.row.visible">
               <p>确定要删除吗？</p>
@@ -68,7 +68,7 @@
                 <el-button type="primary" size="mini" @click="removeKpi(scope.row)" :disabled="isDisable">确定</el-button>
               </div>
               <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" label="移除指标" :disabled="isDisable">移除指标</el-button>
-              <el-button @click="openUserDialog(scope.row)" type="primary" size="mini" slot="reference" label="修改权重">修改权重</el-button>
+              <el-button @click="openRatioDialog(scope.row)" type="primary" size="mini" slot="reference" label="编辑人员权重">编辑人员权重</el-button>
             </el-popover>
         </template>
       </el-table-column>
@@ -129,28 +129,61 @@
     </el-table>
     </el-dialog>
 
-    <el-dialog :before-close="closeUserDialog" :visible.sync="userDialog" title="修改权重" :append-to-body="true" style="width: 50%,marigin:right"
+    <el-dialog :before-close="closeRatioDialog" :visible.sync="ratioDialog" title="编辑人员权重" :append-to-body="true" style="width: 50%,marigin:right"
      >
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-form-item>
+          <el-button @click="openUserDialog" type="primary" size="mini">添加评分人</el-button>
+        </el-form-item>
+      </el-form>
     <el-table
       :data="ekuData"
       @selection-change="handleSelectionChange"
       border
       ref="multipleTable"
       stripe
-      style="width: 100%"
+      style="width: 50%"
       tooltip-effect="dark"
     >
     <el-table-column label="评分人" prop="user.nickName" width="120">
     </el-table-column> 
 
-    <el-table-column label="设置指标分数">
+    <el-table-column label="设置权重">
         <template slot-scope="scope">
           <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
         </template>
     </el-table-column>
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button @click="userDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="修改" :disabled="isDisable">修改</el-button>
+          <el-button @click="changeRatioData(scope.row)" type="primary" size="mini" slot="reference" label="修改" :disabled="isDisable">修改</el-button>
+          <el-popover placement="top" width="160" v-model="scope.row.visible">
+              <p>确定要删除吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="removeUser(scope.row)" :disabled="isDisable">确定</el-button>
+              </div>
+              <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" label="移除评分人" :disabled="isDisable">移除评分人</el-button>
+            </el-popover>
+        </template>
+      </el-table-column>
+    </el-table>
+    </el-dialog>
+    <el-dialog :before-close="closeUserDialog" :visible.sync="userDialog" title="增加评分人" :append-to-body="true" style="width: 50%,marigin:right"
+     >
+    <el-table
+      :data="userData"
+      @selection-change="handleSelectionChange"
+      border
+      ref="multipleTable"
+      stripe
+      style="width: 50%"
+      tooltip-effect="dark"
+    >
+    <el-table-column label="评分人" prop="nickName" width="120">
+    </el-table-column> 
+      <el-table-column label="按钮组">
+        <template slot-scope="scope">
+          <el-button @click="userDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="增加" :disabled="isDisable">增加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -171,11 +204,13 @@ import {
 } from "@/api/pas/evaluationKpi";
 import {
     getUserList,
+    getUserListByAuthorityId
 } from "@/api/user";
 import {
     createEKU,
     getEKUByEKID,
-    updateEKU
+    updateEKU,
+    removeEKU
 } from "@/api/pas/evaluationKpiUser";
 import {
     updateEvaluationByInfo,
@@ -199,6 +234,7 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
+      ratioDialog: false,
       userDialog: false,
       visible: false,
       loading: false,
@@ -220,6 +256,9 @@ export default {
             nickName:"",
           }
         }]
+      },
+      saveData:{
+        ekid:0,
       },
       kpiList:{
             name:"",
@@ -277,7 +316,33 @@ export default {
   },
   methods: {
     async userDataEnter(row){
+      var items=[{
+        ekid:this.saveData.ekid,
+        userid:row.ID,
+        score:Number((Number(1)/Number(this.ekuData.length+1)).toFixed(5))
+      }]
+      const ref = await createEKU({
+        items:items
+      })
+      if(ref.code == 0){
+        const res = await getEKUByEKID({ekid:this.saveData.ekid,authorityId:"10000"})
+        this.ekuData = res.data.list
+        this.$message({
+          type:"success",
+          message:"添加成功"
+        })
+      }
+    },
+    async changeRatioData(row){
       this.isDisable=true;
+      if(row.score<=0||row.score>1){
+        this.$message({
+          type:"success",
+          message:"无效输入"
+        })
+          this.isDisable=false;
+          return
+        }
       const ref = await updateEKU({...row,
         score:Number(row.score),
       })
@@ -291,11 +356,17 @@ export default {
           this.ekuData = res.data.list
         }
     },
-    async openUserDialog(row) {
+    async openRatioDialog(row) {
         const res = await getEKUByEKID({ekid:row.ID,authorityId:"10000"})
         this.ekuData = res.data.list
-        this.userDialog = true
+        this.saveData.ekid=row.ID
+        this.ratioDialog = true
       },
+    async openUserDialog(){
+        const res = await getUserListByAuthorityId({authorityId:"10000"})
+        this.userData = res.data.list
+        this.userDialog = true
+    },
     async openDialog() {
         const life = await getKpiList({ID:Number(this.row.ID)});
         this.kpiList = life.data.list;
@@ -400,8 +471,12 @@ export default {
           tags: 1,
       };
     },
+    closeRatioDialog() {
+      this.ratioDialog = false;
+    },
     closeUserDialog() {
       this.userDialog = false;
+      this.refreshEvalutationKpi()
     },
     
     setOptions(userData) {
@@ -476,6 +551,20 @@ export default {
           message: "移除成功"
         });
       this.isDisable=false
+    },
+    async removeUser(row){
+      this.isDisable=true;
+      row.visible = false;
+      const ref = await removeEKU({ID:row.id,ekid:row.ekid})
+      if(ref.code ==0){
+        this.$message({
+          type: "success",
+          message: "移除成功"
+        });
+        this.isDisable=false;
+        const res = await getEKUByEKID({ekid:row.ekid,authorityId:"10000"})
+        this.ekuData = res.data.list
+      }
     },
     async removeEvaluationKpiByIds(){
       this.isDisable=true;

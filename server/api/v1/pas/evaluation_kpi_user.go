@@ -49,3 +49,14 @@ func UpdateEKU(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
+
+func RemoveEKU(c *gin.Context) {
+	var EvaluationKpiUser mp.EvaluationKpiUser
+	_ = c.ShouldBindJSON(&EvaluationKpiUser)
+	if err := sp.RemoveEKU(EvaluationKpiUser.ID,EvaluationKpiUser.EKID); err != nil {
+		global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
+		response.FailWithMessage("删除失败", c)
+	} else {
+		response.OkWithMessage("删除成功", c)
+	}
+}

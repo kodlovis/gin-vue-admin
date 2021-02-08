@@ -25,7 +25,15 @@ export const getEKUByEKID = (data) => {
 export const updateEKU = (data) => {
     return service({
         url: "/EvaluationKpiUser/updateEKU",
-        method: 'PUT',
+        method: 'put',
+        data
+    })
+}
+
+export const removeEKU = (data) => {
+    return service({
+        url: "/EvaluationKpiUser/removeEKU",
+        method: 'delete',
         data
     })
 }
