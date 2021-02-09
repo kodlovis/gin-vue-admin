@@ -12,7 +12,7 @@ import (
 func GetLastPRICreatePRIU(c *gin.Context) {
 	var res rp.PerformanceReviewItemUserSearch
 	_ = c.ShouldBindJSON(&res)
-	if err := sp.GetLastPRICreatePRIU(res.EKUID); err != nil {
+	if err := sp.GetLastPRICreatePRIU(res.EKUID,res.PRID); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
 		response.FailWithMessage("创建失败", c)
 	} else {

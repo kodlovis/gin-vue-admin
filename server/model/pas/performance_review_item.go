@@ -13,7 +13,7 @@ type PerformanceReviewItem struct {
 	Score   float64           `json:"score" form:"score" gorm:"column:score;comment:更改后的分数"`
 	//User    model.SysUser     `json:"user" gorm:"foreignKey:ID;References:UserId;AssociationForeignKey:UserId;"`
 	PRs     PerformanceReview `json:"prs" gorm:"foreignKey:ID;References:PRId;AssociationForeignKey:PRId;"`
-	PRIUs []PerformanceReviewItemUser `json:"performanceReviewItemUser" gorm:"ForeignKey:PRIID;AssociationForeignKey:ID;References:id"`
+	PRIUs []PerformanceReviewItemUser `json:"PRIUs" gorm:"ForeignKey:PRIID;AssociationForeignKey:ID;References:id"`
 }
 
 func (PerformanceReviewItem) TableName() string {

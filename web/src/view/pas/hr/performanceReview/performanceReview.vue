@@ -181,16 +181,10 @@
         </template>
       </el-table-column> 
       <el-table-column label="评分人" width="230">
-        <template slot-scope="scope">
-            <el-cascader
-              @change="(val)=>{handleOptionChange(val,scope.row)}"
-              v-model="scope.row.user.ID"
-              :options="userOptions"
-              clearable
-              :props="{ checkStrictly: true,label:'nickName',value:'id',}"
-              filterable
-            ></el-cascader>
-        </template>
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.PRIUs"
+        :key="index">{{item.user.nickName}}<br/></span>
+      </template>
       </el-table-column>
         <el-table-column label="按钮组">
           <template slot-scope="scope">
@@ -599,6 +593,7 @@ export default {
         if (re.code == 0) {
           getLastPRICreatePRIU({
             ekuid:Number(this.formData.evaluationId),
+            prid:Number(this.formData.ID)
           })
         }
           break;
