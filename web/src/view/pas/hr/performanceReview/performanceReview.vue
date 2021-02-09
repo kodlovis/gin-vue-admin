@@ -265,7 +265,10 @@ import {
     updatePerformanceReviewByInfo,
     getLastPerformanceReview,
     updatePRStatysByIds
-} from "@/api/pas/performanceReview";  //  此处请自行替换地址
+} from "@/api/pas/performanceReview";
+import {
+    getLastPRICreatePRIU
+} from "@/api/pas/performanceReviewItemUser";
 import {
     getEvaluationList,
     findEvaluation
@@ -587,12 +590,17 @@ export default {
             item.push({
               score:Number(this.evaluationKpiData[i].kpiScore),
               kpiId:Number(this.evaluationKpiData[i].kpiId),
-              userId:Number(this.evaluationKpiData[i].userId),
+              //userId:Number(this.evaluationKpiData[i].userId),
               PRId:Number(this.formData.ID),
               status:100,
-              })
-          } 
-        createPerformanceReviewItem({item})
+            })
+          }
+        var re =await createPerformanceReviewItem({item})
+        if (re.code == 0) {
+          getLastPRICreatePRIU({
+            ekuid:Number(this.formData.evaluationId),
+          })
+        }
           break;
         case "update":
           res = await updatePerformanceReviewByInfo({...this.formData,

@@ -15,15 +15,29 @@ func CreatePerformanceReviewItem(list []pas.PerformanceReviewItem) (err error) {
 }
 
 func DeletePerformanceReviewItem(PerformanceReviewItem mp.PerformanceReviewItem) (err error) {
+	var PRI []mp.PerformanceReviewItem
+	err = global.GVA_DB.Where("pr_id = ?", PerformanceReviewItem.PRId).Find(&PRI).Error
+	for i := 0; i < len(PRI); i++ {
+		err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItemUser{}, "pri_id = ?", PRI[i].ID).Error
+	}
 	err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItem{}, "pr_id = ?", PerformanceReviewItem.PRId).Error
 	return err
 }
 func DeletePRItemById(PerformanceReviewItem mp.PerformanceReviewItem) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItem{}, "id = ?", PerformanceReviewItem.ID).Error
+	err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItemUser{}, "pri_id = ?", PerformanceReviewItem.ID).Error
 	return err
 }
 
 func DeletePerformanceReviewItemByIds(ids rp.IdsReq) (err error) {
+	var PRI []mp.PerformanceReviewItem
+	for i := 0; i < len(ids.Ids); i++ {
+		err = global.GVA_DB.Where("pr_id = ?", ids.Ids[i]).Find(&PRI).Error
+		for j := 0; j < len(PRI); j++ {
+			err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItemUser{}, "pri_id = ?", PRI[j].ID).Error
+		}
+		
+	}
 	err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItem{}, "pr_id in ?", ids.Ids).Error
 	return err
 }
@@ -37,13 +51,13 @@ func GetPerformanceReviewItemListById(id uint, info rp.PerformanceReviewItemSear
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
-	err = db.Preload("User").Preload("Kpi").Preload("Kpi.Tags").Find(&PerformanceReviewItems).Error
+	err = db.Preload("Kpi").Preload("Kpi.Tags").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
 
-func UpdatePerformanceReviewItemByInfo(id uint, score float64, uid uint, status uint) (err error) {
+func UpdatePerformanceReviewItemByInfo(id uint, score float64, status uint) (err error) {
 	var PerformanceReviewItem mp.PerformanceReviewItem
-	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("score", "user_id", "status").Updates(map[string]interface{}{"score": score, "user_id": uid, "status": status}).Error
+	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("score", "status").Updates(map[string]interface{}{"score": score,  "status": status}).Error
 	return err
 }
 
@@ -56,13 +70,13 @@ func GetPRItemListByUser(id uint, status uint, info rp.PerformanceReviewItemSear
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
-	err = db.Preload("User").Preload("Kpi").Preload("PRs.User").Find(&PerformanceReviewItems).Error
+	err = db.Preload("Kpi").Preload("PRs.User").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
 
-func UpdatePRItemStatusById(id uint, status uint, result float64, comment string) (err error) {
+func UpdatePRItemStatusById(id uint, status uint, result float64) (err error) {
 	var PerformanceReviewItem mp.PerformanceReviewItem
-	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("result", "status", "comment").Updates(map[string]interface{}{"result": result, "status": status, "comment": comment}).Error
+	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
 	return err
 }
 
@@ -122,4 +136,8 @@ func GetPRItemListByPrids(ids []int, info rp.PerformanceReviewItemSearch) (err e
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
 	err = db.Preload("User").Preload("Kpi").Preload("PRs.User").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
+}
+func GetLastPerformanceReviewItem() (err error, PerformanceReviewItem mp.PerformanceReviewItem) {
+	err = global.GVA_DB.Last(&PerformanceReviewItem).Error
+	return
 }

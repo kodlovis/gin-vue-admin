@@ -337,7 +337,7 @@ export default {
       this.isDisable=true;
       if(row.score<=0||row.score>1){
         this.$message({
-          type:"success",
+          type:"error",
           message:"无效输入"
         })
           this.isDisable=false;

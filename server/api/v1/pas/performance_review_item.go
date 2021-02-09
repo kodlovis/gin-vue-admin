@@ -74,7 +74,7 @@ func GetPerformanceReviewItemListById(c *gin.Context) {
 func UpdatePerformanceReviewItemByInfo(c *gin.Context) {
 	var PRI mp.PerformanceReviewItem
 	_ = c.ShouldBindJSON(&PRI)
-	if err := sp.UpdatePerformanceReviewItemByInfo(PRI.ID, PRI.Score, PRI.UserId, PRI.Status); err != nil {
+	if err := sp.UpdatePerformanceReviewItemByInfo(PRI.ID, PRI.Score, PRI.Status); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -101,7 +101,7 @@ func GetPRItemListByUser(c *gin.Context) {
 func UpdatePRItemStatusById(c *gin.Context) {
 	var PRItem mp.PerformanceReviewItem
 	_ = c.ShouldBindJSON(&PRItem)
-	if err := sp.UpdatePRItemStatusById(PRItem.ID, PRItem.Status, PRItem.Result, PRItem.Comment); err != nil {
+	if err := sp.UpdatePRItemStatusById(PRItem.ID, PRItem.Status, PRItem.Result); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
