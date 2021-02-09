@@ -108,4 +108,10 @@ export const getPRItemListByPrids = (data) => {
         data
     })
 }
-
+export const getLastPRI = (params) => {
+    return service({
+        url: "/PerformanceReviewItem/getLastPRI",
+        method: 'get',
+        params
+    })
+}

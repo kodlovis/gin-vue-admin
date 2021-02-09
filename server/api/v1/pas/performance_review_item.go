@@ -186,3 +186,14 @@ func GetPRItemListByPrids(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+
+func GetLastPRI(c *gin.Context) {
+	var PerformanceReviewItem mp.PerformanceReviewItem
+	_ = c.ShouldBindQuery(&PerformanceReviewItem)
+	if err, rePRI := sp.GetLastPRI(); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithData(gin.H{"rePRI": rePRI}, c)
+	}
+}

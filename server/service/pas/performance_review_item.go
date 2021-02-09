@@ -137,7 +137,7 @@ func GetPRItemListByPrids(ids []int, info rp.PerformanceReviewItemSearch) (err e
 	err = db.Preload("User").Preload("Kpi").Preload("PRs.User").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
-func GetLastPerformanceReviewItem() (err error, PerformanceReviewItem mp.PerformanceReviewItem) {
+func GetLastPRI() (err error, PerformanceReviewItem mp.PerformanceReviewItem) {
 	err = global.GVA_DB.Last(&PerformanceReviewItem).Error
 	return
 }

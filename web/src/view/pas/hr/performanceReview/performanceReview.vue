@@ -196,6 +196,7 @@
                 <el-button type="primary" size="mini" @click="deletePRI(scope.row)" :disabled="isDisable">确定</el-button>
               </div>
               <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">删除</el-button>
+              <el-button @click="openRatioDialog(scope.row)" type="primary" size="mini" slot="reference" label="编辑人员权重">编辑人员权重</el-button>
             </el-popover>
           </template>
         </el-table-column>
@@ -233,7 +234,7 @@
             :options="userOptions"
             :rules="rules"
             clearable
-            :props="{ checkStrictly: true,label:'nickName',value:'id',}"
+            :props="{ checkStrictly: true,label:'nickName',value:'id',multiple: true}"
             filterable
           ></el-cascader>
       </template>
@@ -242,6 +243,66 @@
       <el-table-column label="按钮组">
         <template slot-scope="scope">
           <el-button @click="kpiDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="添加" :disabled="isDisable">添加</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    </el-dialog>
+    <el-dialog :before-close="closeRatioDialog" :visible.sync="ratioDialog" title="编辑人员权重" :append-to-body="true" style="width: 50%,marigin:right"
+     >
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-form-item>
+          <el-button @click="openUserDialog" type="primary" size="mini">添加评分人</el-button>
+        </el-form-item>
+      </el-form>
+    <el-table
+      :data="priuData"
+      @selection-change="handleSelectionChange"
+      border
+      ref="multipleTable"
+      stripe
+      style="width: 50%"
+      tooltip-effect="dark"
+    >
+    <el-table-column label="评分人" prop="user.nickName" width="120">
+    </el-table-column> 
+
+    <el-table-column label="设置权重">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
+        </template>
+    </el-table-column>
+      <el-table-column label="按钮组">
+        <template slot-scope="scope">
+          <el-button @click="changeRatioData(scope.row)" type="primary" size="mini" slot="reference" label="修改" :disabled="isDisable">修改</el-button>
+          <el-popover placement="top" width="160" v-model="scope.row.visible">
+              <p>确定要删除吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="removeUser(scope.row)" :disabled="isDisable">确定</el-button>
+              </div>
+              <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" label="移除评分人" :disabled="isDisable">移除评分人</el-button>
+            </el-popover>
+        </template>
+      </el-table-column>
+    </el-table>
+    </el-dialog>
+    
+    <el-dialog :before-close="closeUserDialog" :visible.sync="userDialog" title="增加评分人" :append-to-body="true" style="width: 50%,marigin:right"
+     >
+    <el-table
+      :data="userData"
+      @selection-change="handleSelectionChange"
+      border
+      ref="multipleTable"
+      stripe
+      style="width: 50%"
+      tooltip-effect="dark"
+    >
+    <el-table-column label="评分人" prop="nickName" width="120">
+    </el-table-column> 
+      <el-table-column label="按钮组">
+        <template slot-scope="scope">
+          <el-button @click="userDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="增加" :disabled="isDisable">增加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -261,7 +322,11 @@ import {
     updatePRStatysByIds
 } from "@/api/pas/performanceReview";
 import {
-    getLastPRICreatePRIU
+    getLastPRICreatePRIU,
+    removePRIU,
+    getPRIUByPRIID,
+    updatePRIU,
+    createPRIU
 } from "@/api/pas/performanceReviewItemUser";
 import {
     getEvaluationList,
@@ -269,6 +334,7 @@ import {
 } from "@/api/pas/evaluation";
 import {
     getUserList,
+    getUserListByAuthorityId
 } from "@/api/user";
 import {
     getEvaluationKpiById
@@ -280,7 +346,8 @@ import {
     getPerformanceReviewItemListById,
     updatePerformanceReviewItemByInfo,
     updatePRItemStatysByIds,
-    deletePRItemById
+    deletePRItemById,
+    getLastPRI
 } from "@/api/pas/performanceReviewItem";
 import {
     getKpiList,
@@ -297,6 +364,8 @@ export default {
       dialogFormVisible: false,
       kpiDialog:false,
       prItemDialog: false,
+      userDialog: false,
+      ratioDialog: false,
       visible: false,
       isDisable:false,
       dialogFlag: false,
@@ -338,6 +407,11 @@ export default {
             description:"",
             score: "",
             Kpis:0,
+      },
+      priuData:{},
+      lastPRData:{},
+      saveData:{
+        priid:"",
       },
       performanceReviewItemData:{
             PRId:"",
@@ -387,7 +461,6 @@ export default {
             item.push({
               score:Number(row.evaluationKpis.kpiScore),
               kpiId:row.ID,
-              userId:Number(row.userId),
               PRId:this.formData.ID,
               status:100,
               })
@@ -395,12 +468,27 @@ export default {
         this.formData = pr.data.rePerformanceReview;
         const res = await createPerformanceReviewItem({item})
         if(res.code == 0){
-            this.isDisable=false;
-            this.$message({ type: 'success', message: "添加成功" })
-            const sum =  Number(this.formData.score) + Number(row.evaluationKpis.kpiScore)
-            updatePerformanceReviewByInfo({...this.formData,score:Number(sum)})
-            const res = await getPerformanceReviewItemListById({ PRId: this.formData.ID });
-            this.performanceReviewItemData = res.data.list;
+          const lastPR = await getLastPRI()
+          this.lastPRData = lastPR.data.rePRI
+          var items = []
+          for (let i = 0; i < row.userId.length; i++) {
+            items.push({
+              userId:Number(row.userId[i]),
+              priid:Number(this.lastPRData.ID),
+              score:Number((Number(1)/Number(row.userId.length)).toFixed(5)),   
+            })
+          }
+            const cp = await createPRIU({
+              items:items
+            })
+            if (cp.code == 0) {
+              this.isDisable=false;
+              this.$message({ type: 'success', message: "添加成功" })
+              const sum =  Number(this.formData.score) + Number(row.evaluationKpis.kpiScore)
+              updatePerformanceReviewByInfo({...this.formData,score:Number(sum)})
+              const res = await getPerformanceReviewItemListById({ PRId: this.formData.ID });
+              this.performanceReviewItemData = res.data.list;
+            }
         }
       },
       filterDict(status){
@@ -500,11 +588,86 @@ export default {
       const res = await getPerformanceReviewItemListById({ PRId: row.ID });
       const pr = await findPerformanceReview({ ID: row.ID });
       this.formData = pr.data.rePerformanceReview;
-      this.type = "update";
       if (res.code == 0) {
         this.performanceReviewItemData = res.data.list;
         this.prItemDialog = true;
       }
+    },
+    async openUserDialog(){
+        const res = await getUserListByAuthorityId({authorityId:"10000"})
+        this.userData = res.data.list
+        this.userDialog = true
+    },
+    async removeUser(row){
+      this.isDisable=true;
+      row.visible = false;
+      const ref = await removePRIU({ID:row.id,priid:row.priid})
+      if(ref.code ==0){
+        this.$message({
+          type: "success",
+          message: "移除成功"
+        });
+        this.isDisable=false;
+        const res = await getPRIUByPRIID({priid:row.priid})
+        this.priuData = res.data.list
+        const re = await getPerformanceReviewItemListById({ PRId: row.performanceReviewItem.PRId });
+        this.performanceReviewItemData = re.data.list;
+      }
+    },
+    async openRatioDialog(row) {
+        const res = await getPRIUByPRIID({priid:row.ID})
+        this.priuData = res.data.list
+        this.saveData.priid=row.ID
+        this.ratioDialog = true
+      },
+    async changeRatioData(row){
+      this.isDisable=true;
+      if(row.score<=0||row.score>1){
+        this.$message({
+          type:"error",
+          message:"无效输入"
+        })
+          this.isDisable=false;
+          return
+        }
+      const ref = await updatePRIU({...row,
+        score:Number(row.score),
+      })
+        if (ref.code == 0) {
+          this.$message({
+            type:"success",
+            message:"添加成功"
+          })
+          this.isDisable=false;
+          const res = await getPRIUByPRIID({priid:row.priid})
+          this.priuData = res.data.list
+        }
+    },
+    async userDataEnter(row){
+      var items=[{
+        priid:this.saveData.priid,
+        userid:row.ID,
+        score:Number((Number(1)/Number(this.priuData.length+1)).toFixed(5))
+      }]
+      const ref = await createPRIU({
+        items:items
+      })
+      if(ref.code == 0){
+        const res = await getPRIUByPRIID({priid:this.saveData.priid})
+        this.priuData = res.data.list
+        const re = await getPerformanceReviewItemListById({ PRId: this.priuData[0].performanceReviewItem.PRId });
+        this.performanceReviewItemData = re.data.list;
+        this.$message({
+          type:"success",
+          message:"添加成功"
+        })
+      }
+    },
+    closeRatioDialog() {
+      this.ratioDialog = false;
+    },
+    closeUserDialog() {
+      this.userDialog = false;
     },
     closeDialog() {
       this.dialogFormVisible = false;
