@@ -25,11 +25,11 @@
           tooltip-effect="dark"
         >
         
-        <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column> 
+        <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
         
-        <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
-        <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
-        <el-table-column label="被考评人" prop="prs.user.nickName" width="460"></el-table-column> 
+        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
+        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
+        <el-table-column label="被考评人" prop="user.nickName" width="460"></el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
         
           <el-table-column label="按钮组">
@@ -63,11 +63,13 @@
 
 <script>
 import {
-    getPRItemListByUser,
     updatePRItemStatusById,
     getPRItemCount,
     updatePRItemStatusByPrId
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
+import {
+    getPRIUListByUser
+} from "@/api/pas/performanceReviewItemUser";  //  此处请自行替换地址
 import {    
     updatePRStatusById
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
@@ -80,7 +82,7 @@ export default {
   mixins: [infoList],
   data() {
     return {
-      listApi: getPRItemListByUser,
+      listApi: getPRIUListByUser,
       type: "",
       multipleSelection: [],formData:[],
       countData:9,
@@ -132,26 +134,26 @@ export default {
       },
     async confirmKpi(row) {
       const res = await updatePRItemStatusById({
-          ID:row.ID,
+          ID:row.id,
           status:91,
       })
       if(res.code == 0){
-          this.getPRItemListByUser()
+          this.getPRIUListByUser()
           this.$message({
-          type: "success",
-          message: "确认成功"})
+            type: "success",
+            message: "确认成功"})
         const count = await getPRItemCount({
-            PRId:row.PRId,
+            PRId:row.performanceReviewItem.PRId,
             status: 91,
         })
         this.countData = count.data.count;
         if(this.countData == 1){
             updatePRStatusById({
-                ID:row.PRId,
+                ID:row.performanceReviewItem.PRId,
                 status: 2,
             })
             updatePRItemStatusByPrId({
-              PRId:row.PRId,
+              PRId:row.performanceReviewItem.PRId,
               status:2,
           })
         }
@@ -159,18 +161,18 @@ export default {
     },
     async rejectKpi(row){
       const res = await updatePRItemStatusById({
-          ID:row.ID,
+          ID:row.id,
           status:99,
       })
       if(res.code == 0){
-          this.getPRItemListByUser()
+          this.getPRIUListByUser()
           this.$message({
           type: "success",
           message: "驳回成功"})
       }
     },
-    async getPRItemListByUser(page = this.page, pageSize = this.pageSize){
-      const res = await getPRItemListByUser({
+    async getPRIUListByUser(page = this.page, pageSize = this.pageSize){
+      const res = await getPRIUListByUser({
           ID:this.userInfo.ID,
           status:1,
           page: page, 
@@ -183,15 +185,15 @@ export default {
     },
     handleSizeChange(val) {
         this.pageSize = val
-        this.getPRItemListByUser()
+        this.getPRIUListByUser()
     },
     handleCurrentChange(val) {
         this.page = val
-        this.getPRItemListByUser()
+        this.getPRIUListByUser()
     },
   },
   async created() {
-    this.getPRItemListByUser()
+    this.getPRIUListByUser()
 }
 };
 </script>

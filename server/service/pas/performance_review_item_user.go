@@ -69,3 +69,15 @@ func CreatePRIU(info []mp.PerformanceReviewItemUser) (err error) {
 	err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", info[0].PRIID).Update("score",score).Error
 	return err
 }
+func GetPRIUListByUser(id uint, status uint, info rp.PerformanceReviewItemUserSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	// 创建db
+	db := global.GVA_DB.Model(&mp.PerformanceReviewItemUser{}).Where("user_id = ? AND status = ?", id, status)
+	var PerformanceReviewItemUsers []mp.PerformanceReviewItemUser
+	// 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItemUsers).Error
+	err = db.Preload("PRI.Kpi").Preload("User").Find(&PerformanceReviewItemUsers).Error
+	return err, PerformanceReviewItemUsers, total
+}

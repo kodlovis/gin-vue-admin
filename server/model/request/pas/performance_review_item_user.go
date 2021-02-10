@@ -8,6 +8,8 @@ type PerformanceReviewItemUserSearch struct {
 	EKUID uint `json:"ekuid"`
 	PRID uint `json:"prid"`
 	PRIID uint `json:"priid"`
+	ID     uint  `json:"ID"`
+	Status uint  `json:"status"`
 }
 type PRIU struct{
 	PerformanceReviewItemUser []pas.PerformanceReviewItemUser `json:"items"`

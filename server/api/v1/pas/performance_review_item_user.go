@@ -67,3 +67,19 @@ func CreatePRIU(c *gin.Context) {
 		response.OkWithMessage("创建成功", c)
 	}
 }
+
+func GetPRIUListByUser(c *gin.Context) {
+	var info rp.PerformanceReviewItemUserSearch
+	_ = c.ShouldBindJSON(&info)
+	if err, list, total := sp.GetPRIUListByUser(info.ID, info.Status, info); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     info.Page,
+			PageSize: info.PageSize,
+		}, "获取成功", c)
+	}
+}

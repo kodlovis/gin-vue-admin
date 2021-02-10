@@ -38,3 +38,10 @@ export const createPRIU = (data) => {
        data
    })
 }
+export const getPRIUListByUser = (data) => {
+    return service({
+        url: "/PerformanceReviewItemUser/getPRIUListByUser",
+        method: 'post',
+        data
+    })
+}
