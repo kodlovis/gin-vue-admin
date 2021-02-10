@@ -40,8 +40,10 @@ func GetPRIUByPRIID(PRIID uint, info rp.PerformanceReviewItemUserSearch) (err er
 	return err, PerformanceReviewItemUser, total
 }
 
-func UpdatePRIU(PerformanceReviewItemUser *mp.PerformanceReviewItemUser) (err error) {
-	err = global.GVA_DB.Save(PerformanceReviewItemUser).Error
+func UpdatePRIU(ID uint,status uint,result float64,uid uint,score float64) (err error) {
+	//err = global.GVA_DB.Save(PerformanceReviewItemUser).Error
+	var PRIU mp.PerformanceReviewItemUser
+	err = global.GVA_DB.Model(&PRIU).Where("id = ?",ID).Select("result", "status","user_id","score").Updates(map[string]interface{}{"result": result, "status": status,"user_id":uid,"score":score}).Error
 	return err
 }
 

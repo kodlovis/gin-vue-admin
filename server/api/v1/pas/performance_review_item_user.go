@@ -36,9 +36,9 @@ func GetPRIUByPRIID(c *gin.Context) {
 }
 
 func UpdatePRIU(c *gin.Context) {
-	var PerformanceReviewItemUser mp.PerformanceReviewItemUser
-	_ = c.ShouldBindJSON(&PerformanceReviewItemUser)
-	if err := sp.UpdatePRIU(&PerformanceReviewItemUser); err != nil {
+	var PRIU mp.PerformanceReviewItemUser
+	_ = c.ShouldBindJSON(&PRIU)
+	if err := sp.UpdatePRIU(PRIU.ID,PRIU.Status,PRIU.Result,PRIU.UserId,PRIU.Score); err != nil {
         global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {

@@ -124,6 +124,7 @@
              :options="userOptions"
              clearable
              :props="{ checkStrictly: true,label:'nickName',value:'id',}"
+             filterable
           ></el-cascader>
       </el-form-item>
          <el-form-item label="开始日期:">
@@ -141,7 +142,7 @@
     </el-dialog>
     <!-- 编辑指标的弹窗 -->
     <div>
-      <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="编辑指标" :append-to-body="true" width="80%">
+      <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="编辑指标" :append-to-body="true" :fullscreen ="true" width="90%">
         <div class="search-term">
           <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
             <el-form-item>
@@ -260,12 +261,39 @@
       border
       ref="multipleTable"
       stripe
-      style="width: 50%"
+      style="width: 80%"
       tooltip-effect="dark"
     >
-    <el-table-column label="评分人" prop="user.nickName" width="120">
+    <el-table-column label="评分人" width="140">
+      <template slot-scope="scope">
+          <el-cascader
+            @change="(val)=>{handleOptionChange(val,scope.row)}"
+            v-model="scope.row.userId"
+            :options="userOptions"
+            :rules="rules"
+            clearable
+            :props="{ checkStrictly: true,label:'nickName',value:'id'}"
+            filterable
+          ></el-cascader>
+      </template>
     </el-table-column> 
-
+      <el-table-column label="指标状态" prop="kpi.status" width="160">
+        <template slot-scope="scope">
+        <el-select v-model="scope.row.status" placeholder="请选择" clearable>
+          <el-option
+            v-for="item in kpiDictList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column label="得分" width="160">
+        <template slot-scope="scope">
+            <el-input v-model="scope.row.result" clearable placeholder="请输入"></el-input>
+        </template>
+      </el-table-column> 
     <el-table-column label="设置权重">
         <template slot-scope="scope">
           <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
@@ -280,7 +308,7 @@
                 <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
                 <el-button type="primary" size="mini" @click="removeUser(scope.row)" :disabled="isDisable">确定</el-button>
               </div>
-              <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" label="移除评分人" :disabled="isDisable">移除评分人</el-button>
+              <el-button type="danger" size="mini" slot="reference" label="移除评分人" :disabled="isDisable">移除评分人</el-button>
             </el-popover>
         </template>
       </el-table-column>
@@ -632,6 +660,9 @@ export default {
         }
       const ref = await updatePRIU({...row,
         score:Number(row.score),
+        status:Number(row.status),
+        result:Number(row.result),
+        userId:Number(row.userId),
       })
         if (ref.code == 0) {
           this.$message({
@@ -641,13 +672,16 @@ export default {
           this.isDisable=false;
           const res = await getPRIUByPRIID({priid:row.priid})
           this.priuData = res.data.list
+          const re = await getPerformanceReviewItemListById({ PRId: this.priuData[0].performanceReviewItem.PRId });
+          this.performanceReviewItemData = re.data.list;
         }
     },
     async userDataEnter(row){
       var items=[{
         priid:this.saveData.priid,
         userid:row.ID,
-        score:Number((Number(1)/Number(this.priuData.length+1)).toFixed(5))
+        score:Number((Number(1)/Number(this.priuData.length+1)).toFixed(5)),
+        status:100,
       }]
       const ref = await createPRIU({
         items:items
@@ -701,7 +735,6 @@ export default {
         const res = await updatePerformanceReviewItemByInfo({
         id:Number(row.ID),
         score:Number(row.score),
-        userId:Number(row.user.ID),
         status:Number(row.status),
         });
         const prlist = await getPerformanceReviewItemListById({ PRId: this.formData.ID })

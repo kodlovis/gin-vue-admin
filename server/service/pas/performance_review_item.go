@@ -96,8 +96,13 @@ func GetPRItemCount(prid uint, status uint) (err error, count float64) {
 	return err, count
 }
 func UpdatePRItemStatysByIds(Ids []int, status uint) (err error) {
+	var PRIs []mp.PerformanceReviewItem
 	for i := 0; i < len(Ids); i++ {
 		err = global.GVA_DB.Model(&mp.PerformanceReviewItem{}).Where("pr_id = ?", Ids[i]).Update("status", status).Error
+		err = global.GVA_DB.Find(&PRIs).Where("pr_id = ?", Ids[i]).Error
+		for j := 0; j < len(PRIs); j++ {
+			err = global.GVA_DB.Model(&mp.PerformanceReviewItemUser{}).Where("pri_id = ?", PRIs[j].ID).Update("status", status).Error
+		}
 	}
 	return err
 }
