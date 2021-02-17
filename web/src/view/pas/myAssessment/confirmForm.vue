@@ -51,7 +51,12 @@
         <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column> 
         <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
-        <el-table-column label="评分人" prop="user.nickName" width="120"></el-table-column> 
+        <el-table-column label="评分人" prop="user.nickName" width="120">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.PRIUs"
+            :key="index">{{item.user.nickName}}<br/></span>
+          </template>
+        </el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
           <el-table-column label="按钮组">
             <template slot-scope="scope">
@@ -83,6 +88,9 @@ import {
     updatePRStatusById,
     getPRListByUser,
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
+import {    
+    updatePRIUStatusByPRIID
+} from "@/api/pas/performanceReviewItemUser";  //  此处请自行替换地址
 
 import { formatTimeToStr } from "@/utils/date";
 import { getDict } from "@/utils/dictionary";
@@ -163,7 +171,7 @@ export default {
         this.multipleSelection = val
       },
     async confirmKpi(row) {
-      const res = await updatePRItemStatusById({
+      const res = await updatePRIUStatusByPRIID({
           ID:row.ID,
           status:92,
       })
@@ -171,33 +179,12 @@ export default {
           this.$message({
           type: "success",
           message: "确认成功"})
-        const count = await getPRItemCount({
-            PRId:row.PRId,
-            status: 92,
-        })
-        this.countData = count.data.count;
-        if(this.countData == 1){
-            const ref = await updatePRStatusById({
-                ID:row.PRId,
-                status: 3,
-            })
-            updatePRItemStatusByPrId({
-              PRId:row.PRId,
-              status:3,
-          })
-            if(ref.code == 0){
-              this.getPRListByUser()
-              return
-            }
-        }
-        if(count.code==0){
           this.getPRListByUser()
-        }
       }
     },
     async rejectKpi(row){
       const res = await updatePRItemStatusById({
-          ID:row.ID,
+          ID:row.PRId,
           status:99,
       })
       if(res.code == 0){

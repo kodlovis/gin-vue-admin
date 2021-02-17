@@ -83,3 +83,14 @@ func GetPRIUListByUser(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+
+func UpdatePRIUStatusByPRIID(c *gin.Context) {
+	var PRIU mp.PerformanceReviewItemUser
+	_ = c.ShouldBindJSON(&PRIU)
+	if err := sp.UpdatePRIUStatusByPRIID(PRIU.ID, PRIU.Status, PRIU.Result); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}

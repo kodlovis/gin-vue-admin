@@ -15,6 +15,8 @@ func InitPerformanceReviewItemUserRouter(Router *gin.RouterGroup) {
 		PerformanceReviewItemUserRouter.DELETE("removePRIU", pas.RemovePRIU)  
 		PerformanceReviewItemUserRouter.POST("createPRIU", pas.CreatePRIU)   
 		PerformanceReviewItemUserRouter.POST("getPRIUListByUser", pas.GetPRIUListByUser)
+		PerformanceReviewItemUserRouter.POST("updatePRIUStatusByPRIID", pas.UpdatePRIUStatusByPRIID)
+		
 		
 	}
 }

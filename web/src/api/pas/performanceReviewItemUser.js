@@ -45,3 +45,11 @@ export const getPRIUListByUser = (data) => {
         data
     })
 }
+export const updatePRIUStatusByPRIID = (data) => {
+    return service({
+        url: "/PerformanceReviewItemUser/updatePRIUStatusByPRIID",
+        method: 'post',
+        data
+    })
+}
+
