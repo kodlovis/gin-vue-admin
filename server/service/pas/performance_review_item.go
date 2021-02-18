@@ -96,7 +96,13 @@ func UpdatePRItemStatusById(id uint, status uint, result float64) (err error) {
 
 func UpdatePRItemStatusByPrId(id uint, status uint) (err error) {
 	var PerformanceReviewItem mp.PerformanceReviewItem
+	var PRIs []mp.PerformanceReviewItem
 	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("pr_id = ?", id).Update("status", status).Error
+	err = global.GVA_DB.Model(&PRIs).Where("pri_id = ?",id).Error
+	var PRIU mp.PerformanceReviewItemUser
+	for i := 0; i < len(PRIs) ;i++ {
+		err = global.GVA_DB.Model(&PRIU).Where("pri_id = ?", PRIs[i].ID).Update("status", status).Error
+	}
 	return err
 }
 
