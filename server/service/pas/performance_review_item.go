@@ -160,3 +160,8 @@ func GetLastPRI() (err error, PerformanceReviewItem mp.PerformanceReviewItem) {
 	err = global.GVA_DB.Last(&PerformanceReviewItem).Error
 	return
 }
+
+func UpdatePRI(PRI *mp.PerformanceReviewItem) (err error) {
+	err = global.GVA_DB.Save(PRI).Error
+	return err
+}

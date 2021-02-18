@@ -197,3 +197,14 @@ func GetLastPRI(c *gin.Context) {
 		response.OkWithData(gin.H{"rePRI": rePRI}, c)
 	}
 }
+
+func UpdatePRI(c *gin.Context) {
+	var PRI mp.PerformanceReviewItem
+	_ = c.ShouldBindJSON(&PRI)
+	if err := sp.UpdatePRI(&PRI); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}

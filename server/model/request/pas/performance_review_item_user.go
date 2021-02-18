@@ -10,6 +10,8 @@ type PerformanceReviewItemUserSearch struct {
 	PRIID uint `json:"priid"`
 	ID     uint  `json:"ID"`
 	Status uint  `json:"status"`
+	Result float64  `json:"result"`
+	PRStatus uint  `json:"prstatus"`
 }
 type PRIU struct{
 	PerformanceReviewItemUser []pas.PerformanceReviewItemUser `json:"items"`

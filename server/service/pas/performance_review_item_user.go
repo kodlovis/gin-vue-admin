@@ -82,7 +82,7 @@ func GetPRIUListByUser(id uint, status uint, info rp.PerformanceReviewItemUserSe
 	return err, PerformanceReviewItemUsers, total
 }
 
-func UpdatePRIUStatusByPRIID(id uint, status uint, result float64) (err error) {
+func UpdatePRIUStatusByPRIID(id uint, status uint, result float64,prStatus uint) (err error) {
 	var PRIU mp.PerformanceReviewItemUser
 	err = global.GVA_DB.Model(&PRIU).Where("pri_id = ?", id).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
 	var PRI mp.PerformanceReviewItem
@@ -97,7 +97,7 @@ func UpdatePRIUStatusByPRIID(id uint, status uint, result float64) (err error) {
 	result=result*PRI.Score
 	var PR mp.PerformanceReview
 	if count ==1  {
-		err = global.GVA_DB.Model(&PR).Where("id = ?", PRI.PRId).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
+		err = global.GVA_DB.Model(&PR).Where("id = ?", PRI.PRId).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": prStatus}).Error
 	}else{
 		err = global.GVA_DB.Model(&PR).Where("id = ?", PRI.PRId).Select("result").Updates(map[string]interface{}{"result": result}).Error
 	}

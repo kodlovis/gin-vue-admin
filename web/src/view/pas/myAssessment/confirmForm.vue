@@ -79,13 +79,10 @@
 
 <script>
 import {
-    getPRItemCount,
-    updatePRItemStatusById,
+    updatePRI,
     getPRItemListByStatusPrid,
-    updatePRItemStatusByPrId
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
 import {    
-    updatePRStatusById,
     getPRListByUser,
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 import {    
@@ -174,6 +171,7 @@ export default {
       const res = await updatePRIUStatusByPRIID({
           ID:row.ID,
           status:92,
+          prStatus:3,
       })
       if(res.code == 0){
           this.$message({
@@ -183,8 +181,7 @@ export default {
       }
     },
     async rejectKpi(row){
-      const res = await updatePRItemStatusById({
-          ID:row.PRId,
+      const res = await updatePRI({...row,
           status:99,
       })
       if(res.code == 0){

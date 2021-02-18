@@ -115,3 +115,11 @@ export const getLastPRI = (params) => {
         params
     })
 }
+
+export const updatePRI = (data) => {
+    return service({
+        url: "/PerformanceReviewItem/updatePRI",
+        method: 'put',
+        data
+    })
+}
