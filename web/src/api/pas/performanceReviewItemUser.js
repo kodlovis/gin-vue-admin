@@ -53,3 +53,11 @@ export const updatePRIUStatusByPRIID = (data) => {
     })
 }
 
+export const getPRIUListByStatus = (data) => {
+    return service({
+        url: "/PerformanceReviewItemUser/getPRIUListByStatus",
+        method: 'post',
+        data
+    })
+}
+

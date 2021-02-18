@@ -74,9 +74,9 @@ func GetPRItemListByUser(id uint, status uint, info rp.PerformanceReviewItemSear
 	return err, PerformanceReviewItems, total
 }
 
-func UpdatePRItemStatusById(id uint, status uint, result float64) (err error) {
+func UpdatePRItemStatusById(id uint, status uint, result float64, comment string) (err error) {
 	var PRIU mp.PerformanceReviewItemUser
-	err = global.GVA_DB.Model(&PRIU).Where("id = ?", id).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
+	err = global.GVA_DB.Model(&PRIU).Where("id = ?", id).Select("result", "status","comment").Updates(map[string]interface{}{"result": result, "status": status,"comment":comment}).Error
 	
 	var PRI mp.PerformanceReviewItem
 	var total = int64(0)
@@ -148,7 +148,7 @@ func GetPRItemListByStatus(status uint, info rp.PerformanceReviewItemSearch) (er
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
-	err = db.Preload("User").Preload("Kpi").Preload("PRs.User").Find(&PerformanceReviewItems).Error
+	err = db.Preload("Kpi").Preload("PRs.User").Preload("PRIUs.User").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
 func GetPRItemListByPrids(ids []int, info rp.PerformanceReviewItemSearch) (err error, list interface{}, total int64) {

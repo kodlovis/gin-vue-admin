@@ -103,3 +103,16 @@ func UpdatePRIUStatusByPRIID(id uint, status uint, result float64,prStatus uint)
 	}
 	return err
 }
+
+func GetPRIUListByStatus(status uint, info rp.PerformanceReviewItemUserSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	// 创建db
+	db := global.GVA_DB.Model(&mp.PerformanceReviewItemUser{}).Where("status = ?", status)
+	var PRIU []mp.PerformanceReviewItemUser
+	// 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&PRIU).Error
+	err = db.Preload("User").Preload("PRI.Kpi").Preload("PRI.PRs.User").Find(&PRIU).Error
+	return err, PRIU, total
+}

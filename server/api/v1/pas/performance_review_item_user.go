@@ -94,3 +94,19 @@ func UpdatePRIUStatusByPRIID(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
+
+func GetPRIUListByStatus(c *gin.Context) {
+	var info rp.PerformanceReviewItemUserSearch
+	_ = c.ShouldBindJSON(&info)
+	if err, list, total := sp.GetPRIUListByStatus(info.Status, info); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     info.Page,
+			PageSize: info.PageSize,
+		}, "获取成功", c)
+	}
+}

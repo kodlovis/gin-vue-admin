@@ -147,7 +147,7 @@ func GetPRListByUser(id uint, Ids []int, info rp.PerformanceReviewSearch) (err e
 
 func UpdatePRResult(ID uint) (err error) {
 	var PRIs []mp.PerformanceReviewItem
-	err = global.GVA_DB.Find(&PRIs).Where("pr_id = ?", ID).Error
+	err = global.GVA_DB.Where("pr_id = ?", ID).Find(&PRIs).Error
 	var total float64 
 	var PR mp.PerformanceReview
 	for i := 0; i < len(PRIs); i++ {

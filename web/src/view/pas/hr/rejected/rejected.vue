@@ -15,7 +15,32 @@
         </el-form-item>
       </el-form>
     </div> -->
-      <h5>驳回的考核内容</h5>
+      <h5>评分人驳回的考核内容</h5>
+      <el-table
+          :data="prirData"
+          @selection-change="handleSelectionChange"
+          border
+          ref="multipleTable"
+          stripe
+          style="width: 100%"
+          tooltip-effect="dark"
+        >
+        
+        <el-table-column label="考核表名称" prop="performanceReviewItem.prs.name" width="120"></el-table-column> 
+        <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
+        <el-table-column label="指标状态" prop="status" width="120">
+            <template slot-scope="scope">
+                <!-- <span>{{scope.row.status==0?"评分人确认":""}}</span> -->
+                <span>{{filterKpiDict(scope.row.status)}}</span>
+            </template>
+        </el-table-column>
+        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
+        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
+        <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="120"></el-table-column> 
+        <el-table-column label="评分人" prop="user.nickName" width="120"></el-table-column> 
+        <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
+        </el-table>
+      <h5>员工驳回的考核内容</h5>
       <el-table
           :data="acData"
           @selection-change="handleSelectionChange"
@@ -37,8 +62,13 @@
         <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
         <el-table-column label="被考评人" prop="prs.user.nickName" width="120"></el-table-column> 
-        <el-table-column label="评分人" prop="user.nickName" width="120"></el-table-column> 
-        <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
+        <el-table-column label="评分人" prop="user.nickName" width="120">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.PRIUs"
+            :key="index">{{item.user.nickName}}<br/></span>
+          </template>
+          </el-table-column> 
+        <el-table-column label="指标总分" prop="score" width="120"></el-table-column>
         </el-table>
       <h5>驳回的考核结果</h5>
       <el-table
@@ -89,8 +119,11 @@
       </template></el-table-column>
     <el-table-column label="权重分值" prop="score" width="90"></el-table-column> 
     <el-table-column label="得分" prop="result" width="90"></el-table-column> 
-    <el-table-column label="评分人" prop="user.nickName" width="120"></el-table-column>
-    <el-table-column label="考评人反馈" prop="comment" width="360"></el-table-column>
+    <el-table-column label="评分人及反馈" prop="user.nickName" width="320">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.PRIUs"
+            :key="index">{{item.user.nickName}}:{{item.comment}}<br/></span>
+          </template></el-table-column>
     </el-table>
     </el-dialog>
     <el-pagination
@@ -115,6 +148,9 @@ import {
 import {    
     getPRBystatus
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
+import {
+    getPRIUListByStatus
+} from "@/api/pas/performanceReviewItemUser"; 
 import { getDict } from "@/utils/dictionary";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -248,6 +284,11 @@ export default {
           page: page, 
           pageSize: pageSize
           })
+      const priu = await getPRIUListByStatus({
+          status:99,
+          page: page, 
+          pageSize: pageSize
+          })
       const pr = await getPRBystatus({
           status:99,
           page: page, 
@@ -258,6 +299,7 @@ export default {
       this.pageSize = res.data.pageSize
       this.acData = res.data.list
       this.prData = pr.data.list
+      this.prirData = priu.data.list
     },
     handleSizeChange(val) {
         this.pageSize = val

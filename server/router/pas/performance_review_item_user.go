@@ -16,6 +16,8 @@ func InitPerformanceReviewItemUserRouter(Router *gin.RouterGroup) {
 		PerformanceReviewItemUserRouter.POST("createPRIU", pas.CreatePRIU)   
 		PerformanceReviewItemUserRouter.POST("getPRIUListByUser", pas.GetPRIUListByUser)
 		PerformanceReviewItemUserRouter.POST("updatePRIUStatusByPRIID", pas.UpdatePRIUStatusByPRIID)
+		PerformanceReviewItemUserRouter.POST("getPRIUListByStatus", pas.GetPRIUListByStatus)
+		
 		
 		
 	}

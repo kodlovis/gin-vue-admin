@@ -26,10 +26,10 @@
           tooltip-effect="dark"
         >
         
-        <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column> 
+        <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
         
-        <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
-        <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
+        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
+        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
         <el-table-column label="被考评人" prop="user.nickName" width="120"></el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
         <el-table-column label="反馈">
@@ -70,6 +70,9 @@ import {
     findPerformanceReview
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 
+import {    
+    getPRIUListByUser
+} from "@/api/pas/performanceReviewItemUser";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 import { mapGetters } from "vuex";
@@ -133,7 +136,7 @@ export default {
         this.loading=true
         //更新PRItem
         const res = await updatePRItemStatusById({
-            ID:row.ID,
+            ID:row.id,
             status:7,
             result:Number(row.result),
             comment:"无"
@@ -141,12 +144,12 @@ export default {
       if(res.code == 0){
         //查询未反馈的数量
         const count = await getPRItemCount({
-            PRId:row.PRId,
+            PRId:row.performanceReviewItem.PRId,
             status: 6,
         })
         this.countData = count.data.total;
         //查询这条指标的考核表
-        const pr = await findPerformanceReview({ID:row.PRId})
+        const pr = await findPerformanceReview({ID:row.performanceReviewItem.PRId})
         this.prData = pr.data.rePerformanceReview
         //如果未考核的数量为0
         if(this.countData == 0){
@@ -155,13 +158,13 @@ export default {
                 //将考核表设为已完成
                 updatePRStatusById({
                     result:this.prData.result,
-                    ID:row.PRId,
+                    ID:row.performanceReviewItem.PRId,
                     status: 9,
                 })
             }
         }
         //刷新列表
-        this.getPRItemListByUser()
+        this.getPRIUListByUser()
         this.$message({
         type: "success",
         message: "确认成功"})
@@ -172,7 +175,7 @@ export default {
       this.loading=true
       //更新PRItem，写入反馈
       const res = await updatePRItemStatusById({
-          ID:row.ID,
+          ID:row.id,
           status:7,
           result:Number(row.result),
           comment:row.comment,
@@ -180,12 +183,12 @@ export default {
       if(res.code == 0){
         //查询已反馈的数量
         const count = await getPRItemCount({
-            PRId:row.PRId,
+            PRId:row.performanceReviewItem.PRId,
             status: 7,
         })
         this.countData = count.data.count;
         //查询这条指标的考核表
-        const pr = await findPerformanceReview({ID:row.PRId})
+        const pr = await findPerformanceReview({ID:row.performanceReviewItem.PRId})
         this.prData = pr.data.rePerformanceReview
         //如果已反馈除以总数=1
         if(this.countData == 1){
@@ -194,13 +197,13 @@ export default {
                 //将考核表设为已完成
                 updatePRStatusById({
                     result:this.prData.result,
-                    ID:row.PRId,
+                    ID:row.performanceReviewItem.PRId,
                     status: 9,
                 })
             }
         }
         //刷新列表
-        this.getPRItemListByUser()
+        this.getPRIUListByUser()
         this.$message({
         type: "success",
         message: "确认成功"})
@@ -209,14 +212,14 @@ export default {
     },
     handleSizeChange(val) {
         this.pageSize = val
-        this.getPRItemListByUser()
+        this.getPRIUListByUser()
     },
     handleCurrentChange(val) {
         this.page = val
-        this.getPRItemListByUser()
+        this.getPRIUListByUser()
     },
-    async getPRItemListByUser(page = this.page, pageSize = this.pageSize){
-      const res = await getPRItemListByUser({
+    async getPRIUListByUser(page = this.page, pageSize = this.pageSize){
+      const res = await getPRIUListByUser({
           ID:this.userInfo.ID,
           status:6,
           page: page, 
@@ -229,7 +232,7 @@ export default {
     },
   },
   async created() {
-    this.getPRItemListByUser()
+    this.getPRIUListByUser()
 }
 };
 </script>
