@@ -85,7 +85,8 @@ func UpdatePRItemStatusById(id uint, status uint, result float64) (err error) {
 	err = global.GVA_DB.Model(&PRIU).Where("pri_id = ? AND status = ?", PRIU.PRIID, status).Count(&num).Error
 	err = global.GVA_DB.Model(&PRIU).Where("pri_id = ?",PRIU.PRIID).Count(&total).Error
 	var count = float64(num) / float64(total)
-	result=result*PRI.Score
+	err = global.GVA_DB.Where("id = ?",PRIU.PRIID).First(&PRI).Error
+	result=float64(result)*float64(PRIU.Score)+PRI.Result
 	if count ==1  {
 		err = global.GVA_DB.Model(&PRI).Where("id = ?", PRIU.PRIID).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
 	}else{
@@ -98,7 +99,7 @@ func UpdatePRItemStatusByPrId(id uint, status uint) (err error) {
 	var PerformanceReviewItem mp.PerformanceReviewItem
 	var PRIs []mp.PerformanceReviewItem
 	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("pr_id = ?", id).Update("status", status).Error
-	err = global.GVA_DB.Model(&PRIs).Where("pri_id = ?",id).Error
+	err = global.GVA_DB.Find(&PRIs).Where("pri_id = ?",id).Error
 	var PRIU mp.PerformanceReviewItemUser
 	for i := 0; i < len(PRIs) ;i++ {
 		err = global.GVA_DB.Model(&PRIU).Where("pri_id = ?", PRIs[i].ID).Update("status", status).Error
@@ -159,7 +160,7 @@ func GetPRItemListByPrids(ids []int, info rp.PerformanceReviewItemSearch) (err e
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
-	err = db.Preload("User").Preload("Kpi").Preload("PRs.User").Find(&PerformanceReviewItems).Error
+	err = db.Preload("Kpi").Preload("PRs.User").Preload("PRIUs.User").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
 func GetLastPRI() (err error, PerformanceReviewItem mp.PerformanceReviewItem) {

@@ -152,3 +152,11 @@ export const getPRListByUser = (data) => {
     })
 }
 
+export const updatePRResult = (data) => {
+    return service({
+        url: "/PerformanceReview/updatePRResult",
+        method: 'put',
+        data
+    })
+}
+

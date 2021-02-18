@@ -35,8 +35,8 @@
             </template>
          </el-table-column> 
         <el-table-column label="被考核人" prop="user.nickName" width="120"></el-table-column> 
-        <el-table-column label="权重分值" prop="score" width="120"></el-table-column> 
-        <el-table-column label="总得分" prop="result" width="120"></el-table-column> 
+        <el-table-column label="总分" prop="score" width="120"></el-table-column> 
+        <el-table-column label="得分" prop="result" width="120"></el-table-column> 
         <el-table-column label="开始时间" prop="startDate" width="120"></el-table-column>
         <el-table-column label="结束时间" prop="endingDate" width="120"></el-table-column>
         <el-table-column label="备注" prop="score" width="520">
@@ -74,10 +74,14 @@
         
         <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
-        <el-table-column label="评分人" prop="user.nickName" width="120"></el-table-column> 
-        <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
+        <el-table-column label="评分人及评分" prop="PRIUs.user.nickName" width="160">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.PRIUs"
+            :key="index">{{item.user.nickName}}:{{item.score*item.result}}分<br/></span>
+          </template>
+        </el-table-column> 
+        <el-table-column label="总分" prop="score" width="120"></el-table-column>
         <el-table-column label="得分" prop="result" width="120"></el-table-column>
-        <el-table-column label="反馈" prop="comment" width="240"></el-table-column>
         </el-table>
     
 

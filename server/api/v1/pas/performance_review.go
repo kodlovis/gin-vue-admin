@@ -214,3 +214,14 @@ func GetPRListByUser(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+
+func UpdatePRResult(c *gin.Context) {
+	var PR mp.PerformanceReview
+	_ = c.ShouldBindJSON(&PR)
+	if err := sp.UpdatePRResult(PR.ID); err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
+		response.FailWithMessage("更新失败", c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}

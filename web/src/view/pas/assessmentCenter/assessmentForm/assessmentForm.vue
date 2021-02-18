@@ -26,12 +26,13 @@
           tooltip-effect="dark"
         >
         
-        <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column> 
+        <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
         
-        <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
-        <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
-        <el-table-column label="被考评人" prop="prs.user.nickName" width="120"></el-table-column> 
+        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
+        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
+        <el-table-column label="被考评人" prop="user.nickName" width="120"></el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
+        <el-table-column label="总分" prop="performanceReviewItem.score" width="120"></el-table-column>
         <el-table-column label="得分">
           <template slot-scope="scope">
             <el-input v-model="scope.row.result" clearable placeholder="请输入分数"></el-input>
@@ -71,12 +72,16 @@ import {
     getPRItemListByUser,
     updatePRItemStatusById,
     getPRItemCount,
-    updatePRItemStatusByPrId
+    updatePRItemStatusByPrId,
 } from "@/api/pas/performanceReviewItem";  //  此处请自行替换地址
 import {    
     updatePRStatusById,
-    findPerformanceReview
-} from "@/api/pas/performanceReview";  //  此处请自行替换地址
+    updatePRResult
+} from "@/api/pas/performanceReview";
+import {    
+    getPRIUListByUser
+} from "@/api/pas/performanceReviewItemUser";
+
 
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -143,7 +148,7 @@ export default {
       },
     async confirmKpi(row) {
       this.loading=true
-      if(row.result>row.score||row.result<0){
+      if(row.result>row.performanceReviewItem.score||row.result<0){
           this.$message({
             type: 'warning',
             message: '无效输入'
@@ -152,37 +157,31 @@ export default {
           return
       }
       const res = await updatePRItemStatusById({
-          ID:row.ID,
+          ID:row.id,
           status:5,
           result:Number(row.result),
       })
       if(res.code == 0){
-          this.getPRItemListByUser()
+          this.getPRIUListByUser()
           this.$message({
           type: "success",
           message: "确认成功"})
-        const pr = await findPerformanceReview({ID:row.PRId})
-        this.prData = pr.data.rePerformanceReview
-        const total=Number(row.result)+Number(this.prData.result)
-        const update = await updatePRStatusById({
-          ID:row.PRId,
-          result:Number(total),
-          status:5,
+        const update = await updatePRResult({
+          ID:row.performanceReviewItem.PRId,
         })
         if(update.code==0){
           const count = await getPRItemCount({
-              PRId:row.PRId,
+              PRId:row.performanceReviewItem.PRId,
               status: 5,
           })
           this.countData = count.data.count;
           if(this.countData == 1){
               updatePRStatusById({
-                  ID:row.PRId,
-                  result:Number(total),
+                  ID:row.performanceReviewItem.PRId,
                   status: 7,
               })
               updatePRItemStatusByPrId({
-                PRId:row.PRId,
+                PRId:row.performanceReviewItem.PRId,
                 status:6,
             })
           }
@@ -192,14 +191,14 @@ export default {
     },
     handleSizeChange(val) {
         this.pageSize = val
-        this.getPRItemListByUser()
+        this.getPRIUListByUser()
     },
     handleCurrentChange(val) {
         this.page = val
-        this.getPRItemListByUser()
+        this.getPRIUListByUser()
     },
-    async getPRItemListByUser(page = this.page, pageSize = this.pageSize){
-      const res = await getPRItemListByUser({
+    async getPRIUListByUser(page = this.page, pageSize = this.pageSize){
+      const res = await getPRIUListByUser({
           ID:this.userInfo.ID,
           status:4,
           page: page, 
@@ -212,8 +211,7 @@ export default {
     },
   },
   async created() {
-    await this.getTableData();
-    this.getPRItemListByUser()
+    this.getPRIUListByUser()
 }
 };
 </script>

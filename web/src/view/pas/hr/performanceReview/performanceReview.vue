@@ -182,10 +182,10 @@
         </template>
       </el-table-column> 
       <el-table-column label="评分人" width="230">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.PRIUs"
-        :key="index">{{item.user.nickName}}<br/></span>
-      </template>
+        <template slot-scope="scope">
+          <span v-for="(item,index) in scope.row.PRIUs"
+          :key="index">{{item.user.nickName}}<br/></span>
+        </template>
       </el-table-column>
         <el-table-column label="按钮组">
           <template slot-scope="scope">

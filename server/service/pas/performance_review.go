@@ -112,7 +112,11 @@ func GetLastPerformanceReview() (err error, PerformanceReview mp.PerformanceRevi
 func UpdatePRStatusById(id uint, status uint, result float64) (err error) {
 	err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?", id).Update("status", status).Error
 	var pr mp.PerformanceReview
-	err = global.GVA_DB.Model(&pr).Where("id = ?", id).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
+	if result==0 {
+		err = global.GVA_DB.Model(&pr).Where("id = ?", id).Select("status").Updates(map[string]interface{}{ "status": status}).Error
+	}else {
+		err = global.GVA_DB.Model(&pr).Where("id = ?", id).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
+	}
 	return err
 }
 
@@ -139,4 +143,16 @@ func GetPRListByUser(id uint, Ids []int, info rp.PerformanceReviewSearch) (err e
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 	err = db.Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
 	return err, PerformanceReviews, total
+}
+
+func UpdatePRResult(ID uint) (err error) {
+	var PRIs []mp.PerformanceReviewItem
+	err = global.GVA_DB.Find(&PRIs).Where("pr_id = ?", ID).Error
+	var total float64 
+	var PR mp.PerformanceReview
+	for i := 0; i < len(PRIs); i++ {
+		total=total+PRIs[i].Result
+	}
+	err = global.GVA_DB.Model(&PR).Where("id = ?", ID).Select("result").Updates(map[string]interface{}{"result": total}).Error
+	return err
 }
