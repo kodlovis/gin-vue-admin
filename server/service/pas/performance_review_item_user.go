@@ -116,3 +116,9 @@ func GetPRIUListByStatus(status uint, info rp.PerformanceReviewItemUserSearch) (
 	err = db.Preload("User").Preload("PRI.Kpi").Preload("PRI.PRs.User").Find(&PRIU).Error
 	return err, PRIU, total
 }
+
+func UpdatePRIUStatusByIds(ids []uint,status uint) (err error) {
+	var PRIU mp.PerformanceReviewItemUser
+	err = global.GVA_DB.Model(&PRIU).Where("id in ?", ids).Select("status").Updates(map[string]interface{}{"status": status}).Error
+	return err
+}

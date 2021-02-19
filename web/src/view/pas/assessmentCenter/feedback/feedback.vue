@@ -16,6 +16,20 @@
         </el-form-item>
       </el-form>
     </div> -->
+    <div>
+      <el-form>
+        <el-form-item>
+          <el-popover placement="top" v-model="skipVisible" width="160">
+            <p>确定要跳过吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button @click="skipVisible = false" size="mini" type="text">取消</el-button>
+                <el-button @click="onSkip" size="mini" type="primary">确定</el-button>
+              </div>
+            <el-button size="mini" slot="reference" type="primary">批量跳过</el-button>
+          </el-popover>
+        </el-form-item>
+      </el-form>
+    </div>
       <el-table
           :data="acData"
           @selection-change="handleSelectionChange"
@@ -25,7 +39,7 @@
           style="width: 100%"
           tooltip-effect="dark"
         >
-        
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
         
         <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
@@ -71,7 +85,8 @@ import {
 } from "@/api/pas/performanceReview";  //  此处请自行替换地址
 
 import {    
-    getPRIUListByUser
+    getPRIUListByUser,
+    updatePRIUStatustByIds
 } from "@/api/pas/performanceReviewItemUser";
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
@@ -89,6 +104,7 @@ export default {
       total: 10,
       pageSize: 10,
       loading:false,
+      skipVisible:false,
       acData:{
         comment:"",
         score:0,
@@ -128,6 +144,29 @@ export default {
     }
   },
   methods: {
+      async onSkip(){
+        const ids = []
+        if(this.multipleSelection.length == 0){
+          this.$message({
+            type: 'warning',
+            message: '请选择要跳过的数据'
+          })
+          return
+        }
+        this.multipleSelection &&
+          this.multipleSelection.map(item => {
+            ids.push(item.id)
+          })
+        const res = await updatePRIUStatustByIds({ ids:ids,status:7 })
+        if (res.code == 0) {
+          this.$message({
+            type: 'success',
+            message: '跳过成功'
+          })
+          this.skipVisible = false
+          this.getPRIUListByUser()
+        }
+      },
       //条件搜索前端看此方法
       handleSelectionChange(val) {
         this.multipleSelection = val

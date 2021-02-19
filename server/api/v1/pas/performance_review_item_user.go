@@ -110,3 +110,14 @@ func GetPRIUListByStatus(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+
+func UpdatePRIUStatusByIds(c *gin.Context) {
+	var info rp.PerformanceReviewItemUserSearch
+	_ = c.ShouldBindJSON(&info)
+	if err := sp.UpdatePRIUStatusByIds(info.IDS,info.Status); err != nil {
+		global.GVA_LOG.Error("批量删除失败!", zap.Any("err", err))
+		response.FailWithMessage("批量删除失败", c)
+	} else {
+		response.OkWithMessage("批量删除成功", c)
+	}
+}
