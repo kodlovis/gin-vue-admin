@@ -29,12 +29,12 @@
         
         <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
-        <el-table-column label="被考评人" prop="user.nickName" width="460"></el-table-column> 
+        <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="460"></el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
         
           <el-table-column label="按钮组">
             <template slot-scope="scope">
-              <el-button class="table-button" @click="confirmKpi(scope.row)" size="small" type="primary" icon="el-icon-edit">确认</el-button>
+              <el-button class="table-button" @click="confirmKpi(scope.row)" size="small" type="primary" icon="el-icon-edit" :disabled="isDisable">确认</el-button>
               <el-popover placement="top" width="160" v-model="scope.row.visible">
                 <p>确定要驳回吗？</p>
                 <div style="text-align: right; margin: 0">
@@ -89,6 +89,7 @@ export default {
       page: 1,
       total: 10,
       pageSize: 10,
+      isDisable:false,
       acData:{
         score:0,
         kpi:{
@@ -133,6 +134,7 @@ export default {
         this.multipleSelection = val
       },
     async confirmKpi(row) {
+      this.isDisable=true
       const res = await updatePRItemStatusById({
           ID:row.id,
           status:91,
@@ -158,6 +160,7 @@ export default {
           })
         }
       }
+        this.isDisable=false
     },
     async rejectKpi(row){
       const res = await updatePRItemStatusById({

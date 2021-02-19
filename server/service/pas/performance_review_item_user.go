@@ -78,7 +78,7 @@ func GetPRIUListByUser(id uint, status uint, info rp.PerformanceReviewItemUserSe
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItemUsers).Error
-	err = db.Preload("PRI.Kpi").Preload("User").Find(&PerformanceReviewItemUsers).Error
+	err = db.Preload("PRI.Kpi").Preload("PRI.PRs.User").Preload("User").Find(&PerformanceReviewItemUsers).Error
 	return err, PerformanceReviewItemUsers, total
 }
 
