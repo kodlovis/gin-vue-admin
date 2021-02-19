@@ -202,10 +202,20 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        :current-page="priPage"
+        :page-size="priPageSize"
+        :page-sizes="[5,10, 30, 50, 100]"
+        :style="{float:'right',padding:'20px'}"
+        :total="priTotal"
+        @current-change="kpiCurrentChange"
+        @size-change="kpiSizeChange"
+        layout="total, sizes, prev, pager, next, jumper"
+      ></el-pagination>
       </el-dialog>
     </div>
-    
-    <el-dialog :before-close="closeKpiDialog" :visible.sync="kpiDialog" title="添加指标" width= "90%" :append-to-body="true" >
+    <!-- 添加指标 -->
+    <el-dialog :before-close="closeKpiDialog" :visible.sync="kpiDialog" title="添加指标" width= "90%" :append-to-body="true" :fullscreen ="true">
     <el-table
       :data="kpiList"
       @selection-change="handleSelectionChange"
@@ -217,17 +227,17 @@
     >
     <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标说明" prop="description" width="460" type="textarea"></el-table-column> 
     
     <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
     
-    <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标算法" prop="category" width="460" type="textarea"></el-table-column> 
      <el-table-column label="设置指标分数">
       <template slot-scope="scope">
           <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
       </template>
     </el-table-column>
-    <el-table-column label="设置评分人" width="230">
+    <el-table-column label="设置评分人" width="330">
       <template slot-scope="scope">
           <el-cascader
             @change="(val)=>{handleOptionChange(val,scope.row)}"
@@ -247,6 +257,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      :current-page="kpiPage"
+      :page-size="kpiPageSize"
+      :page-sizes="[5,10, 30, 50, 100]"
+      :style="{float:'right',padding:'20px'}"
+      :total="kpiTotal"
+      @current-change="kpiStoreCurrentChange"
+      @size-change="kpiStoreSizeChange"
+      layout="total, sizes, prev, pager, next, jumper"
+    ></el-pagination>
     </el-dialog>
     <el-dialog :before-close="closeRatioDialog" :visible.sync="ratioDialog" title="编辑人员权重" :append-to-body="true" style="width: 50%,marigin:right"
      >
@@ -347,7 +367,8 @@ import {
     getPerformanceReviewList,
     updatePerformanceReviewByInfo,
     getLastPerformanceReview,
-    updatePRStatysByIds
+    updatePRStatysByIds,
+    getPRByID
 } from "@/api/pas/performanceReview";
 import {
     getLastPRICreatePRIU,
@@ -398,7 +419,17 @@ export default {
       isDisable:false,
       dialogFlag: false,
       loading:false,
+      saveID:0,
+      page: 1,
+      kpiPage: 1,
+      priPage: 1,
+      total: 10,
+      pageSize: 10,
+      kpiPageSize: 10,
+      priPageSize: 10,
       type: "",
+      priTotal:0,
+      kpiTotal:0,
       kpiDictList:[],
       userOptions:[],
       evaluationOptions:[],
@@ -477,9 +508,12 @@ export default {
   methods: {
       async openKpiDialog(){
         this.kpiDialog = true;
-        const ref = await getKpiList()
+        const ref = await getKpiList({
+          page: this.page, 
+          pageSize: this.pageSize})
         if (ref.code == 0) {
         this.kpiList = ref.data.list;
+        this.kpiTotal=ref.data.total
         }
       },
       //考核增加指标
@@ -514,7 +548,10 @@ export default {
               this.$message({ type: 'success', message: "添加成功" })
               const sum =  Number(this.formData.score) + Number(row.evaluationKpis.kpiScore)
               updatePerformanceReviewByInfo({...this.formData,score:Number(sum)})
-              const res = await getPerformanceReviewItemListById({ PRId: this.formData.ID });
+              const res = await getPerformanceReviewItemListById({ PRId: this.formData.ID,
+                page: this.priPage, 
+                pageSize: this.priPageSize})
+              this.priTotal=res.data.total
               this.performanceReviewItemData = res.data.list;
             }
         }
@@ -613,9 +650,15 @@ export default {
     },
     //打开编辑指标的弹窗并传参
     async updatePerformancItemReview(row) {
-      const res = await getPerformanceReviewItemListById({ PRId: row.ID });
-      const pr = await findPerformanceReview({ ID: row.ID });
-      this.formData = pr.data.rePerformanceReview;
+      const res = await getPerformanceReviewItemListById({ PRId: row.ID,
+        page: this.priPage, 
+        pageSize: this.priPageSize})
+      this.priTotal=res.data.total
+      this.saveID = row.ID
+      const pr = await getPRByID({ ID: row.ID,
+          page: this.page, 
+          pageSize: this.pageSize });
+      this.formData = pr.data.list[0];
       if (res.code == 0) {
         this.performanceReviewItemData = res.data.list;
         this.prItemDialog = true;
@@ -638,7 +681,10 @@ export default {
         this.isDisable=false;
         const res = await getPRIUByPRIID({priid:row.priid})
         this.priuData = res.data.list
-        const re = await getPerformanceReviewItemListById({ PRId: row.performanceReviewItem.PRId });
+        const re = await getPerformanceReviewItemListById({ PRId: row.performanceReviewItem.PRId,
+          page: this.priPage, 
+          pageSize: this.priPageSize})
+        this.priTotal=re.data.total
         this.performanceReviewItemData = re.data.list;
       }
     },
@@ -672,7 +718,10 @@ export default {
           this.isDisable=false;
           const res = await getPRIUByPRIID({priid:row.priid})
           this.priuData = res.data.list
-          const re = await getPerformanceReviewItemListById({ PRId: this.priuData[0].performanceReviewItem.PRId });
+          const re = await getPerformanceReviewItemListById({ PRId: this.priuData[0].performanceReviewItem.PRId,
+            page: this.priPage, 
+            pageSize: this.priPageSize})
+          this.priTotal=re.data.total
           this.performanceReviewItemData = re.data.list;
         }
     },
@@ -689,7 +738,10 @@ export default {
       if(ref.code == 0){
         const res = await getPRIUByPRIID({priid:this.saveData.priid})
         this.priuData = res.data.list
-        const re = await getPerformanceReviewItemListById({ PRId: this.priuData[0].performanceReviewItem.PRId });
+        const re = await getPerformanceReviewItemListById({ PRId: this.priuData[0].performanceReviewItem.PRId,
+          page: this.priPage, 
+          pageSize: this.priPageSize})
+        this.priTotal=re.data.total
         this.performanceReviewItemData = re.data.list;
         this.$message({
           type:"success",
@@ -717,6 +769,38 @@ export default {
       this.getTableData()
       this.kpiDialog = false;
     },
+    async kpiSizeChange(val) {
+        this.priPageSize = val
+        const res = await getPerformanceReviewItemListById({ PRId: this.saveID,
+          page: this.priPage, 
+          pageSize: this.priPageSize})
+        this.priTotal=res.data.total
+        this.performanceReviewItemData = res.data.list
+    },
+    async kpiCurrentChange(val) {
+        this.priPage = val
+        const res = await getPerformanceReviewItemListById({ PRId: this.saveID,
+          page: this.priPage, 
+          pageSize: this.priPageSize})
+        this.priTotal=res.data.total
+        this.performanceReviewItemData = res.data.list
+    },
+    async kpiStoreSizeChange(val) {
+        this.kpiPageSize = val
+        const ref = await getKpiList({
+          page: this.kpiPage, 
+          pageSize: this.kpiPageSize})
+        this.kpiTotal=ref.data.total
+        this.kpiList=ref.data.list
+    },
+    async kpiStoreCurrentChange(val) {
+        this.kpiPage = val
+        const ref = await getKpiList({
+          page: this.kpiPage, 
+          pageSize: this.kpiPageSize})
+        this.kpiTotal=ref.data.total
+        this.kpiList=ref.data.list
+    },
     async deletePerformanceReview(row) {
       this.isDisable=true;
       const res = await deletePerformanceReview({ ID: row.ID });
@@ -737,7 +821,10 @@ export default {
         score:Number(row.score),
         status:Number(row.status),
         });
-        const prlist = await getPerformanceReviewItemListById({ PRId: this.formData.ID })
+        const prlist = await getPerformanceReviewItemListById({ PRId: this.formData.ID,
+          page: this.priPage, 
+          pageSize: this.priPageSize})
+        this.priTotal=prlist.data.total
         this.performanceReviewItemData = prlist.data.list
         var totalScore = 0
         for (let num = 0; num < this.performanceReviewItemData.length; num++) {
@@ -825,7 +912,10 @@ export default {
         });
       const sum = this.formData.score-row.score
       updatePerformanceReviewByInfo({...this.formData,score:Number(sum)})
-      const res = await getPerformanceReviewItemListById({ PRId: row.PRId });
+      const res = await getPerformanceReviewItemListById({ PRId: row.PRId,
+        page: this.priPage, 
+        pageSize: this.priPageSize})
+      this.priTotal=res.data.total
       this.performanceReviewItemData = res.data.list;
       this.getTableData()
       }

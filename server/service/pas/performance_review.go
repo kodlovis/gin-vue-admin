@@ -156,3 +156,13 @@ func UpdatePRResult(ID uint) (err error) {
 	err = global.GVA_DB.Model(&PR).Where("id = ?", ID).Select("result").Updates(map[string]interface{}{"result": total}).Error
 	return err
 }
+func GetPRByID(id uint, info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	db := global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?", id)
+	var PerformanceReviews []mp.PerformanceReview
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
+	err = db.Preload("User").Find(&PerformanceReviews).Error
+	return err, PerformanceReviews, total
+}

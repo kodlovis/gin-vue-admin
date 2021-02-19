@@ -69,7 +69,6 @@
 
 <script>
 import {
-    getPRItemListByUser,
     updatePRItemStatusById,
     getPRItemCount,
     updatePRItemStatusByPrId,
@@ -91,7 +90,7 @@ export default {
   mixins: [infoList],
   data() {
     return {
-      listApi: getPRItemListByUser,
+      listApi: getPRIUListByUser,
       type: "",
       multipleSelection: [],formData:[],
       countData:9,

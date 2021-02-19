@@ -23,11 +23,7 @@ func InitPerformanceReviewRouter(Router *gin.RouterGroup) {
 		PerformanceReviewRouter.GET("getPRByUser", pas.GetPRByUser)  
 		PerformanceReviewRouter.POST("getPRListByUser", pas.GetPRListByUser) 
 		PerformanceReviewRouter.PUT("updatePRResult", pas.UpdatePRResult)
-		
-		
-		
-		
-		
+		PerformanceReviewRouter.POST("getPRByID", pas.GetPRByID) 
 		
 
 	}

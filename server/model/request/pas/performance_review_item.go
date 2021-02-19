@@ -7,7 +7,7 @@ type PerformanceReviewItemSearch struct {
 	PageInfo
 	ID     uint  `json:"ID"`
 	Status uint  `json:"status"`
-	PRID   uint  `json:"prid"`
+	PRID   uint  `json:"PRId"`
 	Ids    []int `json:"ids"`
 }
 

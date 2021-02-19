@@ -160,3 +160,10 @@ export const updatePRResult = (data) => {
     })
 }
 
+export const getPRByID = (data) => {
+    return service({
+        url: "/PerformanceReview/getPRByID",
+        method: 'post',
+        data
+    })
+}

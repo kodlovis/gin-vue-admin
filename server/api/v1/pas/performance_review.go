@@ -225,3 +225,18 @@ func UpdatePRResult(c *gin.Context) {
 		response.OkWithMessage("更新成功", c)
 	}
 }
+func GetPRByID(c *gin.Context) {
+	var pageInfo rp.PerformanceReviewSearch
+	_ = c.ShouldBindJSON(&pageInfo)
+	if err,  list, total := sp.GetPRByID(pageInfo.ID,pageInfo); err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
+		response.FailWithMessage("查询失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
+	}
+}
