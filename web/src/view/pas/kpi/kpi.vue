@@ -2,14 +2,22 @@
   <div>
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-select v-model="searchInfo.status" placeholder="请选择" clearable>
-          <el-option
-            v-for="item in dictList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>  
+        <el-form-item label="指标状态">
+          <el-select v-model="searchInfo.status" placeholder="请选择" clearable>
+            <el-option
+              v-for="item in dictList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>    
+        <el-form-item label="指标名称">
+          <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
+        </el-form-item>    
+        <el-form-item label="指标说明">
+          <el-input placeholder="搜索条件" v-model="searchInfo.description"></el-input>
+        </el-form-item>    
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>

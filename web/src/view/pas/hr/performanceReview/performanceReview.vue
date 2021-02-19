@@ -216,6 +216,17 @@
     </div>
     <!-- 添加指标 -->
     <el-dialog :before-close="closeKpiDialog" :visible.sync="kpiDialog" title="添加指标" width= "90%" :append-to-body="true" :fullscreen ="true">
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">   
+        <el-form-item label="指标名称">
+          <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
+        </el-form-item>    
+        <el-form-item label="指标说明">
+          <el-input placeholder="搜索条件" v-model="searchInfo.description"></el-input>
+        </el-form-item>    
+        <el-form-item>
+          <el-button @click="searchKpiInfo" type="primary">查询</el-button>
+        </el-form-item>
+      </el-form>
     <el-table
       :data="kpiList"
       @selection-change="handleSelectionChange"
@@ -232,7 +243,7 @@
     <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
     
     <el-table-column label="指标算法" prop="category" width="460" type="textarea"></el-table-column> 
-     <el-table-column label="设置指标分数">
+     <el-table-column label="设置指标分数" width="160">
       <template slot-scope="scope">
           <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
       </template>
@@ -428,6 +439,7 @@ export default {
       kpiPageSize: 10,
       priPageSize: 10,
       type: "",
+      searchInfo: {},
       priTotal:0,
       kpiTotal:0,
       kpiDictList:[],
@@ -612,6 +624,15 @@ export default {
         this.page = 1
         this.pageSize = 10           
         this.getTableData()
+      },
+      async searchKpiInfo() {
+        this.kpiPage = 1
+        this.kpiPageSize = 10
+        const ref = await getKpiList({...this.searchInfo,
+          page: this.kpiPage, 
+          pageSize: this.kpiPageSize})
+        this.kpiTotal=ref.data.total
+        this.kpiList=ref.data.list
       },
       handleSelectionChange(val) {
         this.multipleSelection = val
