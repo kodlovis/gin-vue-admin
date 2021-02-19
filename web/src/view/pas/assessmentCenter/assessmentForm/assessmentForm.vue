@@ -30,8 +30,12 @@
         
         <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
-        <el-table-column label="被考评人" prop="user.nickName" width="120"></el-table-column> 
-        <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
+        <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="120"></el-table-column> 
+        <el-table-column label="权重分值" width="120">
+          <template slot-scope="scope">
+            <span>{{scope.row.score*100+"%"}}<br/></span>
+          </template>
+          </el-table-column>
         <el-table-column label="总分" prop="performanceReviewItem.score" width="120"></el-table-column>
         <el-table-column label="得分">
           <template slot-scope="scope">
