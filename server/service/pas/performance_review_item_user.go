@@ -116,9 +116,37 @@ func GetPRIUListByStatus(status uint, info rp.PerformanceReviewItemUserSearch) (
 	err = db.Preload("User").Preload("PRI.Kpi").Preload("PRI.PRs.User").Find(&PRIU).Error
 	return err, PRIU, total
 }
-
+//批量跳过反馈的方法
 func UpdatePRIUStatusByIds(ids []uint,status uint) (err error) {
 	var PRIU mp.PerformanceReviewItemUser
+	var PRI mp.PerformanceReviewItem
 	err = global.GVA_DB.Model(&PRIU).Where("id in ?", ids).Select("status").Updates(map[string]interface{}{"status": status}).Error
+	var total = int64(0)
+	var num = int64(0)
+	var PRIUs []mp.PerformanceReviewItemUser
+	err = global.GVA_DB.Where("id in ?", ids).Find(&PRIUs).Error
+	for i := 0; i < len(PRIUs); i++ {
+		err = global.GVA_DB.Model(&PRIU).Where("pri_id = ? AND status = ?", PRIUs[i].PRIID, status).Count(&num).Error
+		err = global.GVA_DB.Model(&PRIU).Where("pri_id = ?",PRIUs[i].PRIID).Count(&total).Error
+		var count = float64(num) / float64(total)
+		if count ==1  {
+			var arr []uint
+			for i := 0; i < len(PRIUs); i++ {
+				arr = append(arr,PRIUs[i].PRIID)
+			}
+			err = global.GVA_DB.Model(&PRI).Where("id in ?", arr).Select("status").Updates(map[string]interface{}{"status": status}).Error
+			err = global.GVA_DB.Where("id = ?", PRIUs[i].PRIID).Find(&PRI).Error
+			var prTotal = int64(0)
+			var prNum = int64(0)
+			err = global.GVA_DB.Model(&PRI).Where("id = ? AND status = ?", PRIUs[i].PRIID, status).Count(&prNum).Error
+			err = global.GVA_DB.Model(&PRI).Where("id = ?",PRIUs[i].PRIID).Count(&prTotal).Error
+			var prCount = float64(prNum) / float64(prTotal)
+			var PR mp.PerformanceReview
+			err = global.GVA_DB.Where("id = ?", PRI.PRId).Find(&PR).Error
+			if prCount ==1&&PR.Status==8 {
+				err = global.GVA_DB.Model(&PR).Where("id = ?", PR.ID).Select("status").Updates(map[string]interface{}{"status": 9}).Error
+			}
+		}
+	}
 	return err
 }
