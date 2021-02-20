@@ -115,6 +115,7 @@
              clearable
              :props="{ checkStrictly: true,label:'name',value:'id',}"
              filterable
+            :disabled="isDisable"
           ></el-cascader>
       </el-form-item>
           <el-form-item label="被考核人选择:">
@@ -308,7 +309,7 @@
           ></el-cascader>
       </template>
     </el-table-column> 
-      <el-table-column label="指标状态" prop="kpi.status" width="160">
+      <el-table-column label="操作状态" prop="kpi.status" width="160">
         <template slot-scope="scope">
         <el-select v-model="scope.row.status" placeholder="请选择" clearable>
           <el-option
@@ -320,7 +321,7 @@
         </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="得分" width="160">
+      <el-table-column label="当前得分" width="160">
         <template slot-scope="scope">
             <el-input v-model="scope.row.result" clearable placeholder="请输入"></el-input>
         </template>
@@ -666,6 +667,7 @@ export default {
       this.type = "update";
       if (res.code == 0) {
         this.formData = res.data.rePerformanceReview;
+        this.isDisable=true
         this.dialogFormVisible = true;
       }
     },
@@ -778,6 +780,7 @@ export default {
     },
     closeDialog() {
       this.dialogFormVisible = false;
+      this.isDisable=false
       this.formData = {
           StartDate:new Date(),
           EndingDate:new Date(),
@@ -906,6 +909,7 @@ export default {
           evaluationId:Number(this.formData.evaluationId),
           status:Number(this.formData.status),
           employeeId:Number(this.formData.employeeId)});
+          this.isDisable=false
           break;
         default:
           res = await createPerformanceReview(this.formData);
