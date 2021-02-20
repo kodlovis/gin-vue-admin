@@ -99,7 +99,7 @@ func UpdatePRItemStatusByPrId(id uint, status uint) (err error) {
 	var PerformanceReviewItem mp.PerformanceReviewItem
 	var PRIs []mp.PerformanceReviewItem
 	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("pr_id = ?", id).Update("status", status).Error
-	err = global.GVA_DB.Find(&PRIs).Where("pri_id = ?",id).Error
+	err = global.GVA_DB.Where("pr_id = ?",id).Find(&PRIs).Error
 	var PRIU mp.PerformanceReviewItemUser
 	for i := 0; i < len(PRIs) ;i++ {
 		err = global.GVA_DB.Model(&PRIU).Where("pri_id = ?", PRIs[i].ID).Update("status", status).Error
@@ -120,7 +120,7 @@ func UpdatePRItemStatysByIds(Ids []int, status uint) (err error) {
 	var PRIs []mp.PerformanceReviewItem
 	for i := 0; i < len(Ids); i++ {
 		err = global.GVA_DB.Model(&mp.PerformanceReviewItem{}).Where("pr_id = ?", Ids[i]).Update("status", status).Error
-		err = global.GVA_DB.Find(&PRIs).Where("pr_id = ?", Ids[i]).Error
+		err = global.GVA_DB.Where("pr_id = ?", Ids[i]).Find(&PRIs).Error
 		for j := 0; j < len(PRIs); j++ {
 			err = global.GVA_DB.Model(&mp.PerformanceReviewItemUser{}).Where("pri_id = ?", PRIs[j].ID).Update("status", status).Error
 		}
