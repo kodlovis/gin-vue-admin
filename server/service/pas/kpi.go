@@ -87,8 +87,11 @@ func GetKpiInfoList(info rp.KpiSearch) (err error, list interface{}, total int64
     if info.Description != "" {
         db = db.Where("`description` LIKE ?","%"+ info.Description+"%")
     }
-    if info.Status != 0 {
-        db = db.Where("`status` = ?",info.Status)
+    if info.Status != 2 {
+        db = db.Where("`status` = ?",1)
+    }
+    if info.Status == 2 {
+        db = db.Where("`status` = ?",2)
     }
     if info.Category != "" {
         db = db.Where("`category` LIKE ?","%"+ info.Category+"%")

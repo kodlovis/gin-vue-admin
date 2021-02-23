@@ -85,8 +85,19 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right"
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right" :fullscreen ="true"
      >
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-form-item label="指标名称">
+          <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
+        </el-form-item>    
+        <el-form-item label="指标说明">
+          <el-input placeholder="搜索条件" v-model="searchInfo.description"></el-input>
+        </el-form-item>    
+        <el-form-item>
+          <el-button @click="onSubmit" type="primary">查询</el-button>
+        </el-form-item>
+      </el-form>
     <el-table
       :data="kpiList"
       @selection-change="handleSelectionChange"
@@ -127,6 +138,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      :current-page="kpiPage"
+      :page-size="kpiPageSize"
+      :page-sizes="[5,10,15,20]"
+      :style="{float:'right',padding:'20px'}"
+      :total="kpiTotal"
+      @current-change="kpiChange"
+      @size-change="kpiSizeChange"
+      layout="total, sizes, prev, pager, next, jumper"
+    ></el-pagination>
     </el-dialog>
 
     <el-dialog :before-close="closeRatioDialog" :visible.sync="ratioDialog" title="编辑人员权重" :append-to-body="true" style="width: 50%,marigin:right"
@@ -242,6 +263,9 @@ export default {
       page: 1,
       total: 10,
       pageSize: 5,
+      kpiPage:1,
+      kpiTotal:10,
+      kpiPageSize:5,
       isDisable:false,
       type: "",
       deleteVisible: false,
@@ -368,7 +392,11 @@ export default {
         this.userDialog = true
     },
     async openDialog() {
-        const life = await getKpiList({ID:Number(this.row.ID)});
+        const life = await getKpiList({
+          ID:Number(this.row.ID),
+          page: this.kpiPage, 
+          pageSize: this.kpiPageSize
+        });
         this.kpiList = life.data.list;
         this.dialogFormVisible = true;
     },
@@ -381,10 +409,15 @@ export default {
     },
 
     //条件搜索前端看此方法
-    onSubmit() {
-      this.page = 1
-      this.pageSize = 10
-      this.getKpiScoreByIds()
+    async onSubmit() {
+      this.kpiPage = 1
+      this.kpiPageSize = 10
+      const life = await getKpiList({...this.searchInfo,
+        ID:Number(this.row.ID),
+        page: this.kpiPage, 
+        pageSize: this.kpiPageSize
+      });
+      this.kpiList = life.data.list;
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -451,6 +484,25 @@ export default {
         this.page = val
         this.refreshEvalutationKpi()
     },
+    async kpiSizeChange(val) {
+        this.kpiPageSize = val
+        const life = await getKpiList({
+          ID:Number(this.row.ID),
+          page: this.kpiPage, 
+          pageSize: this.kpiPageSize
+        });
+        this.kpiList = life.data.list;
+    },
+    async kpiChange(val) {
+        this.kpiPage = val
+        const life = await getKpiList({
+          ID:Number(this.row.ID),
+          page: this.kpiPage, 
+          pageSize: this.kpiPageSize
+        });
+        this.kpiList = life.data.list;
+    },
+    
     async setTotalScore(){
       const ref = await getKpiEvaluation({ID:Number(this.row.ID)})
         this.KpiData = ref.data.list;
