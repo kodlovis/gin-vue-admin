@@ -24,6 +24,8 @@ func InitPerformanceReviewRouter(Router *gin.RouterGroup) {
 		PerformanceReviewRouter.POST("getPRListByUser", pas.GetPRListByUser) 
 		PerformanceReviewRouter.PUT("updatePRResult", pas.UpdatePRResult)
 		PerformanceReviewRouter.POST("getPRByID", pas.GetPRByID) 
+		PerformanceReviewRouter.GET("getPRListWithoutFinishedStatus", pas.GetPRListWithoutFinishedStatus)  
+		
 		
 
 	}

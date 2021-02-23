@@ -167,3 +167,11 @@ export const getPRByID = (data) => {
         data
     })
 }
+
+export const getPRListWithoutFinishedStatus = (params) => {
+    return service({
+        url: "/PerformanceReview/getPRListWithoutFinishedStatus",
+        method: 'get',
+        params
+    })
+}

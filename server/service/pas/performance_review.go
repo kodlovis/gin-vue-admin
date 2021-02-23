@@ -94,14 +94,36 @@ func GetPerformanceReviewInfoList(info rp.PerformanceReviewSearch) (err error, l
     if info.NickName != "" {
 		err = db.Count(&total).Error
 		err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
-		
 		err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Joins("INNER JOIN sys_users AS `user` ON performance_review.employee_id = `user`.id").Find(&PerformanceReviews,"`user`.nick_name LIKE ?","%"+ info.NickName+"%").Error
-
 		return err, PerformanceReviews, total
 	}
-	// err = global.GVA_DB.Preload("Promoter").Preload("Operator").Preload("WorkflowNode").Preload("WorkflowProcess").
-	// Joins("INNER JOIN workflow_nodes as node ON workflow_moves.workflow_node_id = node.id").
-	// Find(&wfms, "promoter_id = ? and ( is_active = ? OR node.clazz = ?)", userID, true, "end").Error
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
+	err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
+	return err, PerformanceReviews, total
+}
+func GetPRListWithoutFinishedStatus(info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	// 创建db
+	db := global.GVA_DB.Model(&mp.PerformanceReview{})
+	var PerformanceReviews []mp.PerformanceReview
+	// 如果有条件搜索 下方会自动创建搜索语句
+    if info.Name != "" {
+        db = db.Where("`name` LIKE ?","%"+ info.Name+"%")
+    }
+    if info.PerformanceReview.Status != 0 {
+        db = db.Where("`status` = ?",info.PerformanceReview.Status)
+    }
+    if info.PerformanceReview.Status == 0 {
+        db = db.Where("`status` != ?",9)
+    }
+    if info.NickName != "" {
+		err = db.Count(&total).Error
+		err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
+		err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Joins("INNER JOIN sys_users AS `user` ON performance_review.employee_id = `user`.id").Find(&PerformanceReviews,"`user`.nick_name LIKE ?","%"+ info.NickName+"%").Error
+		return err, PerformanceReviews, total
+	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 	err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error

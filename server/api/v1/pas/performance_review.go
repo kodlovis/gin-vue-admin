@@ -145,6 +145,21 @@ func GetPerformanceReviewList(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+func GetPRListWithoutFinishedStatus(c *gin.Context) {
+	var pageInfo rp.PerformanceReviewSearch
+	_ = c.ShouldBindQuery(&pageInfo)
+	if err, list, total := sp.GetPRListWithoutFinishedStatus(pageInfo); err != nil {
+		global.GVA_LOG.Error("获取失败", zap.Any("err", err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
+	}
+}
 
 func UpdatePerformanceReviewByInfo(c *gin.Context) {
 	var PRInfo rp.PerformanceReviewInfo
