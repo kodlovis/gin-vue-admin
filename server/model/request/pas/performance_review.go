@@ -9,6 +9,7 @@ type PerformanceReviewSearch struct{
     Status uint `json:"status"`
     ID uint `json:"ID"`
     Ids []int `json:"ids"`
+    NickName string `json:"nickName" form:"nickName"` 
 }
 type PerformanceReviewInfo struct {
     ID uint `json:"ID"`
