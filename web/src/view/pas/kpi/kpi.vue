@@ -21,6 +21,7 @@
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
+        <br/>
         <el-form-item>
           <el-button @click="openDialog" type="primary">新增指标表</el-button>
         </el-form-item>

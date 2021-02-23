@@ -71,9 +71,13 @@
 
     <el-table-column label="被考核人" width="120" prop="user.nickName"></el-table-column>
     
-    <el-table-column label="开始时间" prop="startDate" width="120"></el-table-column>
+    <el-table-column label="开始时间" prop="startDate" width="120">
+      <template slot-scope="scope">{{scope.row.startDate|formatDate}}</template>
+    </el-table-column>
 
-    <el-table-column label="结束时间" prop="endingDate" width="120"></el-table-column>
+    <el-table-column label="结束时间" prop="endingDate" width="120">
+      <template slot-scope="scope">{{scope.row.endingDate|formatDate}}</template>
+    </el-table-column>
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
@@ -522,7 +526,7 @@ export default {
     formatDate: function(time) {
       if (time != null && time != "") {
         var date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
+        return formatTimeToStr(date, "yyyy-MM-dd");
       } else {
         return "";
       }

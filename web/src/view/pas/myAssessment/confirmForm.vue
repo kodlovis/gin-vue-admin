@@ -34,9 +34,13 @@
          </el-table-column> 
         <el-table-column label="被考核人" prop="user.nickName" width="120"></el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column> 
-        <el-table-column label="开始时间" prop="startDate" width="120"></el-table-column>
-        <el-table-column label="结束时间" prop="endingDate" width="120"></el-table-column>
-        </el-table>
+        <el-table-column label="开始时间" prop="startDate" width="120">
+          <template slot-scope="scope">{{scope.row.startDate|formatDate}}</template>
+        </el-table-column>
+        <el-table-column label="结束时间" prop="endingDate" width="120">
+          <template slot-scope="scope">{{scope.row.endingDate|formatDate}}</template>
+        </el-table-column>
+      </el-table>
       <h5>当前考核表详情</h5>
       <el-table
           :data="prData"
@@ -139,7 +143,7 @@ export default {
     formatDate: function(time) {
       if (time != null && time != "") {
         var date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
+        return formatTimeToStr(date, "yyyy-MM-dd");
       } else {
         return "";
       }

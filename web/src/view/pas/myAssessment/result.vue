@@ -37,8 +37,12 @@
         <el-table-column label="被考核人" prop="user.nickName" width="120"></el-table-column> 
         <el-table-column label="总分" prop="score" width="120"></el-table-column> 
         <el-table-column label="得分" prop="result" width="120"></el-table-column> 
-        <el-table-column label="开始时间" prop="startDate" width="120"></el-table-column>
-        <el-table-column label="结束时间" prop="endingDate" width="120"></el-table-column>
+        <el-table-column label="开始时间" prop="startDate" width="120">
+          <template slot-scope="scope">{{scope.row.startDate|formatDate}}</template>
+        </el-table-column>
+        <el-table-column label="结束时间" prop="endingDate" width="120">
+          <template slot-scope="scope">{{scope.row.endingDate|formatDate}}</template>
+        </el-table-column>
         <el-table-column label="备注" prop="score" width="520">
           <template slot-scope="scope">
             <el-input v-model="scope.row.comment" clearable placeholder="请输入备注"></el-input>
@@ -145,7 +149,7 @@ export default {
     formatDate: function(time) {
       if (time != null && time != "") {
         var date = new Date(time);
-        return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
+        return formatTimeToStr(date, "yyyy-MM-dd");
       } else {
         return "";
       }
