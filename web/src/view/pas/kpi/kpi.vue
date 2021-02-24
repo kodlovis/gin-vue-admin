@@ -110,16 +110,16 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="修改指标">
-      <el-form :model="formData" label-position="right" label-width="80px" :rules="rules">
-         <el-form-item label="指标名称:">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" :title="dialogTitle">
+      <el-form :model="formData" label-position="right" label-width="100px" :rules="rules" ref="kpiForm">
+         <el-form-item label="指标名称:" prop="name">
             <el-input v-model="formData.name" clearable placeholder="请输入"></el-input>
       </el-form-item>
-         <el-form-item label="指标说明:">
+         <el-form-item label="指标说明:" prop="description">
             <el-input v-model="formData.description" clearable placeholder="请输入"  type="textarea"
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
-         <el-form-item label="指标状态:">
+         <el-form-item label="指标状态:" prop="status">
           <el-select v-model="formData.status" placeholder="请选择">
             <el-option
               v-for="item in dictList"
@@ -129,7 +129,7 @@
           </el-option>
         </el-select>  
       </el-form-item>
-         <el-form-item label="指标算法:">
+         <el-form-item label="指标算法:" prop="category">
             <el-input v-model="formData.category" clearable placeholder="请输入"  type="textarea"
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
@@ -196,6 +196,7 @@ export default {
       statusMap: {},
       dictList:[],
       tagOptions:[],
+      dialogTitle:"新增指标",
       multipleSelection: [],formData: {
             name:"",
             description:"",
@@ -212,6 +213,12 @@ export default {
       tagColumn:{
            name:"",
       },
+      rules: {
+        name:[ { required: true, message: '请输入', trigger: 'blur' }],
+        status:[ { required: true, message: '请输入', trigger: 'blur' }],
+        category:[ { required: true, message: '请输入', trigger: 'blur' }],
+        description:[ { required: true, message: '请输入', trigger: 'blur' }]
+      }
     };
   },
   filters: {
@@ -295,8 +302,9 @@ export default {
           this.getTableData()
         }
       },
-    
+    //编辑指标
     async updateKpi(row) {
+      this.dialogTitle = "编辑指标";
       const res = await findKpi({ ID: row.ID });
       //const tag = await findTag({ ID: row.ID });
       this.type = "update";
@@ -312,14 +320,8 @@ export default {
       }
     },
     closeDialog() {
+      this.initForm();
       this.dialogFormVisible = false;
-      this.formData = {
-          name:"",
-          description:"",
-          status:"",
-          category:"",
-          Tags: [],
-      };
     },
     async deleteKpi(row) {
       this.visible = false;
@@ -343,52 +345,72 @@ export default {
         this.getTableData();
       }
     },
+    // 初始化表单
+    initForm() {
+      if (this.$refs.kpiForm) {
+        this.$refs.kpiForm.resetFields();
+      }
+      this.formData = {
+            name:"",
+            description:"",
+            status:"",
+            category:"",
+            Tags: [],
+      };
+    },
     async enterDialog() {
-      let res;
-      let ref;
-      var item = []
-      switch (this.type) {
-        case "create":
-          var re = await createKpi({...this.formData,Tags:[]});
-          if(re.code == 0){
-            var kpi = await getLastKpi()
-            var lastKpi = kpi.data.reKpi
-            for (let i = 0; i < this.formData.Tags.length; i++) {
-              item.push({
-                tagId:Number(this.formData.Tags[i]),
-                kpiId:Number(lastKpi.ID),
-                })
-            } 
-            res = await createKpiTag({item})
-          }
-          break;
-        case "update":
-          ref = await removeKpiTags({ID: this.formData.ID})
-          if (ref.code == 0 && this.formData.Tags != null) {
-            for (let i = 0; i < this.formData.Tags.length; i++) {
-              item.push({
-                tagId:Number(this.formData.Tags[i]),
-                kpiId:Number(this.formData.ID),
-                })
+      this.$refs.kpiForm.validate(async valid => {
+        if (valid) {
+          let res;
+          let ref;
+          var item = []
+          switch (this.type) {
+            case "create":
+              var re = await createKpi({...this.formData,Tags:[]});
+              if(re.code == 0){
+                var kpi = await getLastKpi()
+                var lastKpi = kpi.data.reKpi
+                for (let i = 0; i < this.formData.Tags.length; i++) {
+                  item.push({
+                    tagId:Number(this.formData.Tags[i]),
+                    kpiId:Number(lastKpi.ID),
+                    })
+                } 
+                res = await createKpiTag({item})
               }
-          createKpiTag({item})
+              break;
+            case "update":
+              ref = await removeKpiTags({ID: this.formData.ID})
+              if (ref.code == 0 && this.formData.Tags != null) {
+                for (let i = 0; i < this.formData.Tags.length; i++) {
+                  item.push({
+                    tagId:Number(this.formData.Tags[i]),
+                    kpiId:Number(this.formData.ID),
+                    })
+                  }
+              createKpiTag({item})
+              }
+              res = await updateKpi({...this.formData,Tags:[]});
+              break;
+            default:
+              res = await createKpi({...this.formData,Tags:[{ID:this.formData.Tags}]});
+              break;
           }
-          res = await updateKpi({...this.formData,Tags:[]});
-          break;
-        default:
-          res = await createKpi({...this.formData,Tags:[{ID:this.formData.Tags}]});
-          break;
-      }
-      if (res.code == 0) {
-        this.$message({
-          type:"success",
-          message:"创建/更改成功"
-        })
-        this.closeDialog();
-        this.getTableData();
-      }
+          if (res.code == 0) {
+            this.$message({
+              type:"success",
+              message:"创建/更改成功"
+            })
+            this.closeDialog();
+            this.getTableData();
+          }
+          this.initForm();
+        }
+      });
     },
     async openDialog() {
+      this.formData.status=1
+      this.dialogTitle = "新增指标";
       const tags = await getTagList();
       this.tagData = tags.data.list;
       this.type = "create";

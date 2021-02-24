@@ -73,18 +73,18 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="修改方案">
-      <el-form :model="formData" label-position="right" label-width="80px">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" :title="dialogTitle">
+      <el-form :model="formData" label-position="right" label-width="100px" :rules="rules" ref="evaluationForm">
         
-         <el-form-item label="方案名称:">
+         <el-form-item label="方案名称:" prop="name">
             <el-input v-model="formData.name" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="方案类型:">
+         <el-form-item label="方案类型:" prop="category">
             <el-input v-model="formData.category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="方案状态:">
+         <el-form-item label="方案状态:" prop="status">
           <el-select v-model="formData.status" placeholder="请选择">
             <el-option
               v-for="item in dictList"
@@ -95,7 +95,7 @@
           </el-select>  
        </el-form-item>
        
-         <el-form-item label="方案描述:">
+         <el-form-item label="方案描述:" prop="description">
             <el-input v-model="formData.description" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        </el-form>
@@ -142,6 +142,7 @@ export default {
       visible: false,
       type: "",
       dictList:[],
+      dialogTitle:"新增方案",
       deleteVisible: false,
       multipleSelection: [],formData: {
             ID:"",
@@ -151,7 +152,12 @@ export default {
             description:"",
             score: "",
             Kpis:0,
-            
+      },
+      rules: {
+        name:[ { required: true, message: '请输入', trigger: 'blur' }],
+        status:[ { required: true, message: '请输入', trigger: 'blur' }],
+        category:[ { required: true, message: '请输入', trigger: 'blur' }],
+        description:[ { required: true, message: '请输入', trigger: 'blur' }]
       },
     };
   },
@@ -238,6 +244,7 @@ export default {
         }
       },
     async updateEvaluation(row) {
+      this.dialogTitle = "编辑方案";
       const res = await findEvaluation({ ID: row.ID });
       this.type = "update";
       if (res.code == 0) {
@@ -246,15 +253,8 @@ export default {
       }
     },
     closeDialog() {
+      this.initForm();
       this.dialogFormVisible = false;
-      this.formData = {
-          name:"",
-          category:"",
-          status:"",
-          description:"",
-          score:"",
-          
-      };
     },
     async deleteEvaluation(row) {
       this.visible = false;
@@ -267,29 +267,49 @@ export default {
         this.getTableData();
       }
     },
+    // 初始化表单
+    initForm() {
+      if (this.$refs.evaluationForm) {
+        this.$refs.evaluationForm.resetFields();
+      }
+      this.formData = {
+            name:"",
+            description:"",
+            status:"",
+            category:"",
+      };
+    },
     async enterDialog() {
-      let res;
-      switch (this.type) {
-        case "create":
-          res = await createEvaluation({...this.formData,score:Number(this.formData.score)});
-          break;
-        case "update":
-          res = await updateEvaluation({...this.formData,score:Number(this.formData.score)});
-          break;
-        default:
-          res = await createEvaluation({...this.formData,score:Number(this.formData.score)});
-          break;
-      }
-      if (res.code == 0) {
-        this.$message({
-          type:"success",
-          message:"创建/更改成功"
-        })
-        this.closeDialog();
-        this.getTableData();
-      }
+      this.$refs.evaluationForm.validate(async valid => {
+        if (valid) {
+          let res;
+          switch (this.type) {
+            case "create":
+              res = await createEvaluation({...this.formData,score:Number(this.formData.score)});
+              break;
+            case "update":
+              res = await updateEvaluation({...this.formData,score:Number(this.formData.score)});
+              break;
+            default:
+              res = await createEvaluation({...this.formData,score:Number(this.formData.score)});
+              break;
+          }
+          if (res.code == 0) {
+            this.$message({
+              type:"success",
+              message:"创建/更改成功"
+            })
+            this.closeDialog();
+            this.getTableData();
+          }
+          this.initForm();
+        }
+      });
     },
     openDialog() {
+      
+              this.formData.status=1
+      this.dialogTitle = "新增方案";
       this.type = "create";
       this.dialogFormVisible = true;
     }

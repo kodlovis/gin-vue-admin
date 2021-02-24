@@ -64,21 +64,15 @@
         <span>{{filterDict(scope.row.status)}}</span>
       </template>
       </el-table-column>
-
     <el-table-column label="方案名称" width="120" prop="evaluation.name"></el-table-column>
-
     <el-table-column label="方案总分" width="120" prop="score"></el-table-column>
-
     <el-table-column label="被考核人" width="120" prop="user.nickName"></el-table-column>
-    
     <el-table-column label="开始时间" prop="startDate" width="120">
       <template slot-scope="scope">{{scope.row.startDate|formatDate}}</template>
     </el-table-column>
-
     <el-table-column label="结束时间" prop="endingDate" width="120">
       <template slot-scope="scope">{{scope.row.endingDate|formatDate}}</template>
     </el-table-column>
-    
       <el-table-column label="按钮组">
         <template slot-scope="scope">
           <el-button class="table-button" @click="updatePerformanceReview(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑考核表</el-button>
@@ -106,18 +100,18 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
     <!-- 编辑考核表的弹窗 -->
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="编辑考核表" 
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" :title="dialogTitle" 
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)">
-      <el-form :model="formData" label-position="right" label-width="120px">
+      <el-form :model="formData" label-position="right" label-width="120px" :rules="rules" ref="prForm">
        
-         <el-form-item label="考核表名称:">
+         <el-form-item label="考核表名称:" prop="name">
             <el-input v-model="formData.name" clearable placeholder="请输入" :style="{width: '60%'}"></el-input>
       </el-form-item>
        
-         <el-form-item label="考核表状态:">
+         <el-form-item label="考核表状态:" prop="status">
           <el-select v-model="formData.status" placeholder="请选择">
             <el-option
               v-for="item in dictList"
@@ -128,7 +122,7 @@
             </el-select>  
         </el-form-item>
        
-         <el-form-item label="方案选择:" v-model="formData.evaluationId">
+         <el-form-item label="方案选择:" v-model="formData.evaluationId" prop="evaluationId">
            <el-cascader
              @change="(val)=>{handleOptionChange(val)}"
              v-model="formData.evaluationId"
@@ -139,7 +133,7 @@
             :disabled="isDisable"
           ></el-cascader>
       </el-form-item>
-          <el-form-item label="被考核人选择:">
+          <el-form-item label="被考核人选择:" prop="employeeId">
            <el-cascader
              @change="(val)=>{handleOptionChange(val)}"
              v-model="formData.employeeId"
@@ -149,11 +143,11 @@
              filterable
           ></el-cascader>
       </el-form-item>
-         <el-form-item label="开始日期:">
+         <el-form-item label="开始日期:" prop="startDate">
               <el-date-picker type="date" placeholder="选择日期" v-model="formData.startDate" clearable></el-date-picker>
        </el-form-item>
        
-         <el-form-item label="结束日期:">
+         <el-form-item label="结束日期:" prop="endingDate">
               <el-date-picker type="date" placeholder="选择日期" v-model="formData.endingDate" clearable></el-date-picker>
        </el-form-item>
        </el-form>
@@ -452,6 +446,7 @@ export default {
       isDisable:false,
       dialogFlag: false,
       loading:false,
+      dialogTitle:"新增指标",
       saveID:0,
       page: 1,
       kpiPage: 1,
@@ -520,6 +515,15 @@ export default {
               ID:"",
             }
       },
+      rules: {
+        name:[ { required: true, message: '请输入', trigger: 'blur' }],
+        status:[ { required: true, message: '请输入', trigger: 'blur' }],
+        description:[ { required: true, message: '请输入', trigger: 'blur' }],
+        evaluationId:[ { required: true, message: '请输入', trigger: 'blur' }],
+        employeeId:[ { required: true, message: '请输入', trigger: 'blur' }],
+        startDate:[ { required: true, message: '请输入', trigger: 'blur' }],
+        endingDate:[ { required: true, message: '请输入', trigger: 'blur' }],
+      }
     };
   },
   filters: {
@@ -684,6 +688,7 @@ export default {
         }
       },
     async updatePerformanceReview(row) {
+      this.dialogTitle = "编辑考核表";
       const res = await findPerformanceReview({ ID: row.ID });
       this.type = "update";
       if (res.code == 0) {
@@ -799,13 +804,25 @@ export default {
     closeUserDialog() {
       this.userDialog = false;
     },
+    // 初始化表单
+    initForm() {
+      if (this.$refs.prForm) {
+        this.$refs.prForm.resetFields();
+      }
+      this.formData = {
+            name:"",
+            startDate:"",
+            endingDate:"",
+            status:"",
+            evaluationId:"",
+            employeeId:"",
+            Tags: [],
+      };
+    },
     closeDialog() {
+      this.initForm();
       this.dialogFormVisible = false;
       this.isDisable=false
-      this.formData = {
-          StartDate:new Date(),
-          EndingDate:new Date(),
-      };
     },
     closeprItemDialog() {
       this.prItemDialog = false;
@@ -890,61 +907,66 @@ export default {
       }
     },
     async enterDialog() {
-      this.loading=true
-      let res;
-      switch (this.type) {
-        case "create":
-          var ref = await findEvaluation({ID:Number(this.formData.evaluationId)})
-          var evaluationData = ref.data.reEvaluation;
-          res = await createPerformanceReview({...this.formData,
-            evaluationId:Number(this.formData.evaluationId),
-            employeeId:Number(this.formData.employeeId),
-            score:Number(evaluationData.score),
-            status:Number(this.formData.status),
-            });
-          //查询出ID，循环将默认数据组合转入一个list
-          var evaluationKpi = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
-          this.evaluationKpiData = evaluationKpi.data.list
-          var pr = await getLastPerformanceReview()
-          this.formData = pr.data.rePR
-          var item = []
-          for (let i = 0; i < this.evaluationKpiData.length; i++) {
-            item.push({
-              score:Number(this.evaluationKpiData[i].kpiScore),
-              kpiId:Number(this.evaluationKpiData[i].kpiId),
-              //userId:Number(this.evaluationKpiData[i].userId),
-              PRId:Number(this.formData.ID),
-              status:100,
-            })
+      this.$refs.prForm.validate(async valid => {
+        if (valid) {
+          this.loading=true
+          let res;
+          switch (this.type) {
+            case "create":
+              var ref = await findEvaluation({ID:Number(this.formData.evaluationId)})
+              var evaluationData = ref.data.reEvaluation;
+              res = await createPerformanceReview({...this.formData,
+                evaluationId:Number(this.formData.evaluationId),
+                employeeId:Number(this.formData.employeeId),
+                score:Number(evaluationData.score),
+                status:Number(this.formData.status),
+                });
+              //查询出ID，循环将默认数据组合转入一个list
+              var evaluationKpi = await getEvaluationKpiById({ID:Number(this.formData.evaluationId)});
+              this.evaluationKpiData = evaluationKpi.data.list
+              var pr = await getLastPerformanceReview()
+              this.formData = pr.data.rePR
+              var item = []
+              for (let i = 0; i < this.evaluationKpiData.length; i++) {
+                item.push({
+                  score:Number(this.evaluationKpiData[i].kpiScore),
+                  kpiId:Number(this.evaluationKpiData[i].kpiId),
+                  //userId:Number(this.evaluationKpiData[i].userId),
+                  PRId:Number(this.formData.ID),
+                  status:100,
+                })
+              }
+            var re =await createPerformanceReviewItem({item})
+            if (re.code == 0) {
+              getLastPRICreatePRIU({
+                ekuid:Number(this.formData.evaluationId),
+                prid:Number(this.formData.ID)
+              })
+            }
+              break;
+            case "update":
+              res = await updatePerformanceReviewByInfo({...this.formData,
+              evaluationId:Number(this.formData.evaluationId),
+              status:Number(this.formData.status),
+              employeeId:Number(this.formData.employeeId)});
+              this.isDisable=false
+              break;
+            default:
+              res = await createPerformanceReview(this.formData);
+              break;
           }
-        var re =await createPerformanceReviewItem({item})
-        if (re.code == 0) {
-          getLastPRICreatePRIU({
-            ekuid:Number(this.formData.evaluationId),
-            prid:Number(this.formData.ID)
-          })
+          if (res.code == 0) {
+            this.$message({
+              type:"success",
+              message:"创建/更改成功"
+            })
+            this.loading=false
+            this.getTableData()
+            this.closeDialog();
+          }
+          this.initForm();
         }
-          break;
-        case "update":
-          res = await updatePerformanceReviewByInfo({...this.formData,
-          evaluationId:Number(this.formData.evaluationId),
-          status:Number(this.formData.status),
-          employeeId:Number(this.formData.employeeId)});
-          this.isDisable=false
-          break;
-        default:
-          res = await createPerformanceReview(this.formData);
-          break;
-      }
-      if (res.code == 0) {
-         this.$message({
-          type:"success",
-          message:"创建/更改成功"
-        })
-        this.loading=false
-        this.getTableData()
-        this.closeDialog();
-      }
+      });
     },
     //删除考核表中的指标
     async deletePRI(row){
@@ -1003,6 +1025,9 @@ export default {
         }
     },
     async openDialog() {
+      this.dialogTitle = "创建考核表";
+      this.initForm();
+      this.formData.status=100
       this.type = "create";
       this.dialogFormVisible = true;
     }
