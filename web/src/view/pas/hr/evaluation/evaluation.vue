@@ -307,8 +307,7 @@ export default {
       });
     },
     openDialog() {
-      
-              this.formData.status=1
+      this.formData.status=1
       this.dialogTitle = "新增方案";
       this.type = "create";
       this.dialogFormVisible = true;

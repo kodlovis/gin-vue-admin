@@ -150,7 +150,7 @@
     ></el-pagination>
     </el-dialog>
 
-    <el-dialog :before-close="closeRatioDialog" :visible.sync="ratioDialog" title="编辑人员权重" :append-to-body="true" style="width: 50%,marigin:right"
+    <el-dialog :before-close="closeRatioDialog" :visible.sync="ratioDialog" title="编辑人员权重" :append-to-body="true" style="width: 50%,marigin:right" :fullscreen ="true"
      >
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
         <el-form-item>
@@ -188,8 +188,18 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      :current-page="ekuPage"
+      :page-size="ekuPageSize"
+      :page-sizes="[5,10,15,20]"
+      :style="{float:'right',padding:'20px'}"
+      :total="total"
+      @current-change="ekuCurrentChange"
+      @size-change="ekuSizeChange"
+      layout="total, sizes, prev, pager, next, jumper"
+    ></el-pagination>
     </el-dialog>
-    <el-dialog :before-close="closeUserDialog" :visible.sync="userDialog" title="增加评分人" :append-to-body="true" style="width: 50%,marigin:right"
+    <el-dialog :before-close="closeUserDialog" :visible.sync="userDialog" title="增加评分人" :append-to-body="true" style="width: 50%,marigin:right" :fullscreen ="true"
      >
     <el-table
       :data="userData"
@@ -200,14 +210,24 @@
       style="width: 50%"
       tooltip-effect="dark"
     >
-    <el-table-column label="评分人" prop="nickName" width="120">
-    </el-table-column> 
-      <el-table-column label="按钮组">
-        <template slot-scope="scope">
-          <el-button @click="userDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="增加" :disabled="isDisable">增加</el-button>
-        </template>
-      </el-table-column>
+      <el-table-column label="评分人" prop="nickName" width="120">
+      </el-table-column> 
+        <el-table-column label="按钮组">
+          <template slot-scope="scope">
+            <el-button @click="userDataEnter(scope.row)" type="primary" size="mini" slot="reference" label="增加" :disabled="isDisable">增加</el-button>
+          </template>
+        </el-table-column>
     </el-table>
+      <el-pagination
+        :current-page="userPage"
+        :page-size="userPageSize"
+        :page-sizes="[5,10,15,20]"
+        :style="{float:'right',padding:'20px'}"
+        :total="total"
+        @current-change="userCurrentChange"
+        @size-change="userSizeChange"
+        layout="total, sizes, prev, pager, next, jumper"
+      ></el-pagination>
     </el-dialog>
   </div>
 </template>
@@ -266,6 +286,10 @@ export default {
       kpiPage:1,
       kpiTotal:10,
       kpiPageSize:5,
+      ekuPage:1,
+      ekuPageSize:5,
+      userPage:1,
+      userPageSize:5,
       isDisable:false,
       type: "",
       deleteVisible: false,
@@ -349,7 +373,11 @@ export default {
         items:items
       })
       if(ref.code == 0){
-        const res = await getEKUByEKID({ekid:this.saveData.ekid,authorityId:"10000"})
+        const res = await getEKUByEKID({
+          page: this.ekuPage, 
+          pageSize: this.ekuPageSize,
+          ekid:this.saveData.ekid,
+          authorityId:"10000"})
         this.ekuData = res.data.list
         this.$message({
           type:"success",
@@ -376,18 +404,29 @@ export default {
             message:"添加成功"
           })
           this.isDisable=false;
-          const res = await getEKUByEKID({ekid:row.ekid,authorityId:"10000"})
+          const res = await getEKUByEKID({
+          page: this.ekuPage, 
+          pageSize: this.ekuPageSize,
+          ekid:row.ekid,
+          authorityId:"10000"})
           this.ekuData = res.data.list
         }
     },
     async openRatioDialog(row) {
-        const res = await getEKUByEKID({ekid:row.ID,authorityId:"10000"})
+        const res = await getEKUByEKID({
+          page: this.ekuPage, 
+          pageSize: this.ekuPageSize,
+          ekid:row.ID,
+          authorityId:"10000"})
         this.ekuData = res.data.list
         this.saveData.ekid=row.ID
         this.ratioDialog = true
       },
     async openUserDialog(){
-        const res = await getUserListByAuthorityId({authorityId:"10000"})
+        const res = await getUserListByAuthorityId({
+          page: this.userPage, 
+          pageSize: this.userPageSize,
+          authorityId:"10000"})
         this.userData = res.data.list
         this.userDialog = true
     },
@@ -483,6 +522,40 @@ export default {
     handleCurrentChange(val) {
         this.page = val
         this.refreshEvalutationKpi()
+    },
+    async ekuSizeChange(val) {
+        this.ekuPageSize = val
+        const res = await getEKUByEKID({
+          page: this.ekuPage, 
+          pageSize: this.ekuPageSize,
+          ekid:this.saveData.ekid,
+          authorityId:"10000"})
+        this.ekuData = res.data.list
+    },
+    async ekuCurrentChange(val) {
+        this.ekuPage = val
+        const res = await getEKUByEKID({
+          page: this.ekuPage, 
+          pageSize: this.ekuPageSize,
+          ekid:this.saveData.ekid,
+          authorityId:"10000"})
+        this.ekuData = res.data.list
+    },
+    async userSizeChange(val) {
+        this.userPageSize = val
+        const res = await getUserListByAuthorityId({
+          page: this.userPage, 
+          pageSize: this.userPageSize,
+          authorityId:"10000"})
+        this.userData = res.data.list
+    },
+    async userCurrentChange(val) {
+        this.userPage = val
+        const res = await getUserListByAuthorityId({
+          page: this.userPage, 
+          pageSize: this.userPageSize,
+          authorityId:"10000"})
+        this.userData = res.data.list
     },
     async kpiSizeChange(val) {
         this.kpiPageSize = val
@@ -614,7 +687,11 @@ export default {
           message: "移除成功"
         });
         this.isDisable=false;
-        const res = await getEKUByEKID({ekid:row.ekid,authorityId:"10000"})
+        const res = await getEKUByEKID({
+          page: this.ekuPage, 
+          pageSize: this.ekuPageSize,
+          ekid:row.ekid,
+          authorityId:"10000"})
         this.ekuData = res.data.list
       }
     },
