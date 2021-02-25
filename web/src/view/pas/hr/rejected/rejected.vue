@@ -15,9 +15,10 @@
         </el-form-item>
       </el-form>
     </div> -->
-      <h5>评分人驳回的考核内容</h5>
+    <div>
+      <h5 style="font-size:20px">评分人驳回的考核内容：</h5>
       <el-table
-          :data="prirData"
+          :data="priuData"
           @selection-change="handleSelectionChange"
           border
           ref="multipleTable"
@@ -40,7 +41,20 @@
         <el-table-column label="评分人" prop="user.nickName" width="120"></el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
         </el-table>
-      <h5>员工驳回的考核内容</h5>
+      <el-pagination
+        :current-page="scorePage"
+        :page-size="scorePageSize"
+        :page-sizes="[3,5,10,15]"
+        :style="{float:'right',padding:'20px'}"
+        :total="total"
+        @current-change="scoreCurrentChange"
+        @size-change="scoreSizeChange"
+        layout="total, sizes, prev, pager, next, jumper"
+      ></el-pagination>
+      <br/><br/>
+    </div>
+    <div>
+      <h5 style="font-size:20px">员工驳回的考核内容：</h5>
       <el-table
           :data="acData"
           @selection-change="handleSelectionChange"
@@ -70,7 +84,20 @@
           </el-table-column> 
         <el-table-column label="指标总分" prop="score" width="120"></el-table-column>
         </el-table>
-      <h5>驳回的考核结果</h5>
+      <el-pagination
+        :current-page="employeePage"
+        :page-size="employeePageSize"
+        :page-sizes="[3,5,10,15]"
+        :style="{float:'right',padding:'20px'}"
+        :total="total"
+        @current-change="employeeCurrentChange"
+        @size-change="employeeSizeChange"
+        layout="total, sizes, prev, pager, next, jumper"
+      ></el-pagination>
+        <br/><br/>
+    </div>
+    <div>
+      <h5 style="font-size:20px">驳回的考核结果：</h5>
       <el-table
           :data="prData"
           @selection-change="handleSelectionChange"
@@ -97,7 +124,19 @@
             </template>
           </el-table-column>
         </el-table>
-    <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="编辑指标" :append-to-body="true" width="80%">
+      <el-pagination
+        :current-page="prPage"
+        :page-size="prPageSize"
+        :page-sizes="[3,5,10,15]"
+        :style="{float:'right',padding:'20px'}"
+        :total="total"
+        @current-change="prCurrentChange"
+        @size-change="prSizeChange"
+        layout="total, sizes, prev, pager, next, jumper"
+      ></el-pagination>
+        <br/><br/>
+    </div>
+      <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="编辑指标" :append-to-body="true" width="80%">
       <el-table
       :data="prItemData"
       @selection-change="handleSelectionChange"
@@ -108,9 +147,7 @@
       tooltip-effect="dark"
     >
     <el-table-column label="指标名称" prop="kpi.name" width="90"></el-table-column>
-
     <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
-    
     <el-table-column label="指标算法" prop="kpi.category" width="360" type="textarea"> </el-table-column> 
     <el-table-column label="指标状态" prop="kpi.status" width="90">
       <template slot-scope="scope">
@@ -125,17 +162,7 @@
             :key="index">{{item.user.nickName}}:{{item.comment}}<br/></span>
           </template></el-table-column>
     </el-table>
-    </el-dialog>
-    <el-pagination
-      :current-page="page"
-      :page-size="pageSize"
-      :page-sizes="[10]"
-      :style="{float:'right',padding:'20px'}"
-      :total="total"
-      @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"
-      layout="total, sizes, prev, pager, next, jumper"
-    ></el-pagination>
+      </el-dialog>
 
   </div>
 </template>
@@ -165,9 +192,15 @@ export default {
       countData:9,
       dictList:[],
       prItemDialog: false,
-      page: 1,
       total: 10,
-      pageSize: 10,
+      page: 1,
+      pageSize: 3,
+      scorePage: 1,
+      scorePageSize: 3,
+      employeePage: 1,
+      employeePageSize: 3,
+      prPage: 1,
+      prPageSize: 3,
       prData:{
         name:"",
         comment:"",
@@ -294,12 +327,12 @@ export default {
           page: page, 
           pageSize: pageSize
           })
-      this.total = res.data.total
-      this.page = res.data.page
-      this.pageSize = res.data.pageSize
-      this.acData = res.data.list
-      this.prData = pr.data.list
-      this.prirData = priu.data.list
+        this.total = res.data.total
+        this.page = res.data.page
+        this.pageSize = res.data.pageSize
+        this.acData = res.data.list
+        this.prData = pr.data.list
+        this.priuData = priu.data.list
     },
     handleSizeChange(val) {
         this.pageSize = val
@@ -308,6 +341,60 @@ export default {
     handleCurrentChange(val) {
         this.page = val
         this.getPRItemListByStatus()
+    },
+    async scoreSizeChange(val) {
+        this.scorePageSize = val
+        const priu = await getPRIUListByStatus({
+            status:99,
+            page: this.scorePage, 
+            pageSize: this.scorePageSize
+            })
+        this.priuData = priu.data.list
+    },
+    async scoreCurrentChange(val) {
+        this.scorePage = val
+        const priu = await getPRIUListByStatus({
+            status:99,
+            page: this.scorePage, 
+            pageSize: this.scorePageSize
+            })
+        this.priuData = priu.data.list
+    },
+    async employeeSizeChange(val) {
+        this.employeePageSize = val
+        const res = await getPRItemListByStatus({
+            status:99,
+            page: this.employeePage, 
+            pageSize: this.employeePageSize
+            })
+        this.acData = res.data.list
+    },
+    async employeeCurrentChange(val) {
+        this.employeePage = val
+        const res = await getPRItemListByStatus({
+            status:99,
+            page: this.employeePage, 
+            pageSize: this.employeePageSize
+            })
+        this.acData = res.data.list
+    },
+    async prSizeChange(val) {
+        this.prPageSize = val
+        const res = await getPRBystatus({
+            status:99,
+            page: this.prPage, 
+            pageSize: this.prPageSize
+            })
+        this.acData = res.data.list
+    },
+    async prCurrentChange(val) {
+        this.prPage = val
+        const res = await getPRBystatus({
+            status:99,
+            page: this.prPage, 
+            pageSize: this.prPageSize
+            })
+        this.acData = res.data.list
     },
   },
   async created() {
