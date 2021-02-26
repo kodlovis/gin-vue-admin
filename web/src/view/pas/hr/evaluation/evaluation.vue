@@ -155,9 +155,9 @@ export default {
       },
       rules: {
         name:[ { required: true, message: '请输入', trigger: 'blur' }],
-        status:[ { required: true, message: '请输入', trigger: 'blur' }],
+        //status:[ { required: true, message: '请输入', trigger: 'blur' }],
         category:[ { required: true, message: '请输入', trigger: 'blur' }],
-        description:[ { required: true, message: '请输入', trigger: 'blur' }]
+        //description:[ { required: true, message: '请输入', trigger: 'blur' }]
       },
     };
   },
