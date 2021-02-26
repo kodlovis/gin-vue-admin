@@ -23,10 +23,9 @@ func CreateEKU(c *gin.Context) {
 
 
 func GetEKUByEKID(c *gin.Context) {
-	var EKU rp.EKU
 	var pageInfo rp.EvaluationKpiUserSearch
-	_ = c.ShouldBindJSON(&EKU)
-	if err, list, total := sp.GetEKUByEKID(EKU,pageInfo); err != nil {
+	_ = c.ShouldBindJSON(&pageInfo)
+	if err, list, total := sp.GetEKUByEKID(pageInfo); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {

@@ -1,7 +1,7 @@
 package pas
 
 import (
-	"fmt"
+	//"fmt"
 	//"gin-vue-admin/global"
 	"gin-vue-admin/global"
 	//"gin-vue-admin/model"
@@ -13,19 +13,22 @@ func CreateEKU(info []mp.EvaluationKpiUser) (err error) {
 		err = global.GVA_DB.Create(&info[i]).Error
 	}
 	var EvaluationKpiUsers mp.EvaluationKpiUser
+	var EvaluationKpi mp.EvaluationKpi
 	var total int64
 	err = global.GVA_DB.Model(&EvaluationKpiUsers).Where("ek_id = ?", info[0].EKID).Count(&total).Error
-	var num = float64(1/float64(total))
-	var score = fmt.Sprintf("%.5f", num)
-	err = global.GVA_DB.Model(&EvaluationKpiUsers).Where("ek_id = ?", info[0].EKID).Update("score",score).Error
+	err = global.GVA_DB.Where("ek_id = ?", info[0].EKID).Find(&EvaluationKpiUsers).Error
+	err = global.GVA_DB.Where("id = ?", EvaluationKpiUsers.EKID).Find(&EvaluationKpi).Error
+	// var num = float64(total)/float64(EvaluationKpi.KpiScore)
+	// var score = fmt.Sprintf("%.5f", num)
+	err = global.GVA_DB.Model(&mp.EvaluationKpiUser{}).Where("ek_id = ?", info[0].EKID).Update("score",EvaluationKpi.KpiScore).Error
 	return err
 }
 
-func GetEKUByEKID(EKU rp.EKU, info rp.EvaluationKpiUserSearch) (err error, list interface{}, total int64) {
+func GetEKUByEKID(info rp.EvaluationKpiUserSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&mp.EvaluationKpiUser{}).Where("ek_id = ?", EKU.EKID)
+	db := global.GVA_DB.Model(&mp.EvaluationKpiUser{}).Where("ek_id = ?", info.EKID)
 	var EvaluationKpiUsers []mp.EvaluationKpiUser
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
@@ -42,10 +45,13 @@ func UpdateEKU(EvaluationKpiUser *mp.EvaluationKpiUser) (err error) {
 func RemoveEKU(ID uint,ekid uint) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.EvaluationKpiUser{}, "id = ?", ID).Error
 	var EvaluationKpiUsers mp.EvaluationKpiUser
+	var EvaluationKpi mp.EvaluationKpi
 	var total int64
 	err = global.GVA_DB.Model(&EvaluationKpiUsers).Where("ek_id = ?", ekid).Count(&total).Error
-	var num = float64(1/float64(total))
-	var score = fmt.Sprintf("%.5f", num)
-	err = global.GVA_DB.Model(&EvaluationKpiUsers).Where("ek_id = ?", ekid).Update("score",score).Error
+	err = global.GVA_DB.Where("ek_id = ?", ekid).Find(&EvaluationKpiUsers).Error
+	err = global.GVA_DB.Where("id = ?", EvaluationKpiUsers.EKID).Find(&EvaluationKpi).Error
+	// var num = float64(total)/float64(EvaluationKpi.KpiScore)
+	// var score = fmt.Sprintf("%.5f", num)
+	err = global.GVA_DB.Model(&mp.EvaluationKpiUser{}).Where("ek_id = ?", ekid).Update("score",EvaluationKpi.KpiScore).Error
 	return err
 }
