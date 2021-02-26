@@ -102,7 +102,7 @@
     <el-pagination
       :current-page="page"
       :page-size="pageSize"
-      :page-sizes="[10, 30, 50, 100]"
+      :page-sizes="[5,10, 30, 50, 100]"
       :style="{float:'right',padding:'20px'}"
       :total="total"
       @current-change="handleCurrentChange"
@@ -195,6 +195,7 @@ export default {
       deleteVisible: false,
       statusMap: {},
       dictList:[],
+      pageSize:5,
       tagOptions:[],
       dialogTitle:"新增指标",
       multipleSelection: [],formData: {
@@ -273,7 +274,7 @@ export default {
       },
       onSubmit() {
         this.page = 1
-        this.pageSize = 10        
+        this.pageSize = 5        
         this.getTableData()
       },
       handleSelectionChange(val) {

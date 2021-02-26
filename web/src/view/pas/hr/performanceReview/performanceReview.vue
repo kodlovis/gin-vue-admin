@@ -365,7 +365,7 @@
       :page-size="ekuPageSize"
       :page-sizes="[5,10,15,20]"
       :style="{float:'right',padding:'20px'}"
-      :total="total"
+      :total="ekuTotal"
       @current-change="ekuCurrentChange"
       @size-change="ekuSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
@@ -396,7 +396,7 @@
       :page-size="userPageSize"
       :page-sizes="[5,10,15,20]"
       :style="{float:'right',padding:'20px'}"
-      :total="total"
+      :total="userTotal"
       @current-change="userCurrentChange"
       @size-change="userSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
@@ -473,6 +473,7 @@ export default {
       ekuPageSize:5,
       userPage:1,
       userPageSize:5,
+      userTotal:10,
       kpiPage: 1,
       priPage: 1,
       total: 10,
@@ -483,6 +484,7 @@ export default {
       searchInfo: {},
       priTotal:0,
       kpiTotal:0,
+      ekuTotal:0,
       kpiDictList:[],
       userOptions:[],
       evaluationOptions:[],
@@ -539,6 +541,7 @@ export default {
               ID:"",
             }
       },
+      userData:{},
       rules: {
         name:[ { required: true, message: '请输入', trigger: 'blur' }],
         status:[ { required: true, message: '请输入', trigger: 'blur' }],
@@ -738,7 +741,11 @@ export default {
       }
     },
     async openUserDialog(){
-        const res = await getUserListByAuthorityId({authorityId:"10000"})
+        const res = await getUserListByAuthorityId({
+          page: this.userPage, 
+          pageSize: this.userPageSize,
+          authorityId:"10000"})
+        this.userTotal= res.data.total
         this.userData = res.data.list
         this.userDialog = true
     },
@@ -756,6 +763,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           priid:row.priid})
+        this.ekuTotal = res.data.total
         this.priuData = res.data.list
         const re = await getPerformanceReviewItemListById({ PRId: row.performanceReviewItem.PRId,
           page: this.priPage, 
@@ -769,6 +777,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           priid:row.ID})
+        this.ekuTotal = res.data.total
         this.priuData = res.data.list
         this.saveData.priid=row.ID
         this.ratioDialog = true
@@ -799,6 +808,7 @@ export default {
             page: this.ekuPage, 
             pageSize: this.ekuPageSize,
             priid:row.priid})
+          this.ekuTotal = res.data.total
           this.priuData = res.data.list
           const re = await getPerformanceReviewItemListById({ PRId: this.priuData[0].performanceReviewItem.PRId,
             page: this.priPage, 
@@ -822,6 +832,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           priid:this.saveData.priid})
+        this.ekuTotal = res.data.total
         this.priuData = res.data.list
         const re = await getPerformanceReviewItemListById({ PRId: this.priuData[0].performanceReviewItem.PRId,
           page: this.priPage, 
@@ -905,6 +916,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           priid:this.saveData.priid})
+        this.ekuTotal = res.data.total
         this.priuData = res.data.list
     },
     async ekuCurrentChange(val) {
@@ -913,6 +925,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           priid:this.saveData.priid})
+        this.ekuTotal = res.data.total
         this.priuData = res.data.list
     },
     async userSizeChange(val) {
@@ -921,6 +934,7 @@ export default {
           page: this.userPage, 
           pageSize: this.userPageSize,
           authorityId:"10000"})
+        this.userTotal= res.data.total
         this.userData = res.data.list
     },
     async userCurrentChange(val) {
@@ -929,6 +943,7 @@ export default {
           page: this.userPage, 
           pageSize: this.userPageSize,
           authorityId:"10000"})
+        this.userTotal= res.data.total
         this.userData = res.data.list
     },
     async deletePerformanceReview(row) {

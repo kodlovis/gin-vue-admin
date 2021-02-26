@@ -193,7 +193,7 @@
       :page-size="ekuPageSize"
       :page-sizes="[5,10,15,20]"
       :style="{float:'right',padding:'20px'}"
-      :total="total"
+      :total="ekuTotal"
       @current-change="ekuCurrentChange"
       @size-change="ekuSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
@@ -221,9 +221,9 @@
       <el-pagination
         :current-page="userPage"
         :page-size="userPageSize"
-        :page-sizes="[5,10,15,20]"
+        :page-sizes="[3,5,10,15,20]"
         :style="{float:'right',padding:'20px'}"
-        :total="total"
+        :total="userTotal"
         @current-change="userCurrentChange"
         @size-change="userSizeChange"
         layout="total, sizes, prev, pager, next, jumper"
@@ -282,6 +282,8 @@ export default {
       ids:[],
       page: 1,
       total: 10,
+      userTotal:10,
+      ekuTotal:10,
       pageSize: 5,
       kpiPage:1,
       kpiTotal:10,
@@ -331,6 +333,7 @@ export default {
       ekData:{
 
       },
+      userData:{},
       ekuData:{
         user:{
         nickName:"",
@@ -379,6 +382,7 @@ export default {
           ekid:this.saveData.ekid,
           authorityId:"10000"})
         this.ekuData = res.data.list
+        this.ekuTotal = res.data.total
         this.$message({
           type:"success",
           message:"添加成功"
@@ -405,11 +409,12 @@ export default {
           })
           this.isDisable=false;
           const res = await getEKUByEKID({
-          page: this.ekuPage, 
-          pageSize: this.ekuPageSize,
-          ekid:row.ekid,
-          authorityId:"10000"})
+            page: this.ekuPage, 
+            pageSize: this.ekuPageSize,
+            ekid:row.ekid,
+            authorityId:"10000"})
           this.ekuData = res.data.list
+          this.ekuTotal = res.data.total
         }
     },
     async openRatioDialog(row) {
@@ -419,6 +424,7 @@ export default {
           ekid:row.ID,
           authorityId:"10000"})
         this.ekuData = res.data.list
+        this.ekuTotal = res.data.total
         this.saveData.ekid=row.ID
         this.ratioDialog = true
       },
@@ -427,6 +433,7 @@ export default {
           page: this.userPage, 
           pageSize: this.userPageSize,
           authorityId:"10000"})
+        this.userTotal = res.data.total
         this.userData = res.data.list
         this.userDialog = true
     },
@@ -531,6 +538,7 @@ export default {
           ekid:this.saveData.ekid,
           authorityId:"10000"})
         this.ekuData = res.data.list
+        this.ekuTotal = res.data.total
     },
     async ekuCurrentChange(val) {
         this.ekuPage = val
@@ -540,6 +548,7 @@ export default {
           ekid:this.saveData.ekid,
           authorityId:"10000"})
         this.ekuData = res.data.list
+        this.ekuTotal = res.data.total
     },
     async userSizeChange(val) {
         this.userPageSize = val
@@ -547,7 +556,10 @@ export default {
           page: this.userPage, 
           pageSize: this.userPageSize,
           authorityId:"10000"})
+        if (res.code==0) {
+        this.userTotal = res.data.total
         this.userData = res.data.list
+        }
     },
     async userCurrentChange(val) {
         this.userPage = val
@@ -555,7 +567,10 @@ export default {
           page: this.userPage, 
           pageSize: this.userPageSize,
           authorityId:"10000"})
+        if (res.code==0) {
+        this.userTotal = res.data.total
         this.userData = res.data.list
+        }
     },
     async kpiSizeChange(val) {
         this.kpiPageSize = val
@@ -693,6 +708,7 @@ export default {
           ekid:row.ekid,
           authorityId:"10000"})
         this.ekuData = res.data.list
+        this.ekuTotal = ref.data.total
       }
     },
     async removeEvaluationKpiByIds(){
