@@ -5,7 +5,7 @@ import (
 	//"gin-vue-admin/model/pas"
 	mp "gin-vue-admin/model/pas"
 	rp "gin-vue-admin/model/request/pas"
-	"fmt"
+	//"fmt"
 )
 
 func GetLastPRICreatePRIU(ekuid uint,prid uint) (err error) {
@@ -49,24 +49,27 @@ func UpdatePRIU(ID uint,status uint,result float64,uid uint,score float64) (err 
 
 func RemovePRIU(ID uint,priid uint) (err error) {
 	err = global.GVA_DB.Delete(&[]mp.PerformanceReviewItemUser{}, "id = ?", ID).Error
-	var PerformanceReviewItemUser mp.PerformanceReviewItemUser
-	var total int64
-	err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", priid).Count(&total).Error
-	var num = float64(1/float64(total))
-	var score = fmt.Sprintf("%.5f", num)
-	err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", priid).Update("score",score).Error
+	// var PerformanceReviewItemUser mp.PerformanceReviewItemUser
+	// var total int64
+	// err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", priid).Count(&total).Error
+	// var num = float64(1/float64(total))
+	// var score = fmt.Sprintf("%.5f", num)
+	// err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", priid).Update("score",score).Error
 	return err
 }
 func CreatePRIU(info []mp.PerformanceReviewItemUser) (err error) {
+	var PerformanceReviewItemUser mp.PerformanceReviewItemUser
+	var PerformanceReviewItem mp.PerformanceReviewItem
+	err = global.GVA_DB.Where("id = ?", info[0].PRIID).Find(&PerformanceReviewItem).Error
 	for i := 0; i < len(info); i++ {
 		err = global.GVA_DB.Create(&info[i]).Error
+		err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("id = ?", info[i].ID).Update("score",PerformanceReviewItem.Score).Error
 	}
-	var PerformanceReviewItemUser mp.PerformanceReviewItemUser
-	var total int64
-	err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", info[0].PRIID).Count(&total).Error
-	var num = float64(1/float64(total))
-	var score = fmt.Sprintf("%.5f", num)
-	err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", info[0].PRIID).Update("score",score).Error
+	// var total int64
+	// err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", info[0].PRIID).Count(&total).Error
+	// err = global.GVA_DB.Where("pri_id = ?", info[0].PRIID).Find(&PerformanceReviewItemUser).Error
+	// var num = float64(total)/float64(PerformanceReviewItem.Score)
+	// var score = fmt.Sprintf("%.5f", num)
 	return err
 }
 func GetPRIUListByUser(id uint, status uint, info rp.PerformanceReviewItemUserSearch) (err error, list interface{}, total int64) {

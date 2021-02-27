@@ -784,14 +784,14 @@ export default {
       },
     async changeRatioData(row){
       this.isDisable=true;
-      if(row.score<=0||row.score>1){
-        this.$message({
-          type:"error",
-          message:"无效输入"
-        })
-          this.isDisable=false;
-          return
-        }
+      // if(row.score<=0||row.score>1){
+      //   this.$message({
+      //     type:"error",
+      //     message:"无效输入"
+      //   })
+      //     this.isDisable=false;
+      //     return
+      //   }
       const ref = await updatePRIU({...row,
         score:Number(row.score),
         status:Number(row.status),
@@ -821,7 +821,7 @@ export default {
       var items=[{
         priid:this.saveData.priid,
         userid:row.ID,
-        score:Number((Number(1)/Number(this.priuData.length+1)).toFixed(5)),
+        //score:Number((Number(1)/Number(this.priuData.length+1)).toFixed(5)),
         status:100,
       }]
       const ref = await createPRIU({

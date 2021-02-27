@@ -84,7 +84,7 @@
       @size-change="handleSizeChange"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
-
+    <!-- 添加指标 -->
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right" :fullscreen ="true"
      >
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
@@ -391,14 +391,14 @@ export default {
     },
     async changeRatioData(row){
       this.isDisable=true;
-      if(row.score<=0||row.score>1){
-        this.$message({
-          type:"error",
-          message:"无效输入"
-        })
-          this.isDisable=false;
-          return
-        }
+      // if(row.score<=0||row.score>1){
+      //   this.$message({
+      //     type:"error",
+      //     message:"无效输入"
+      //   })
+      //     this.isDisable=false;
+      //     return
+      //   }
       const ref = await updateEKU({...row,
         score:Number(row.score),
       })
