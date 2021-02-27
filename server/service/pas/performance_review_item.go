@@ -57,7 +57,9 @@ func GetPerformanceReviewItemListById(id uint, info rp.PerformanceReviewItemSear
 
 func UpdatePerformanceReviewItemByInfo(id uint, score float64, status uint) (err error) {
 	var PerformanceReviewItem mp.PerformanceReviewItem
+	var PerformanceReviewItemUser mp.PerformanceReviewItemUser
 	err = global.GVA_DB.Model(&PerformanceReviewItem).Where("id = ?", id).Select("score", "status").Updates(map[string]interface{}{"score": score,  "status": status}).Error
+	err = global.GVA_DB.Model(&PerformanceReviewItemUser).Where("pri_id = ?", id).Select("score").Updates(map[string]interface{}{"score": score}).Error
 	return err
 }
 
@@ -86,7 +88,14 @@ func UpdatePRItemStatusById(id uint, status uint, result float64, comment string
 	err = global.GVA_DB.Model(&PRIU).Where("pri_id = ?",PRIU.PRIID).Count(&total).Error
 	var count = float64(num) / float64(total)
 	err = global.GVA_DB.Where("id = ?",PRIU.PRIID).First(&PRI).Error
-	result=float64(result)*float64(PRIU.Score)+PRI.Result
+	var PRIUs []mp.PerformanceReviewItemUser
+	err = global.GVA_DB.Where("pri_id = ?",PRIU.PRIID).Find(&PRIUs).Error
+	//result=float64(result)*float64(PRIU.Score)+PRI.Result
+	var sum = float64(0)
+	for i := 0; i < len(PRIUs); i++ {
+		sum = sum +PRIUs[i].Result
+	}
+	result=sum/float64(total)
 	if count ==1  {
 		err = global.GVA_DB.Model(&PRI).Where("id = ?", PRIU.PRIID).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
 	}else{

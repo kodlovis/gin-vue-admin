@@ -131,6 +131,12 @@ func GetPRListWithoutFinishedStatus(info rp.PerformanceReviewSearch) (err error,
 }
 
 func UpdatePerformanceReviewByInfo(PRInfo rp.PerformanceReviewInfo) (err error) {
+	var PRIs []mp.PerformanceReviewItem
+	err = global.GVA_DB.Where("pr_id = ?", PRInfo.ID).Find(&PRIs).Error
+	var sum float64
+	for i := 0; i < len(PRIs); i++ {
+		sum=sum+PRIs[i].Score
+	}
 	err = global.GVA_DB.Model(&mp.PerformanceReview{}).Where("id = ?", PRInfo.ID).Updates(mp.PerformanceReview{
 		EmployeeId:   PRInfo.EmployeeId,
 		EvaluationId: PRInfo.EvaluationId,
@@ -138,7 +144,7 @@ func UpdatePerformanceReviewByInfo(PRInfo rp.PerformanceReviewInfo) (err error) 
 		Status:       PRInfo.Status,
 		StartDate:    PRInfo.StartDate,
 		EndingDate:   PRInfo.EndingDate,
-		Score:        PRInfo.Score,
+		Score:        sum,
 	}).Error
 	return err
 }
