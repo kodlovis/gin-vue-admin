@@ -33,7 +33,7 @@
             </template>
          </el-table-column> 
         <el-table-column label="被考核人" prop="user.nickName" width="120"></el-table-column> 
-        <el-table-column label="权重分值" prop="score" width="120"></el-table-column> 
+        <el-table-column label="考核总分" prop="score" width="120"></el-table-column> 
         <el-table-column label="开始时间" prop="startDate" width="120">
           <template slot-scope="scope">{{scope.row.startDate|formatDate}}</template>
         </el-table-column>
@@ -41,6 +41,7 @@
           <template slot-scope="scope">{{scope.row.endingDate|formatDate}}</template>
         </el-table-column>
       </el-table>
+    <div>
       <h5 style="font-size:20px">当前考核表详情</h5>
       <el-table
           :data="prData"
@@ -76,6 +77,18 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          :current-page="page"
+          :page-size="pageSize"
+          :page-sizes="[5,10, 30, 50, 100]"
+          :style="{float:'right',padding:'20px'}"
+          :total="total"
+          @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
+          layout="total, sizes, prev, pager, next, jumper"
+        ></el-pagination>
+
+      </div>
     
 
   </div>
@@ -108,6 +121,9 @@ export default {
       isDisable:false,
       multipleSelection: [],
       countData:9,
+      page: 1,
+      total: 10,
+      pageSize: 5,
       prData:{
         result:"",
         kpi:{
@@ -208,11 +224,22 @@ export default {
         num.push(this.acData[i].ID)
       }
       const prItem = await getPRItemListByStatusPrid({
+          page: this.page, 
+          pageSize: this.pageSize,
           ids: num,
           status:2,
           })
+      this.total = prItem.data.total
       this.prData = prItem.data.list 
       this.isDisable=false
+    },
+    handleSizeChange(val) {
+        this.pageSize = val
+        this.getPRListByUser()
+    },
+    handleCurrentChange(val) {
+        this.page = val
+        this.getPRListByUser()
     },
   },
   async created() {
