@@ -225,7 +225,7 @@ export default {
     async rejectKpi(row){
       const res = await updatePRStatusById({
           ID:row.ID,
-          status:99,
+          status:999,
           result:row.result
       })
       if(res.code == 0){
@@ -238,7 +238,7 @@ export default {
     async getPRListByUser(){
       const res = await getPRListByUser({
           ID:this.userInfo.ID,
-          ids:[7,8,99],
+          ids:[7,8,999],
           })
       this.acData = res.data.list
       const num = [] 
