@@ -323,7 +323,7 @@ export default {
           pageSize: pageSize
           })
       const pr = await getPRBystatus({
-          status:99,
+          status:999,
           page: page, 
           pageSize: pageSize
           })
@@ -381,7 +381,7 @@ export default {
     async prSizeChange(val) {
         this.prPageSize = val
         const res = await getPRBystatus({
-            status:99,
+            status:999,
             page: this.prPage, 
             pageSize: this.prPageSize
             })
@@ -390,7 +390,7 @@ export default {
     async prCurrentChange(val) {
         this.prPage = val
         const res = await getPRBystatus({
-            status:99,
+            status:999,
             page: this.prPage, 
             pageSize: this.prPageSize
             })
