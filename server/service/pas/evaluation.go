@@ -88,6 +88,15 @@ func GetEvaluationInfoList(info rp.EvaluationSearch) (err error, list interface{
 	db := global.GVA_DB.Model(&mp.Evaluation{})
     var Evaluations []mp.Evaluation
     // 如果有条件搜索 下方会自动创建搜索语句
+    if info.Name != "" {
+        db = db.Where("`name` LIKE ?","%"+ info.Name+"%")
+    }
+    if info.Status != 2 {
+        db = db.Where("`status` = ?",1)
+    }
+    if info.Status == 2 {
+        db = db.Where("`status` = ?",2)
+    }
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Evaluations).Error
 	err = db.Preload("Kpis").Find(&Evaluations).Error
