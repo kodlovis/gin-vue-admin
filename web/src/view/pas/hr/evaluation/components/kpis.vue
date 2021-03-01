@@ -748,7 +748,10 @@ export default {
   },
   async created() {
     //const life = await getKpiScoreByIds({ID:Number(this.row.ID)});
-    const user = await getUserList({ page: 1, pageSize: 999 });
+    const user = await getUserListByAuthorityId({
+          page: 1, 
+          pageSize: 999,
+          authorityId:"10000"})
     //载入Users
     this.setOptions(user.data.list);
     this.refreshEvalutationKpi()
