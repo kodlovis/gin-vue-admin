@@ -5,6 +5,7 @@ import (
 	"gin-vue-admin/model/pas"
 	mp "gin-vue-admin/model/pas"
 	rp "gin-vue-admin/model/request/pas"
+	"fmt"
 )
 
 func CreatePerformanceReviewItem(list []pas.PerformanceReviewItem) (err error) {
@@ -95,11 +96,12 @@ func UpdatePRItemStatusById(id uint, status uint, result float64, comment string
 	for i := 0; i < len(PRIUs); i++ {
 		sum = sum +PRIUs[i].Result
 	}
-	result=sum/float64(total)
+	var s=float64(sum/float64(total))
+	var re = fmt.Sprintf("%.3f", s)
 	if count ==1  {
-		err = global.GVA_DB.Model(&PRI).Where("id = ?", PRIU.PRIID).Select("result", "status").Updates(map[string]interface{}{"result": result, "status": status}).Error
+		err = global.GVA_DB.Model(&PRI).Where("id = ?", PRIU.PRIID).Select("result", "status").Updates(map[string]interface{}{"result": re, "status": status}).Error
 	}else{
-		err = global.GVA_DB.Model(&PRI).Where("id = ?", PRIU.PRIID).Select("result").Updates(map[string]interface{}{"result": result}).Error
+		err = global.GVA_DB.Model(&PRI).Where("id = ?", PRIU.PRIID).Select("result").Updates(map[string]interface{}{"result": re}).Error
 	}
 	return err
 }
