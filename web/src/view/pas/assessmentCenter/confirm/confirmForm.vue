@@ -29,7 +29,7 @@
         
         <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
-        <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="460"></el-table-column> 
+        <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="120"></el-table-column> 
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
         
           <el-table-column label="按钮组">

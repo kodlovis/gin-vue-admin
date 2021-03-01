@@ -126,6 +126,7 @@ export default {
       saveID:0,
       prItemDialog: false,
       kpiDictList:[],
+      searchInfo: {},
       acData:{
         startDate:new Date(),
         endingDate:new Date(),
