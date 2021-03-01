@@ -77,10 +77,11 @@
         <span>{{filterKpiDict(scope.row.status)}}</span>
       </template></el-table-column>
       <el-table-column label="指标分值" prop="score" width="100"></el-table-column> 
-      <el-table-column label="评分人及信息">
+      <el-table-column label="指标得分" prop="result" width="100"></el-table-column>
+      <el-table-column label="评分人打分详情">
         <template slot-scope="scope">
           <span v-for="(item,index) in scope.row.PRIUs"
-          :key="index">评分人：{{item.user.nickName}},权重：{{item.score*100+"%"}},评分：{{item.result}}分<br/></span>
+          :key="index">评分人：{{item.user.nickName}},评分：{{item.result}}分<br/></span>
         </template>
       </el-table-column>
       </el-table>

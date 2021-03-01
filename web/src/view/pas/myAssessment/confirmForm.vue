@@ -15,7 +15,7 @@
         </el-form-item>
       </el-form>
     </div> -->
-      <h1>当前考核概览</h1>
+      <h1 style="font-size:20px">当前考核概览</h1>
       <el-table
           :data="acData"
           @selection-change="handleSelectionChange"
@@ -41,7 +41,7 @@
           <template slot-scope="scope">{{scope.row.endingDate|formatDate}}</template>
         </el-table-column>
       </el-table>
-      <h5>当前考核表详情</h5>
+      <h5 style="font-size:20px">当前考核表详情</h5>
       <el-table
           :data="prData"
           @selection-change="handleSelectionChange"

@@ -15,7 +15,7 @@
         </el-form-item>
       </el-form>
     </div> -->
-      <h1>当前考核概览</h1>
+      <h1 style="font-size:20px">当前考核概览</h1>
       <el-table
           :data="acData"
           @selection-change="handleSelectionChange"
@@ -35,8 +35,8 @@
             </template>
          </el-table-column> 
         <el-table-column label="被考核人" prop="user.nickName" width="120"></el-table-column> 
-        <el-table-column label="总分" prop="score" width="120"></el-table-column> 
-        <el-table-column label="得分" prop="result" width="120"></el-table-column> 
+        <el-table-column label="考核总分" prop="score" width="120"></el-table-column> 
+        <el-table-column label="考核得分" prop="result" width="120"></el-table-column> 
         <el-table-column label="开始时间" prop="startDate" width="120">
           <template slot-scope="scope">{{scope.row.startDate|formatDate}}</template>
         </el-table-column>
@@ -63,7 +63,7 @@
             </template>
           </el-table-column>
         </el-table>
-      <h5>当前考核表详情</h5>
+      <h5 style="font-size:20px">当前考核表详情</h5>
       <el-table
           :data="prData"
           @selection-change="handleSelectionChange"
@@ -78,14 +78,14 @@
         
         <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
+        <el-table-column label="指标总分" prop="score" width="120"></el-table-column>
+        <el-table-column label="指标得分" prop="result" width="120"></el-table-column>
         <el-table-column label="评分人及评分" prop="PRIUs.user.nickName" width="160">
           <template slot-scope="scope">
             <span v-for="(item,index) in scope.row.PRIUs"
-            :key="index">{{item.user.nickName}}:{{item.score*item.result}}分<br/></span>
+            :key="index">{{item.user.nickName}}:{{item.result}}分<br/></span>
           </template>
         </el-table-column> 
-        <el-table-column label="总分" prop="score" width="120"></el-table-column>
-        <el-table-column label="得分" prop="result" width="120"></el-table-column>
         </el-table>
     
 
