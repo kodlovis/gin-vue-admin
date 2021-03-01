@@ -244,7 +244,6 @@ import {
     getLastEvaluationKpi
 } from "@/api/pas/evaluationKpi";
 import {
-    getUserList,
     getUserListByAuthorityId
 } from "@/api/user";
 import {
