@@ -1129,7 +1129,7 @@ export default {
     kpi.map(item=>item.value)
     this.kpiDictList = kpi
     //载入Evaluations
-    const evaluations = await getEvaluationList({ page: 1, pageSize: 999 });
+    const evaluations = await getEvaluationList({ status:1,page: 1, pageSize: 999 });
     this.setEvaluationOptions(evaluations.data.list);
 }
 };
