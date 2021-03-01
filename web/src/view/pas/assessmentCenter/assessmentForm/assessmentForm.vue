@@ -44,7 +44,7 @@
         </el-table-column>
           <el-table-column label="按钮组">
             <template slot-scope="scope">
-              <el-button class="table-button" @click="confirmKpi(scope.row)" size="small" type="primary" icon="el-icon-edit" >确认</el-button>
+              <el-button class="table-button" @click="confirmKpi(scope.row)" size="small" type="primary" icon="el-icon-edit"  :disabled="isDisable">确认</el-button>
               <!-- <el-popover placement="top" width="160" v-model="scope.row.visible">
                 <p>确定要驳回吗？</p>
                 <div style="text-align: right; margin: 0">
@@ -99,6 +99,7 @@ export default {
       multipleSelection: [],formData:[],
       countData:9,
       loading:false,
+      isDisable:false,
       page: 1,
       total: 10,
       pageSize: 10,
@@ -150,7 +151,7 @@ export default {
         this.multipleSelection = val
       },
     async confirmKpi(row) {
-      this.loading=true
+      this.isDisable=true
       if(row.result>row.performanceReviewItem.score||row.result<0){
           this.$message({
             type: 'warning',
@@ -190,7 +191,7 @@ export default {
           }
         }
       }
-          this.loading=false
+        this.isDisable=false
     },
     handleSizeChange(val) {
         this.pageSize = val
