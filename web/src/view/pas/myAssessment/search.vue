@@ -86,6 +86,7 @@
       </el-table-column>
       </el-table>
       <el-pagination
+      background
         :current-page="priPage"
         :page-size="priPageSize"
         :page-sizes="[5,10, 30, 50, 100]"

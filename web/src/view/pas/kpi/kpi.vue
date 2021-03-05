@@ -100,6 +100,7 @@
     </el-table>
 
     <el-pagination
+      background
       :current-page="page"
       :page-size="pageSize"
       :page-sizes="[5,10, 30, 50, 100]"

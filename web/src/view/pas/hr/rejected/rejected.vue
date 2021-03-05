@@ -42,6 +42,7 @@
         <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
         </el-table>
       <el-pagination
+      background
         :current-page="scorePage"
         :page-size="scorePageSize"
         :page-sizes="[3,5,10,15]"
@@ -85,6 +86,7 @@
         <el-table-column label="指标总分" prop="score" width="120"></el-table-column>
         </el-table>
       <el-pagination
+      background
         :current-page="employeePage"
         :page-size="employeePageSize"
         :page-sizes="[3,5,10,15]"
@@ -125,6 +127,7 @@
           </el-table-column>
         </el-table>
       <el-pagination
+      background
         :current-page="prPage"
         :page-size="prPageSize"
         :page-sizes="[3,5,10,15]"
