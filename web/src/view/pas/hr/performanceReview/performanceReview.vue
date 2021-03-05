@@ -90,6 +90,7 @@
     </el-table>
 
     <el-pagination
+      background
       :current-page="page"
       :page-size="pageSize"
       :page-sizes="[10, 30, 50, 100]"
@@ -219,6 +220,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+      background
         :current-page="priPage"
         :page-size="priPageSize"
         :page-sizes="[5,10, 30, 50, 100]"
@@ -285,6 +287,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      background
       :current-page="kpiPage"
       :page-size="kpiPageSize"
       :page-sizes="[5,10, 30, 50, 100]"
@@ -361,6 +364,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      background
       :current-page="ekuPage"
       :page-size="ekuPageSize"
       :page-sizes="[5,10,15,20]"
@@ -392,6 +396,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      background
       :current-page="userPage"
       :page-size="userPageSize"
       :page-sizes="[5,10,15,20]"
@@ -470,9 +475,9 @@ export default {
       saveID:0,
       page: 1,
       ekuPage:1,
-      ekuPageSize:5,
+      ekuPageSize:10,
       userPage:1,
-      userPageSize:5,
+      userPageSize:10,
       userTotal:10,
       kpiPage: 1,
       priPage: 1,
@@ -584,6 +589,10 @@ export default {
       //考核增加指标
       async kpiDataEnter(row){
         this.isDisable=true;
+        if (row.userId==null) {
+          this.$message({ type: 'warning', message: "请选择评分人" })
+          this.isDisable=false;
+        }
           var item = []
             item.push({
               score:Number(row.evaluationKpis.kpiScore),

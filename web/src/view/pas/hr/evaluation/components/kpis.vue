@@ -75,6 +75,7 @@
     </el-table>
 
     <el-pagination
+      background
       :current-page="page"
       :page-size="pageSize"
       :page-sizes="[5,10,15,20]"
@@ -139,6 +140,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      background
       :current-page="kpiPage"
       :page-size="kpiPageSize"
       :page-sizes="[5,10,15,20]"
@@ -189,6 +191,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      background
       :current-page="ekuPage"
       :page-size="ekuPageSize"
       :page-sizes="[5,10,15,20]"
@@ -219,6 +222,7 @@
         </el-table-column>
     </el-table>
       <el-pagination
+      background
         :current-page="userPage"
         :page-size="userPageSize"
         :page-sizes="[3,5,10,15,20]"
@@ -288,9 +292,9 @@ export default {
       kpiTotal:10,
       kpiPageSize:5,
       ekuPage:1,
-      ekuPageSize:5,
+      ekuPageSize:10,
       userPage:1,
-      userPageSize:5,
+      userPageSize:10,
       isDisable:false,
       type: "",
       deleteVisible: false,
@@ -478,6 +482,10 @@ export default {
     },
     async kpiDataEnter(row){
         this.isDisable=true;
+        if (row.userId==null) {
+          this.$message({ type: 'warning', message: "请选择评分人" })
+          this.isDisable=false;
+        }
         const res = await createEvaluationKpi({
           EvaluationId: this.row.ID,
           KpiId: row.ID,
