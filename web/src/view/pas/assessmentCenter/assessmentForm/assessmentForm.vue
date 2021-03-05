@@ -27,7 +27,6 @@
         >
         
         <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
-        
         <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
         <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="120"></el-table-column> 
@@ -58,6 +57,7 @@
         </el-table>
         
     <el-pagination
+      background
       :current-page="page"
       :page-size="pageSize"
       :page-sizes="[10, 30, 50, 100]"
@@ -105,7 +105,7 @@ export default {
       pageSize: 10,
       acData:{
         score:0,
-        result:0,
+        result:"",
         kpi:{
           name:"",
           category:"",
@@ -152,12 +152,13 @@ export default {
       },
     async confirmKpi(row) {
       this.isDisable=true
-      if(row.result>row.performanceReviewItem.score||row.result<0){
+      if(row.result>row.performanceReviewItem.score||row.result<0||row.result!=Number){
           this.$message({
             type: 'warning',
             message: '无效输入'
           })
           this.loading=false
+          this.isDisable=false
           return
       }
       const res = await updatePRItemStatusById({
