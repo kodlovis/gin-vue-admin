@@ -753,7 +753,7 @@ export default {
         const res = await getUserListByAuthorityId({
           page: this.userPage, 
           pageSize: this.userPageSize,
-          authorityId:"10000"})
+          authorityIds:["10000","8888"]})
         this.userTotal= res.data.total
         this.userData = res.data.list
         this.userDialog = true
@@ -942,7 +942,7 @@ export default {
         const res = await getUserListByAuthorityId({
           page: this.userPage, 
           pageSize: this.userPageSize,
-          authorityId:"10000"})
+          authorityIds:["10000","8888"]})
         this.userTotal= res.data.total
         this.userData = res.data.list
     },
@@ -951,7 +951,7 @@ export default {
         const res = await getUserListByAuthorityId({
           page: this.userPage, 
           pageSize: this.userPageSize,
-          authorityId:"10000"})
+          authorityIds:["10000","8888"]})
         this.userTotal= res.data.total
         this.userData = res.data.list
     },

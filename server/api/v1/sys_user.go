@@ -316,7 +316,7 @@ func GetUserByIds(c *gin.Context) {
 func GetUserListByAuthorityId(c *gin.Context) {
 	var pageInfo request.UserSearch
 	_ = c.ShouldBindJSON(&pageInfo)
-	if err, list, total := service.GetUserListByAuthorityId(pageInfo.AuthorityId, pageInfo); err != nil {
+	if err, list, total := service.GetUserListByAuthorityId(pageInfo.AuthorityIds, pageInfo); err != nil {
 		global.GVA_LOG.Error("批量查询失败!", zap.Any("err", err))
 		response.FailWithMessage("批量查询失败", c)
 	} else {

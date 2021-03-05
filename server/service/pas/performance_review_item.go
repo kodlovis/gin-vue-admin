@@ -97,7 +97,7 @@ func UpdatePRItemStatusById(id uint, status uint, result float64, comment string
 		sum = sum +PRIUs[i].Result
 	}
 	var s=float64(sum/float64(total))
-	var re = fmt.Sprintf("%.3f", s)
+	var re = fmt.Sprintf("%.1f", s)
 	if count ==1  {
 		err = global.GVA_DB.Model(&PRI).Where("id = ?", PRIU.PRIID).Select("result", "status").Updates(map[string]interface{}{"result": re, "status": status}).Error
 	}else{

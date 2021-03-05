@@ -153,11 +153,11 @@ func GetUserByIds(ids request.IdsReq, info request.UserSearch) (err error, list 
 	err = db.Limit(limit).Offset(offset).Find(&Users).Error
 	return err, Users, total
 }
-func GetUserListByAuthorityId(id string, info request.UserSearch) (err error, list interface{}, total int64) {
+func GetUserListByAuthorityId(ids []string, info request.UserSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&model.SysUser{}).Where("authority_id = ?", id)
+	db := global.GVA_DB.Model(&model.SysUser{}).Where("authority_id in ?", ids)
 	var Users []model.SysUser
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error

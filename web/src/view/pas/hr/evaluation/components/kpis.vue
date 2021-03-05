@@ -383,7 +383,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           ekid:this.saveData.ekid,
-          authorityId:"10000"})
+          authorityId:["10000","8888"]})
         this.ekuData = res.data.list
         this.ekuTotal = res.data.total
         this.$message({
@@ -415,7 +415,7 @@ export default {
             page: this.ekuPage, 
             pageSize: this.ekuPageSize,
             ekid:row.ekid,
-            authorityId:"10000"})
+            authorityId:["10000","8888"]})
           this.ekuData = res.data.list
           this.ekuTotal = res.data.total
         }
@@ -425,7 +425,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           ekid:row.ID,
-          authorityId:"10000"})
+          authorityId:["10000","8888"]})
         this.ekuData = res.data.list
         this.ekuTotal = res.data.total
         this.saveData.ekid=row.ID
@@ -435,7 +435,7 @@ export default {
         const res = await getUserListByAuthorityId({
           page: this.userPage, 
           pageSize: this.userPageSize,
-          authorityId:"10000"})
+          authorityIds:["10000","8888"]})
         this.userTotal = res.data.total
         this.userData = res.data.list
         this.userDialog = true
@@ -543,7 +543,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           ekid:this.saveData.ekid,
-          authorityId:"10000"})
+          authorityId:["10000","8888"]})
         this.ekuData = res.data.list
         this.ekuTotal = res.data.total
     },
@@ -553,7 +553,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           ekid:this.saveData.ekid,
-          authorityId:"10000"})
+          authorityId:["10000","8888"]})
         this.ekuData = res.data.list
         this.ekuTotal = res.data.total
     },
@@ -562,7 +562,7 @@ export default {
         const res = await getUserListByAuthorityId({
           page: this.userPage, 
           pageSize: this.userPageSize,
-          authorityId:"10000"})
+          authorityIds:["10000","8888"]})
         if (res.code==0) {
         this.userTotal = res.data.total
         this.userData = res.data.list
@@ -573,7 +573,7 @@ export default {
         const res = await getUserListByAuthorityId({
           page: this.userPage, 
           pageSize: this.userPageSize,
-          authorityId:"10000"})
+          authorityIds:["10000","8888"]})
         if (res.code==0) {
         this.userTotal = res.data.total
         this.userData = res.data.list
@@ -713,7 +713,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           ekid:row.ekid,
-          authorityId:"10000"})
+          authorityId:["10000","8888"]})
         this.ekuData = res.data.list
         this.ekuTotal = ref.data.total
       }
@@ -758,7 +758,7 @@ export default {
     const user = await getUserListByAuthorityId({
           page: 1, 
           pageSize: 999,
-          authorityId:"10000"})
+          authorityIds:["10000","8888"]})
     //载入Users
     this.setOptions(user.data.list);
     this.refreshEvalutationKpi()

@@ -7,6 +7,7 @@ type EvaluationKpiUserSearch struct {
 	PageInfo
 	AuthorityId	string `json:"authorityId"`
 	EKID uint `json:"ekid"`
+	AuthorityIds []string `json:"authorityIds"`
 }
 type EKU struct{
 	EvaluationKpiUser []pas.EvaluationKpiUser `json:"items"`

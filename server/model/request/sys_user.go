@@ -41,4 +41,5 @@ type UserSearch struct {
 	NickName    []string
 	AuthorityId string `json:"authorityId"`
 	PageInfo
+	AuthorityIds []string `json:"authorityIds"`
 }

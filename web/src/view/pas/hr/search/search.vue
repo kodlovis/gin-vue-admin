@@ -432,7 +432,7 @@ export default {
       }
     },
     async openUserDialog(){
-        const res = await getUserListByAuthorityId({authorityId:"10000"})
+        const res = await getUserListByAuthorityId({authorityIds:["10000","8888"]})
         this.userData = res.data.list
         this.userDialog = true
     },
