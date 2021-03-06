@@ -185,6 +185,12 @@ func GetPRListByUser(id uint, Ids []int, info rp.PerformanceReviewSearch) (err e
 		db := global.GVA_DB.Model(&mp.PerformanceReview{}).Where("employee_id = ?", id)
 		var PerformanceReviews []mp.PerformanceReview
 		// 如果有条件搜索 下方会自动创建搜索语句
+		if info.Name != "" {
+			db = db.Where("`name` LIKE ?","%"+ info.Name+"%")
+		}
+		if info.Status != 0 {
+			db = db.Where("`status` = ?",info.Status)
+		}
 		err = db.Count(&total).Error
 		err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 		err = db.Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
@@ -193,6 +199,12 @@ func GetPRListByUser(id uint, Ids []int, info rp.PerformanceReviewSearch) (err e
 		db := global.GVA_DB.Model(&mp.PerformanceReview{}).Where("employee_id = ? AND status in ?", id, Ids)
 		var PerformanceReviews []mp.PerformanceReview
 		// 如果有条件搜索 下方会自动创建搜索语句
+		if info.Name != "" {
+			db = db.Where("`name` LIKE ?","%"+ info.Name+"%")
+		}
+		if info.Status != 0 {
+			db = db.Where("`status` = ?",info.Status)
+		}
 		err = db.Count(&total).Error
 		err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 		err = db.Preload("User").Preload("PRItems").Find(&PerformanceReviews).Error
