@@ -85,6 +85,12 @@
         style="width: 100%"
         tooltip-effect="dark"
       >
+      <el-table-column label="指标类型" width="120">
+        <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.kpi.Tags"
+        :key="index">{{item.name}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="指标名称" prop="kpi.name" width="150"></el-table-column>
 
       <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>

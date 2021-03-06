@@ -66,7 +66,14 @@
         stripe
         style="width: 100%"
         tooltip-effect="dark"
+        sortable
       >
+      <el-table-column label="指标类型" width="120" sortable>
+        <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.kpi.Tags"
+        :key="index">{{item.name}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="指标名称" prop="kpi.name" width="150"></el-table-column>
 
       <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
@@ -86,7 +93,7 @@
       </el-table-column>
       </el-table>
       <el-pagination
-      background
+        background
         :current-page="priPage"
         :page-size="priPageSize"
         :page-sizes="[5,10, 30, 50, 100]"
@@ -125,6 +132,11 @@ export default {
       multipleSelection: [],
       countData:9,
       saveID:0,
+      page: 1,
+      pageSize: 10,
+      priPage:1,
+      priPageSize:5,
+      priTotal:0,
       prItemDialog: false,
       kpiDictList:[],
       searchInfo: {},
@@ -139,21 +151,9 @@ export default {
         user:{
             nickName:"",
         },
-        performanceReviewItemData:{
-                PRId:"",
-                kpiId:"",
-                userId:"",
-                score:"",
-                kpi:{
-                name:"",
-                description:"",
-                category:"",
-                },
-                user:{
-                ID:"",
-                }
-        },
       },
+        performanceReviewItemData:{
+        },
     };
   },
   computed: {
@@ -208,6 +208,22 @@ export default {
           return""
           }
       },
+      async kpiSizeChange(val) {
+          this.priPageSize = val
+          const res = await getPerformanceReviewItemListById({ PRId: this.saveID,
+            page: this.priPage, 
+            pageSize: this.priPageSize})
+          this.priTotal=res.data.total
+          this.performanceReviewItemData = res.data.list
+      },
+      async kpiCurrentChange(val) {
+          this.priPage = val
+          const res = await getPerformanceReviewItemListById({ PRId: this.saveID,
+            page: this.priPage, 
+            pageSize: this.priPageSize})
+          this.priTotal=res.data.total
+          this.performanceReviewItemData = res.data.list
+      },
       //条件搜索前端看此方法
       filterDict(status){
         const re = this.dictList.filter(item=>{
@@ -224,14 +240,14 @@ export default {
         this.multipleSelection = val
       },
     async searchPRIInfo() {
-    this.PRIPage = 1
-    this.PRIPageSize = 10
-    const ref = await getPRListByUser({...this.searchInfo,
-        ID:this.userInfo.ID,
-        page: this.PRIPage, 
-        pageSize: this.PRIPageSize})
-    this.PRITotal=ref.data.total
-    this.acData=ref.data.list
+      this.PRIPage = 1
+      this.PRIPageSize = 10
+      const ref = await getPRListByUser({...this.searchInfo,
+          ID:this.userInfo.ID,
+          page: this.PRIPage, 
+          pageSize: this.PRIPageSize})
+      this.PRITotal=ref.data.total
+      this.acData=ref.data.list
     },
     async getPRListByUser(){
       const res = await getPRListByUser({

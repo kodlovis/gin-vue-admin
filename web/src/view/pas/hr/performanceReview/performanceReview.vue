@@ -176,24 +176,28 @@
         style="width: 100%"
         tooltip-effect="dark"
       >
-      <el-table-column label="指标名称" prop="kpi.name" width="90"></el-table-column>
-
+      <el-table-column label="指标类型" width="120">
+        <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.kpi.Tags"
+        :key="index">{{item.name}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column>
       <el-table-column label="指标说明" prop="kpi.description" width="360" type="textarea"></el-table-column>
-      
       <el-table-column label="指标算法" prop="kpi.category" width="360" type="textarea"> </el-table-column> 
       <el-table-column label="指标状态" prop="kpi.status" width="160">
         <template slot-scope="scope">
-        <el-select v-model="scope.row.status" placeholder="请选择" clearable>
-          <el-option
-            v-for="item in kpiDictList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+          <el-select v-model="scope.row.status" placeholder="请选择" clearable>
+            <el-option
+              v-for="item in kpiDictList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="指标分数">
+      <el-table-column label="指标分数" width="90">
         <template slot-scope="scope">
             <el-input v-model="scope.row.score" clearable placeholder="请输入"></el-input>
         </template>
@@ -201,7 +205,7 @@
       <el-table-column label="评分人" width="230">
         <template slot-scope="scope">
           <span v-for="(item,index) in scope.row.PRIUs"
-          :key="index">{{item.user.nickName}}<br/></span>
+          :key="index">{{item.user.nickName}},</span>
         </template>
       </el-table-column>
         <el-table-column label="按钮组">
@@ -474,6 +478,7 @@ export default {
       dialogTitle:"新增指标",
       saveID:0,
       page: 1,
+      pageSize: 10,
       ekuPage:1,
       ekuPageSize:10,
       userPage:1,
@@ -482,7 +487,6 @@ export default {
       kpiPage: 1,
       priPage: 1,
       total: 10,
-      pageSize: 10,
       kpiPageSize: 10,
       priPageSize: 10,
       type: "",
@@ -746,6 +750,7 @@ export default {
       this.formData = pr.data.list[0];
       if (res.code == 0) {
         this.performanceReviewItemData = res.data.list;
+        
         this.prItemDialog = true;
       }
     },
