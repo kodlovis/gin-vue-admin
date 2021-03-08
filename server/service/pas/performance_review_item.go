@@ -147,7 +147,7 @@ func GetPRItemListByStatusPrid(status uint, Ids []int, info rp.PerformanceReview
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
-	err = db.Preload("Kpi").Preload("PRs.User").Preload("PRIUs.User").Find(&PerformanceReviewItems).Error
+	err = db.Preload("Kpi.Tags").Preload("PRs.User").Preload("PRIUs.User").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
 func GetPRItemListByStatus(status uint, info rp.PerformanceReviewItemSearch) (err error, list interface{}, total int64) {
@@ -171,7 +171,7 @@ func GetPRItemListByPrids(ids []int, info rp.PerformanceReviewItemSearch) (err e
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviewItems).Error
-	err = db.Preload("Kpi").Preload("PRs.User").Preload("PRIUs.User").Find(&PerformanceReviewItems).Error
+	err = db.Preload("Kpi.Tags").Preload("PRs.User").Preload("PRIUs.User").Find(&PerformanceReviewItems).Error
 	return err, PerformanceReviewItems, total
 }
 func GetLastPRI() (err error, PerformanceReviewItem mp.PerformanceReviewItem) {

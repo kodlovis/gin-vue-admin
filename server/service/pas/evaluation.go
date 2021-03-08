@@ -99,7 +99,7 @@ func GetEvaluationInfoList(info rp.EvaluationSearch) (err error, list interface{
     }
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Evaluations).Error
-	err = db.Preload("Kpis").Find(&Evaluations).Error
+	err = db.Preload("Kpis.Tags").Find(&Evaluations).Error
 	return err, Evaluations, total
 }
 
