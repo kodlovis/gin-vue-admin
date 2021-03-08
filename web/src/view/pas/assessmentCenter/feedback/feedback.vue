@@ -40,13 +40,20 @@
           tooltip-effect="dark"
         >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
+        <el-table-column label="考核名称" prop="performanceReviewItem.prs.name" width="120"></el-table-column> 
+        <el-table-column label="指标类型" width="120">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.performanceReviewItem.kpi.Tags"
+            :key="index">{{item.name}}<br/></span>
+          </template>
+        </el-table-column>
+        <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="100"></el-table-column> 
         
-        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
-        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
-        <el-table-column label="被考评人" prop="user.nickName" width="120"></el-table-column> 
-        <el-table-column label="权重分值" prop="score" width="120"></el-table-column>
-        <el-table-column label="反馈">
+        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="380"></el-table-column> 
+        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="380"></el-table-column> 
+        <el-table-column label="被考评人" prop="user.nickName" width="100"></el-table-column> 
+        <el-table-column label="权重分值" prop="score" width="80"></el-table-column>
+        <el-table-column label="反馈" width="200">
           <template slot-scope="scope">
             <el-input v-model="scope.row.comment" clearable placeholder="请输入反馈"></el-input>
           </template>

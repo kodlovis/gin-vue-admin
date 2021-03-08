@@ -238,7 +238,10 @@
     </div>
     <!-- 添加指标 -->
     <el-dialog :before-close="closeKpiDialog" :visible.sync="kpiDialog" title="添加指标" width= "90%" :append-to-body="true" :fullscreen ="true">
-      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">   
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-form-item label="指标标签">
+          <el-input placeholder="搜索条件" v-model="searchInfo.tagName"></el-input>
+        </el-form-item> 
         <el-form-item label="指标名称">
           <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
         </el-form-item>    
@@ -258,6 +261,12 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
+    <el-table-column label="指标类型" width="120">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Tags"
+        :key="index">{{item.name}}<br/></span>
+      </template>
+    </el-table-column>
     <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
     <el-table-column label="指标说明" prop="description" width="460" type="textarea"></el-table-column> 

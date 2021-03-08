@@ -74,12 +74,18 @@
           tooltip-effect="dark"
         >
         
+        <el-table-column label="指标类型" width="120">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.kpi.Tags"
+            :key="index">{{item.name}}<br/></span>
+          </template>
+        </el-table-column>
         <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column> 
         
         <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 
-        <el-table-column label="指标总分" prop="score" width="120"></el-table-column>
-        <el-table-column label="指标得分" prop="result" width="120"></el-table-column>
+        <el-table-column label="指标总分" prop="score" width="100"></el-table-column>
+        <el-table-column label="指标得分" prop="result" width="100"></el-table-column>
         <el-table-column label="评分人及评分" prop="PRIUs.user.nickName" width="160">
           <template slot-scope="scope">
             <span v-for="(item,index) in scope.row.PRIUs"

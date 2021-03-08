@@ -52,7 +52,12 @@
           style="width: 100%"
           tooltip-effect="dark"
         >
-        <el-table-column label="考核名称" prop="prs.name" width="120"></el-table-column> 
+        <el-table-column label="指标类型" width="120">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.kpi.Tags"
+            :key="index">{{item.name}}<br/></span>
+          </template>
+        </el-table-column>
         <el-table-column label="指标名称" prop="kpi.name" width="120"></el-table-column> 
         <el-table-column label="指标算法" prop="kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="kpi.description" width="460"></el-table-column> 

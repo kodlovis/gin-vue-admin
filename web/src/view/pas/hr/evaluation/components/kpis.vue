@@ -29,7 +29,15 @@
     >
     
     <el-table-column type="selection" width="55"></el-table-column>
-
+    <el-table-column label="指标类型" width="120">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.kpis"
+        :key="index">
+          <span v-for="(item,index) in item.Tags"
+          :key="index">{{item.name}}<br/></span>
+        <br/></span>
+      </template>
+    </el-table-column>
     <el-table-column label="指标名称" width="90">
       <template slot-scope="scope">
         <p v-for="(item,index) in scope.row.kpis"
@@ -89,6 +97,9 @@
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right" :fullscreen ="true"
      >
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-form-item label="指标标签">
+          <el-input placeholder="搜索条件" v-model="searchInfo.tagName"></el-input>
+        </el-form-item>    
         <el-form-item label="指标名称">
           <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
         </el-form-item>    
@@ -108,6 +119,12 @@
       style="width: 100%"
       tooltip-effect="dark"
     >
+    <el-table-column label="指标类型" width="120">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Tags"
+        :key="index">{{item.name}}<br/></span>
+      </template>
+    </el-table-column>
     <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
     <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 

@@ -2,6 +2,9 @@
   <div>
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-form-item label="指标标签">
+          <el-input placeholder="搜索条件" v-model="searchInfo.tagName"></el-input>
+        </el-form-item> 
         <el-form-item label="指标状态">
           <el-select v-model="searchInfo.status" placeholder="请选择" clearable>
             <el-option
@@ -51,6 +54,12 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column> -->
     
+    <el-table-column label="标签名称">
+      <template slot-scope="scope">
+        <span v-for="(item,index) in scope.row.Tags"
+        :key="index">{{item.name}}<br/></span>
+      </template>
+    </el-table-column>
     <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
     <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 
@@ -64,18 +73,12 @@
     
     <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
 
-    <el-table-column label="标签名称">
-      <template slot-scope="scope">
-        <span v-for="(item,index) in scope.row.Tags"
-        :key="index">{{item.name}}<br/></span>
-      </template>
-    </el-table-column>
-    <el-table-column label="标签类型">
+    <!-- <el-table-column label="标签类型">
       <template slot-scope="scope">
         <span v-for="(item,index) in scope.row.Tags"
         :key="index">{{item.category}}<br/></span>
       </template>
-    </el-table-column>
+    </el-table-column> -->
       <el-table-column label="按钮组">
         <template slot-scope="scope">
           <el-button class="table-button" @click="updateKpi(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑指标</el-button>
