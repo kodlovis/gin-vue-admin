@@ -8,6 +8,7 @@ type KpiSearch struct{
     Kpis []pas.Kpi
     ID uint
     PageInfo
+    TagName string `josn:"tagName" form:"tagName"`
 }
 
 

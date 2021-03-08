@@ -96,6 +96,14 @@ func GetKpiInfoList(info rp.KpiSearch) (err error, list interface{}, total int64
     if info.Category != "" {
         db = db.Where("`category` LIKE ?","%"+ info.Category+"%")
     }
+    if info.TagName != "" {
+        err = db.Preload("Tags").Preload("EvaluationKpis", "evaluation_id = ?", info.ID).
+		Joins("INNER JOIN kpi_tag AS `kt` ON kpi.id = `kt`.kpi_id INNER JOIN tag AS `tag` ON `tag`.id = `kt`.tag_id").Find(&Kpis,"`tag`.name LIKE ?","%"+ info.TagName+"%").Error
+
+		err = db.Count(&total).Error
+		err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
+		return err, Kpis, total
+	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Kpis).Error
 	err = db.Preload("Tags").Preload("EvaluationKpis", "evaluation_id = ?", info.ID).Find(&Kpis).Error
@@ -159,7 +167,7 @@ func GetKpiEvaluation(info rp.KpiSearch) (err error, list interface{}, total int
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&Evaluations).Error
-	err = db.Preload("Kpis").Preload("EvaluationKpiUsers.User").Preload("Evaluation").Find(&Evaluations).Error
+	err = db.Preload("Kpis.Tags").Preload("EvaluationKpiUsers.User").Preload("Evaluation").Find(&Evaluations).Error
 	return err, Evaluations, total
 }
 
