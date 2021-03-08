@@ -24,8 +24,15 @@
           stripe
           style="width: 100%"
           tooltip-effect="dark"
+          :rules="rules" 
         >
-        
+        <el-table-column label="考核名称" prop="performanceReviewItem.prs.name" width="120"></el-table-column> 
+        <el-table-column label="指标类型" width="120">
+          <template slot-scope="scope">
+            <span v-for="(item,index) in scope.row.performanceReviewItem.kpi.Tags"
+            :key="index">{{item.name}}<br/></span>
+          </template>
+        </el-table-column>
         <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
         <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
         <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
@@ -105,7 +112,7 @@ export default {
       pageSize: 10,
       acData:{
         score:0,
-        result:"",
+        result:0,
         kpi:{
           name:"",
           category:"",
@@ -152,7 +159,7 @@ export default {
       },
     async confirmKpi(row) {
       this.isDisable=true
-      if(row.result>row.performanceReviewItem.score||row.result<0||row.result!=Number){
+      if(row.result>row.performanceReviewItem.score||row.result<0){
           this.$message({
             type: 'warning',
             message: '无效输入'
