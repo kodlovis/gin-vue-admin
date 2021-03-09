@@ -168,11 +168,13 @@ export default {
         this.isDisable=false
     },
     async rejectKpi(row){
+      this.isDisable=true
       const res = await updatePRItemStatusById({
           ID:row.id,
           status:99,
       })
       if(res.code == 0){
+          this.isDisable=false
           this.getPRIUListByUser()
           this.$message({
           type: "success",
