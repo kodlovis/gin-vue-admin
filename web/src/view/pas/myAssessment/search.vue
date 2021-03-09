@@ -56,6 +56,17 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          :current-page="page"
+          :page-size="pageSize"
+          :page-sizes="[10, 30, 50, 100]"
+          :style="{float:'right',padding:'20px'}"
+          :total="total"
+          @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
+          layout="total, sizes, prev, pager, next, jumper"
+        ></el-pagination>
     <div>
       <el-dialog :before-close="closeprItemDialog" :visible.sync="prItemDialog" title="考核指标" :append-to-body="true" :fullscreen ="true" width="90%">
         <el-table
@@ -96,7 +107,7 @@
         background
         :current-page="priPage"
         :page-size="priPageSize"
-        :page-sizes="[5,10, 30, 50, 100]"
+        :page-sizes="[1,5,10, 30, 50, 100]"
         :style="{float:'right',padding:'20px'}"
         :total="priTotal"
         @current-change="kpiCurrentChange"
@@ -134,6 +145,7 @@ export default {
       saveID:0,
       page: 1,
       pageSize: 10,
+      total: 10,
       priPage:1,
       priPageSize:5,
       priTotal:0,
@@ -240,20 +252,40 @@ export default {
         this.multipleSelection = val
       },
     async searchPRIInfo() {
-      this.PRIPage = 1
-      this.PRIPageSize = 10
+      this.page = 1
+      this.pageSize = 10
       const ref = await getPRListByUser({...this.searchInfo,
           ID:this.userInfo.ID,
-          page: this.PRIPage, 
-          pageSize: this.PRIPageSize})
-      this.PRITotal=ref.data.total
+          page: this.page, 
+          pageSize: this.pageSize})
+      this.total=ref.data.total
       this.acData=ref.data.list
     },
     async getPRListByUser(){
       const res = await getPRListByUser({
           ID:this.userInfo.ID,
+          page: this.page, 
+          pageSize: this.pageSize
           })
       this.acData = res.data.list
+    },
+    async handleSizeChange(val) {
+        this.pageSize = val
+        const ref = await getPRListByUser({...this.searchInfo,
+            ID:this.userInfo.ID,
+            page: this.page, 
+            pageSize: this.pageSize})
+        this.total=ref.data.total
+        this.acData=ref.data.list
+    },
+    async handleCurrentChange(val) {
+        this.page = val
+        const ref = await getPRListByUser({...this.searchInfo,
+            ID:this.userInfo.ID,
+            page: this.page, 
+            pageSize: this.pageSize})
+        this.total=ref.data.total
+        this.acData=ref.data.list
     },
   },
   async created() {
