@@ -42,10 +42,10 @@
             <span>{{scope.row.score*100+"%"}}<br/></span>
           </template>
           </el-table-column> -->
-        <el-table-column label="总分" prop="performanceReviewItem.score" width="120"></el-table-column>
+        <el-table-column label="分值" prop="performanceReviewItem.score" width="120"></el-table-column>
         <el-table-column label="得分">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.result" clearable placeholder="请输入分数"></el-input>
+            <el-input v-model="scope.row.result" clearable placeholder="请输入分数" ></el-input>
           </template>
         </el-table-column>
           <el-table-column label="按钮组">
@@ -110,6 +110,12 @@ export default {
       page: 1,
       total: 10,
       pageSize: 10,
+      rules: {
+        name:[ { required: true, message: '请输入', trigger: 'blur' }],
+        status:[ { required: true, message: '请输入', trigger: 'blur' }],
+        category:[ { required: true, message: '请输入', trigger: 'blur' }],
+        description:[ { required: true, message: '请输入', trigger: 'blur' }]
+      },
       acData:{
         score:0,
         result:0,
