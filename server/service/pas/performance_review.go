@@ -4,6 +4,7 @@ import (
 	"gin-vue-admin/global"
 	mp "gin-vue-admin/model/pas"
 	rp "gin-vue-admin/model/request/pas"
+	"fmt"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -220,7 +221,8 @@ func UpdatePRResult(ID uint) (err error) {
 	for i := 0; i < len(PRIs); i++ {
 		total=total+PRIs[i].Result
 	}
-	err = global.GVA_DB.Model(&PR).Where("id = ?", ID).Select("result").Updates(map[string]interface{}{"result": total}).Error
+	var re=fmt.Sprintf("%.1f", total)
+	err = global.GVA_DB.Model(&PR).Where("id = ?", ID).Select("result").Updates(map[string]interface{}{"result": re}).Error
 	return err
 }
 func GetPRByID(id uint, info rp.PerformanceReviewSearch) (err error, list interface{}, total int64) {

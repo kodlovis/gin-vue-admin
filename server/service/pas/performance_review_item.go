@@ -96,7 +96,7 @@ func UpdatePRItemStatusById(id uint, status uint, result float64, comment string
 	for i := 0; i < len(PRIUs); i++ {
 		sum = sum +PRIUs[i].Result
 	}
-	var s=float64(sum/float64(total))
+	var s=float64((sum/float64(total))+0.05)
 	var re = fmt.Sprintf("%.1f", s)
 	if count ==1  {
 		if status==99 {
