@@ -97,7 +97,7 @@
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="添加指标" :append-to-body="true" style="width: 90%,marigin:right" :fullscreen ="true"
      >
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item label="指标标签">
+        <el-form-item label="指标类型">
           <el-input placeholder="搜索条件" v-model="searchInfo.tagName"></el-input>
         </el-form-item>    
         <el-form-item label="指标名称">
@@ -127,14 +127,14 @@
     </el-table-column>
     <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标说明" prop="description" width="520" type="textarea"></el-table-column> 
     
     <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
     
-    <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
-    <el-table-column label="设置指标分数">
+    <el-table-column label="指标算法" prop="category" width="520" type="textarea"></el-table-column> 
+    <el-table-column label="设置指标分数" width="120">
       <template slot-scope="scope">
-          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
+          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入" type="number" onkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )" :min="0"></el-input>
       </template>
     </el-table-column>
     <el-table-column label="设置评分人" width="230">
@@ -364,7 +364,8 @@ export default {
         id: [
           { required: true, message: "请选择用户角色", trigger: "blur" }
         ],
-        nickName:{ required: true, message: "请选择用户角色", trigger: "blur" }
+        inputScore:[{ required: true, message: "请选择用户角色", trigger: "blur" },
+                  ]
       },
     };
   },
@@ -499,6 +500,10 @@ export default {
     },
     async kpiDataEnter(row){
         this.isDisable=true;
+        if (row.userId==null) {
+          this.$message({ type: 'warning', message: "请选择评分人" })
+          this.isDisable=false;
+        }
         if (row.userId==null) {
           this.$message({ type: 'warning', message: "请选择评分人" })
           this.isDisable=false;

@@ -34,18 +34,18 @@
           </template>
         </el-table-column>
         <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="120"></el-table-column> 
-        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="460"></el-table-column> 
-        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="460"></el-table-column> 
-        <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="120"></el-table-column> 
+        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="450"></el-table-column> 
+        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="450"></el-table-column> 
+        <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="100"></el-table-column> 
         <!-- <el-table-column label="权重分值" width="120">
           <template slot-scope="scope">
             <span>{{scope.row.score*100+"%"}}<br/></span>
           </template>
           </el-table-column> -->
-        <el-table-column label="分值" prop="performanceReviewItem.score" width="120"></el-table-column>
-        <el-table-column label="得分">
+        <el-table-column label="分值" prop="performanceReviewItem.score" width="100"></el-table-column>
+        <el-table-column label="得分" width="100">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.result" clearable placeholder="请输入分数" ></el-input>
+            <el-input label="" v-model="scope.row.result" clearable placeholder="请输入分数"  type="number" onkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )" :min="0"></el-input>
           </template>
         </el-table-column>
           <el-table-column label="按钮组">

@@ -239,7 +239,7 @@
     <!-- 添加指标 -->
     <el-dialog :before-close="closeKpiDialog" :visible.sync="kpiDialog" title="添加指标" width= "90%" :append-to-body="true" :fullscreen ="true">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item label="指标标签">
+        <el-form-item label="指标类型">
           <el-input placeholder="搜索条件" v-model="searchInfo.tagName"></el-input>
         </el-form-item> 
         <el-form-item label="指标名称">
@@ -276,7 +276,7 @@
     <el-table-column label="指标算法" prop="category" width="460" type="textarea"></el-table-column> 
      <el-table-column label="设置指标分数" width="160">
       <template slot-scope="scope">
-          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入"></el-input>
+          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入" type="number" onkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )" :min="0"></el-input>
       </template>
     </el-table-column>
     <el-table-column label="设置评分人" width="330">
