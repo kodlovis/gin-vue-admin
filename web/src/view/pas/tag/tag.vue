@@ -6,7 +6,7 @@
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item> -->
         <el-form-item>
-          <el-button @click="openDialog" type="primary">新增标签</el-button>
+          <el-button @click="openDialog" type="primary">新增指标类型</el-button>
         </el-form-item>
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
@@ -34,9 +34,9 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column> -->
     
-    <el-table-column label="标签名称" prop="name" width="120"></el-table-column> 
+    <el-table-column label="指标类型名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="标签分类" prop="category" width="120"></el-table-column> 
+    <el-table-column label="指标类型分类" prop="category" width="120"></el-table-column> 
     
     <!-- <el-table-column label="树形结构" prop="Parentid" width="120"></el-table-column>  -->
     
@@ -67,13 +67,13 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="编辑标签">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="编辑指标类型">
       <el-form :model="formData" label-position="right" label-width="80px">
-         <el-form-item label="标签名称:">
+         <el-form-item label="指标类型名称:">
             <el-input v-model="formData.name" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="标签分类:">
+         <el-form-item label="指标类型分类:">
             <el-input v-model="formData.category" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        

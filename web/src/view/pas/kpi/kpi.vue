@@ -2,7 +2,7 @@
   <div>
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item label="指标标签">
+        <el-form-item label="指标类型">
           <el-input placeholder="搜索条件" v-model="searchInfo.tagName"></el-input>
         </el-form-item> 
         <el-form-item label="指标状态">
@@ -54,7 +54,7 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column> -->
     
-    <el-table-column label="标签名称">
+    <el-table-column label="指标类型" width="120">
       <template slot-scope="scope">
         <span v-for="(item,index) in scope.row.Tags"
         :key="index">{{item.name}}<br/></span>
@@ -62,7 +62,7 @@
     </el-table-column>
     <el-table-column label="指标名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="指标说明" prop="description" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标说明" prop="description" width="430" type="textarea"></el-table-column> 
     
     <el-table-column label="指标状态" prop="status" width="120">
       <template slot-scope="scope">
@@ -71,7 +71,7 @@
       </template>
     </el-table-column>
     
-    <el-table-column label="指标算法" prop="category" width="360" type="textarea"></el-table-column> 
+    <el-table-column label="指标算法" prop="category" width="430" type="textarea"></el-table-column> 
 
     <!-- <el-table-column label="标签类型">
       <template slot-scope="scope">
@@ -88,15 +88,15 @@
               <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
               <el-button type="primary" size="mini" @click="deleteKpi(scope.row)">确定</el-button>
             </div>
-            <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">删除指标</el-button>
-          </el-popover>
+            <el-button type="danger" size="mini" slot="reference">删除指标</el-button>
+          </el-popover>&#32;
           <el-popover placement="top" width="160" v-model="scope.row.vis">
-            <p>确定要清空标签吗？</p>
+            <p>确定要清空指标类型吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="scope.row.vis = false">取消</el-button>
               <el-button type="primary" size="mini" @click="removeKpiTags(scope.row)">确定</el-button>
             </div>
-            <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">清除标签</el-button>
+            <el-button type="danger" size="mini" slot="reference">清除指标类型</el-button>
           </el-popover>
         </template>
       </el-table-column>
@@ -137,7 +137,7 @@
             <el-input v-model="formData.category" clearable placeholder="请输入"  type="textarea"
         :autosize="{minRows: 4, maxRows: 4}"></el-input>
       </el-form-item>
-          <el-form-item label="添加标签"> 
+          <el-form-item label="添加指标类型"> 
             <!-- <el-select v-model="formData.Tags" placeholder="请选择需要添加的标签" clearable
               :style="{width: '100%'}">
               <el-option v-for="(item, index) in tagData" 

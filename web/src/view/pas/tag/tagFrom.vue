@@ -1,11 +1,11 @@
 <template>
 <div>
     <el-form :model="formData" label-position="right" label-width="80px">
-             <el-form-item label="标签名称:">
+             <el-form-item label="类型名称:">
                 <el-input v-model="formData.Name" clearable placeholder="请输入" ></el-input>
           </el-form-item>
            
-             <el-form-item label="标签分类:">
+             <el-form-item label="类型分类:">
                 <el-input v-model="formData.Category" clearable placeholder="请输入" ></el-input>
           </el-form-item>
            
