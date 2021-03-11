@@ -45,7 +45,10 @@
         <el-table-column label="分值" prop="performanceReviewItem.score" width="100"></el-table-column>
         <el-table-column label="得分" width="170">
           <template slot-scope="scope">
-            <el-input-number  :step="0.1" size="small" v-model="scope.row.result" clearable placeholder="请输入分数"  onkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )" :min="0"></el-input-number>
+            <el-input :step="0.1" size="small" v-model="scope.row.result" clearable placeholder="请输入分数"  :min="0"
+              type="number"
+              onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))"
+            ></el-input>
           </template>
         </el-table-column>
           <el-table-column label="按钮组">
@@ -232,6 +235,7 @@ export default {
     this.getPRIUListByUser()
 }
 };
+
 </script>
 
 <style>

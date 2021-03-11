@@ -199,7 +199,8 @@
       </el-table-column>
       <el-table-column label="指标分数" width="160">
         <template slot-scope="scope">
-            <el-input-number :step="0.1" size="small" v-model="scope.row.score" clearable placeholder="请输入" onkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )" :min="0"></el-input-number >
+            <el-input :step="0.1" size="small" v-model="scope.row.score" clearable placeholder="请输入"
+              onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))" :min="0"></el-input>
         </template>
       </el-table-column> 
       <el-table-column label="评分人" width="230">
