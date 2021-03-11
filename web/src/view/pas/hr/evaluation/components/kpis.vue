@@ -132,9 +132,9 @@
     <!-- <el-table-column label="指标状态" prop="Status" width="120"></el-table-column>  -->
     
     <el-table-column label="指标算法" prop="category" width="520" type="textarea"></el-table-column> 
-    <el-table-column label="设置指标分数" width="120">
+    <el-table-column label="设置指标分数" width="170">
       <template slot-scope="scope">
-          <el-input v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入" type="number" onkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )" :min="0"></el-input>
+          <el-input-number  :step="0.1" size="small" v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入" onkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )" :min="0"></el-input-number>
       </template>
     </el-table-column>
     <el-table-column label="设置评分人" width="230">
