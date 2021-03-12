@@ -134,8 +134,15 @@
     <el-table-column label="指标算法" prop="category" width="520" type="textarea"></el-table-column> 
     <el-table-column label="设置指标分数" width="170">
       <template slot-scope="scope">
-          <el-input  :step="0.1" size="small" v-model="scope.row.evaluationKpis.kpiScore" clearable placeholder="请输入" 
-              onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))" :min="0"></el-input>
+          <el-input  
+            :step="0.1" 
+            size="small"
+            v-model="scope.row.evaluationKpis.kpiScore" 
+            placeholder="请输入" 
+            onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))"
+            :min="0"
+            type="number"
+            ></el-input>
       </template>
     </el-table-column>
     <el-table-column label="设置评分人" width="230">
