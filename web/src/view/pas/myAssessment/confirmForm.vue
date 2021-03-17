@@ -77,7 +77,7 @@
                   <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
                   <el-button type="primary" size="mini" @click="rejectKpi(scope.row)">确定</el-button>
                 </div>
-                <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference">驳回</el-button>
+                <el-button type="danger" icon="el-icon-delete" size="mini" slot="reference" :disabled="isDisable">驳回</el-button>
               </el-popover>
             </template>
           </el-table-column>
