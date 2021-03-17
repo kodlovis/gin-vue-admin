@@ -5,7 +5,8 @@ import (
 	"gin-vue-admin/model/pas"
 	mp "gin-vue-admin/model/pas"
 	rp "gin-vue-admin/model/request/pas"
-	"fmt"
+	//"fmt"
+	"strconv"
 )
 
 func CreatePerformanceReviewItem(list []pas.PerformanceReviewItem) (err error) {
@@ -96,8 +97,8 @@ func UpdatePRItemStatusById(id uint, status uint, result float64, comment string
 	for i := 0; i < len(PRIUs); i++ {
 		sum = sum +PRIUs[i].Result
 	}
-	var s=float64((sum/float64(total))+0.05)
-	var re = fmt.Sprintf("%.1f", s)
+	var s=float64(sum/float64(total))
+	var re = strconv.FormatFloat(s, 'f', 1, 64)
 	if count ==1  {
 		if status==99 {
 			err = global.GVA_DB.Model(&PRI).Where("id = ?", PRIU.PRIID).Select("result").Updates(map[string]interface{}{"result": re}).Error
