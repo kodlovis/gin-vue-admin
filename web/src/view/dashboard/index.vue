@@ -46,26 +46,26 @@
                  </el-col>
             </el-row>
          </div>
-      <div class="bottom">
+      <!-- <div class="bottom">
          <el-row :gutter="32">
              <el-col :xs="24" :sm="24" :lg="12">
                  <div class="chart-player">
                      <musicPlayer />
                  </div>
              </el-col>
-             <!-- <el-col :xs="24" :sm="24" :lg="12">
+             <el-col :xs="24" :sm="24" :lg="12">
                  <div  class="chart-player">
                      <todo-list />
                  </div>
-             </el-col> -->
+             </el-col>
          </el-row>
-     </div>
+     </div> -->
  </div>
 
 </template>
 
 <script>
-import musicPlayer from "./component/musicPlayer"
+//import musicPlayer from "./component/musicPlayer"
 // import TodoList from "./component/todoList"
 import { mapGetters } from 'vuex'
 export default {
@@ -129,7 +129,7 @@ export default {
     ...mapGetters('user', ['userInfo'])
   },
     components:{
-        musicPlayer,  //音乐播放器
+        //musicPlayer,  //音乐播放器
         //TodoList, //TodoList
         // RaddarChart, //雷达图
         // stackMap, //堆叠图

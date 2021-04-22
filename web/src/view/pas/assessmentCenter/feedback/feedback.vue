@@ -40,25 +40,26 @@
           tooltip-effect="dark"
         >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="考核名称" prop="performanceReviewItem.prs.name" width="120"></el-table-column> 
-        <el-table-column label="指标类型" width="120">
+        <el-table-column label="考核名称" prop="performanceReviewItem.prs.name" width="90"></el-table-column> 
+        <el-table-column label="指标类型" width="100">
           <template slot-scope="scope">
             <span v-for="(item,index) in scope.row.performanceReviewItem.kpi.Tags"
             :key="index">{{item.name}}<br/></span>
           </template>
         </el-table-column>
-        <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="100"></el-table-column> 
+        <el-table-column label="指标名称" prop="performanceReviewItem.kpi.name" width="90"></el-table-column> 
         
-        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="380"></el-table-column> 
-        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="380"></el-table-column> 
+        <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="340"></el-table-column> 
+        <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="340"></el-table-column> 
         <el-table-column label="被考评人" prop="user.nickName" width="100"></el-table-column> 
-        <el-table-column label="权重分值" prop="score" width="80"></el-table-column>
+        <el-table-column label="分值" prop="score" width="60"></el-table-column>
+        <el-table-column label="得分" prop="result" width="60"></el-table-column>
         <el-table-column label="反馈" width="200">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.comment" clearable placeholder="请输入反馈"></el-input>
+            <el-input v-model="scope.row.comment" clearable placeholder="请输入反馈" type="textarea" :autosize="{ minRows: 5, maxRows: 10}"></el-input>
           </template>
         </el-table-column>
-          <el-table-column label="按钮组">
+          <el-table-column label="按钮组" width="200">
             <template slot-scope="scope">
               <el-button class="table-button" @click="confirmKpi(scope.row)" size="small" type="primary" icon="el-icon-edit" >提交</el-button>
               <el-button class="table-button" @click="skip(scope.row)" size="small" type="primary" icon="el-icon-edit" >跳过</el-button>
@@ -70,7 +71,7 @@
       background
       :current-page="page"
       :page-size="pageSize"
-      :page-sizes="[10, 30, 50, 100]"
+      :page-sizes="[3,5,10, 30, 50, 100]"
       :style="{float:'right',padding:'20px'}"
       :total="total"
       @current-change="handleCurrentChange"
@@ -110,7 +111,7 @@ export default {
       countData:9,
       page: 1,
       total: 10,
-      pageSize: 10,
+      pageSize: 5,
       loading:false,
       skipVisible:false,
       acData:{

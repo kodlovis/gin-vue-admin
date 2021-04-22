@@ -46,10 +46,9 @@
         <el-table-column label="得分" width="170">
           <template slot-scope="scope">
             <el-input 
-              :step="0.1" 
               size="small" 
               v-model="scope.row.result" 
-              clearable placeholder="请输入分数"  
+              placeholder="请输入分数"  
               :min="0"
               type="number"
               onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))"
@@ -126,7 +125,7 @@ export default {
       },
       acData:{
         score:0,
-        result:0,
+        result:"",
         kpi:{
           name:"",
           category:"",

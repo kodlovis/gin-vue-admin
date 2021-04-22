@@ -769,7 +769,7 @@ export default {
       this.priTotal=res.data.total
       this.saveID = row.ID
       const pr = await getPRByID({ ID: row.ID,
-          page: this.page, 
+          page: 1, 
           pageSize: this.pageSize });
       this.formData = pr.data.list[0];
       if (res.code == 0) {
@@ -921,7 +921,7 @@ export default {
         const res = await getPerformanceReviewItemListById({ PRId: this.saveID,
           page: this.priPage, 
           pageSize: this.priPageSize})
-        this.priTotal=res.data.total
+        //this.priTotal=res.data.total
         this.performanceReviewItemData = res.data.list
     },
     async kpiCurrentChange(val) {
@@ -929,7 +929,7 @@ export default {
         const res = await getPerformanceReviewItemListById({ PRId: this.saveID,
           page: this.priPage, 
           pageSize: this.priPageSize})
-        this.priTotal=res.data.total
+        //this.priTotal=res.data.total
         this.performanceReviewItemData = res.data.list
     },
     async kpiStoreSizeChange(val) {
@@ -937,7 +937,6 @@ export default {
         const ref = await getKpiList({
           page: this.kpiPage, 
           pageSize: this.kpiPageSize})
-        this.kpiTotal=ref.data.total
         this.kpiList=ref.data.list
     },
     async kpiStoreCurrentChange(val) {
@@ -945,7 +944,6 @@ export default {
         const ref = await getKpiList({
           page: this.kpiPage, 
           pageSize: this.kpiPageSize})
-        this.kpiTotal=ref.data.total
         this.kpiList=ref.data.list
     },
     async ekuSizeChange(val) {
@@ -954,7 +952,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           priid:this.saveData.priid})
-        this.ekuTotal = res.data.total
+        //this.ekuTotal = res.data.total
         this.priuData = res.data.list
     },
     async ekuCurrentChange(val) {
@@ -963,7 +961,7 @@ export default {
           page: this.ekuPage, 
           pageSize: this.ekuPageSize,
           priid:this.saveData.priid})
-        this.ekuTotal = res.data.total
+        //this.ekuTotal = res.data.total
         this.priuData = res.data.list
     },
     async userSizeChange(val) {
@@ -972,7 +970,7 @@ export default {
           page: this.userPage, 
           pageSize: this.userPageSize,
           authorityIds:["10000","8888"]})
-        this.userTotal= res.data.total
+        //this.userTotal= res.data.total
         this.userData = res.data.list
     },
     async userCurrentChange(val) {
@@ -981,7 +979,7 @@ export default {
           page: this.userPage, 
           pageSize: this.userPageSize,
           authorityIds:["10000","8888"]})
-        this.userTotal= res.data.total
+        //this.userTotal= res.data.total
         this.userData = res.data.list
     },
     async deletePerformanceReview(row) {

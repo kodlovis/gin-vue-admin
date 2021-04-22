@@ -135,7 +135,6 @@
     <el-table-column label="设置指标分数" width="170">
       <template slot-scope="scope">
           <el-input  
-            :step="0.1" 
             size="small"
             v-model="scope.row.evaluationKpis.kpiScore" 
             placeholder="请输入" 
@@ -472,6 +471,7 @@ export default {
           page: this.kpiPage, 
           pageSize: this.kpiPageSize
         });
+         this.kpiTotal=life.data.total
         this.kpiList = life.data.list;
         this.dialogFormVisible = true;
     },
@@ -489,9 +489,10 @@ export default {
       this.kpiPageSize = 10
       const life = await getKpiList({...this.searchInfo,
         ID:Number(this.row.ID),
-        page: this.kpiPage, 
+        page: this.kpiPage,
         pageSize: this.kpiPageSize
       });
+      this.kpiTotal=life.data.total
       this.kpiList = life.data.list;
     },
     handleSelectionChange(val) {
