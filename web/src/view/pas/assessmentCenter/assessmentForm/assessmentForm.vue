@@ -121,7 +121,8 @@ export default {
         name:[ { required: true, message: '请输入', trigger: 'blur' }],
         status:[ { required: true, message: '请输入', trigger: 'blur' }],
         category:[ { required: true, message: '请输入', trigger: 'blur' }],
-        description:[ { required: true, message: '请输入', trigger: 'blur' }]
+        description:[ { required: true, message: '请输入', trigger: 'blur' }],
+        result:[ { required: true, message: '请输入', trigger: 'blur' }]
       },
       acData:{
         score:0,
@@ -172,7 +173,7 @@ export default {
       },
     async confirmKpi(row) {
       this.isDisable=true
-      if(row.result>row.performanceReviewItem.score||row.result<0){
+      if(row.result>row.performanceReviewItem.score||row.result<0||row.result==""){
           this.$message({
             type: 'warning',
             message: '无效输入'
@@ -233,6 +234,10 @@ export default {
       this.page = res.data.page
       this.pageSize = res.data.pageSize
       this.acData = res.data.list
+      for (let i = 0; i < this.acData.length;i++) {
+        this.acData[i].result=""
+        
+      }
     },
   },
   async created() {
