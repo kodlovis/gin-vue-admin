@@ -91,7 +91,8 @@
             <span v-for="(item,index) in scope.row.PRIUs"
             :key="index">{{item.user.nickName}}:{{item.result}}分<br/></span>
           </template>
-        </el-table-column> 
+        </el-table-column>
+        <el-table-column label="评分人备注" prop="comment" width="100"></el-table-column>
         </el-table>
     
 
