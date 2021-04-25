@@ -132,6 +132,9 @@ export default {
           category:"",
           description:"",
         },
+      saveData:{
+        result:"",
+      },
         prs:{
           user:{
             nickName:"",
@@ -224,6 +227,10 @@ export default {
         this.getPRIUListByUser()
     },
     async getPRIUListByUser(page = this.page, pageSize = this.pageSize){
+      const num = []
+      for (let i = 0; i < this.acData.length; i++) {
+        num.push(this.acData[i].result)
+      }
       const res = await getPRIUListByUser({
           ID:this.userInfo.ID,
           status:4,
@@ -234,9 +241,8 @@ export default {
       this.page = res.data.page
       this.pageSize = res.data.pageSize
       this.acData = res.data.list
-      for (let i = 0; i < this.acData.length;i++) {
-        this.acData[i].result=""
-        
+      for (let i = 0; i < this.acData.length; i++) {
+        this.acData[i].result=num[i+1]
       }
     },
   },
