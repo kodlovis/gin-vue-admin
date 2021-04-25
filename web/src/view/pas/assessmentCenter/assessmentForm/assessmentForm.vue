@@ -191,7 +191,7 @@ export default {
           result:Number(row.result),
       })
       if(res.code == 0){
-          this.getPRIUListByUser()
+          this.getPRIUListByUserNoRefresh()
           this.$message({
           type: "success",
           message: "确认成功"})
@@ -226,7 +226,7 @@ export default {
         this.page = val
         this.getPRIUListByUser()
     },
-    async getPRIUListByUser(page = this.page, pageSize = this.pageSize){
+    async getPRIUListByUserNoRefresh(page = this.page, pageSize = this.pageSize){
       const num = []
       for (let i = 0; i < this.acData.length; i++) {
         num.push(this.acData[i].result)
@@ -243,6 +243,21 @@ export default {
       this.acData = res.data.list
       for (let i = 0; i < this.acData.length; i++) {
         this.acData[i].result=num[i+1]
+      }
+    },
+    async getPRIUListByUser(page = this.page, pageSize = this.pageSize){
+      const res = await getPRIUListByUser({
+          ID:this.userInfo.ID,
+          status:4,
+          page: page, 
+          pageSize: pageSize
+          })
+      this.total = res.data.total
+      this.page = res.data.page
+      this.pageSize = res.data.pageSize
+      this.acData = res.data.list
+      for (let i = 0; i < this.acData.length; i++) {
+        this.acData[i].result=""
       }
     },
   },
