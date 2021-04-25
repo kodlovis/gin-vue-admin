@@ -96,7 +96,7 @@ func GetPerformanceReviewInfoList(info rp.PerformanceReviewSearch) (err error, l
 		err = db.Count(&total).Error
 		err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 		err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Joins("INNER JOIN sys_users AS `user` ON performance_review.employee_id = `user`.id").Find(&PerformanceReviews,"`user`.nick_name LIKE ?","%"+ info.NickName+"%").Error
-		return err, PerformanceReviews, total
+		
 	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
@@ -123,7 +123,6 @@ func GetPRListWithoutFinishedStatus(info rp.PerformanceReviewSearch) (err error,
 		err = db.Count(&total).Error
 		err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
 		err = db.Preload("Evaluation").Preload("User").Preload("PRItems").Joins("INNER JOIN sys_users AS `user` ON performance_review.employee_id = `user`.id").Find(&PerformanceReviews,"`user`.nick_name LIKE ?","%"+ info.NickName+"%").Error
-		return err, PerformanceReviews, total
 	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&PerformanceReviews).Error
