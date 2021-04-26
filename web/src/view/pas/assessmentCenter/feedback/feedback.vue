@@ -51,7 +51,7 @@
         
         <el-table-column label="指标算法" prop="performanceReviewItem.kpi.category" width="340"></el-table-column> 
         <el-table-column label="指标描述" prop="performanceReviewItem.kpi.description" width="340"></el-table-column> 
-        <el-table-column label="被考评人" prop="user.nickName" width="100"></el-table-column> 
+        <el-table-column label="被考评人" prop="performanceReviewItem.prs.user.nickName" width="100"></el-table-column> 
         <el-table-column label="分值" prop="score" width="60"></el-table-column>
         <el-table-column label="得分" prop="result" width="60"></el-table-column>
         <el-table-column label="反馈" width="200">
