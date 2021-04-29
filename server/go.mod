@@ -57,4 +57,5 @@ require (
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gorm.io/driver/mysql v0.3.0
 	gorm.io/gorm v1.20.5
+	gotest.tools v2.2.0+incompatible
 )

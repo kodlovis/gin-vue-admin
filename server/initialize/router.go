@@ -5,10 +5,12 @@ import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/middleware"
 	"gin-vue-admin/router"
+	"gin-vue-admin/router/pas"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"net/http"
 )
 
 // 初始化总路由
@@ -42,7 +44,15 @@ func Routers() *gin.Engine {
 	router.InitSysDictionaryRouter(ApiGroup)         // 字典管理
 	router.InitSysOperationRecordRouter(ApiGroup)    // 操作记录
 	router.InitEmailRouter(ApiGroup)                 // 邮件相关路由
-	router.InitPasKpiRouter(ApiGroup)
+	pas.InitKpiRouter(ApiGroup)
+	pas.InitTagRouter(ApiGroup)
+	pas.InitPerformanceReviewRouter(ApiGroup)
+	pas.InitPerformanceReviewItemRouter(ApiGroup)
+	pas.InitEvaluationRouter(ApiGroup)
+	pas.InitEvaluationKpiRouter(ApiGroup)
+	pas.InitKpiTagRouter(ApiGroup)
+	pas.InitEvaluationKpiUserRouter(ApiGroup)
+	pas.InitPerformanceReviewItemUserRouter(ApiGroup)
 
 	global.GVA_LOG.Info("router register success")
 	return Router

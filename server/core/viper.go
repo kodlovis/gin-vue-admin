@@ -6,9 +6,10 @@ import (
 	"gin-vue-admin/global"
 	_ "gin-vue-admin/packfile"
 	"gin-vue-admin/utils"
+	"os"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"os"
 )
 
 func Viper(path ...string) *viper.Viper {

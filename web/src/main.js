@@ -64,6 +64,20 @@ export default new Vue({
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts;
 
+Vue.prototype.$steamrollArray = steamrollArray
+
+function steamrollArray(arr) {
+    let res = []
+    for (const a of arr) {
+        if(a instanceof Array){
+            res = res.concat(steamrollArray(a))
+        }else{
+            res.push(a)
+        }
+    }
+    return res;
+}
+
 console.log(`
        欢迎使用 Gin-Vue-Admin
        当前版本:V2.3.6

@@ -8,7 +8,7 @@
         <div class="header">
           <a href="/">
             <!-- <img src="~@/assets/logo.png" class="logo" alt="logo" /> -->
-            <span class="title">Gin-Vue-Admin</span>
+            <span class="title">绩效考核系统</span>
           </a>
         </div>
       </div>
@@ -70,18 +70,14 @@
 
       <div class="footer">
         <div class="links">
-          <a href="http://doc.henrongyi.top/"
-            ><img src="@/assets/docs.png" class="link-icon"
-          /></a>
-          <a href="https://www.yuque.com/flipped-aurora/"
-            ><img src="@/assets/yuque.png" class="link-icon"
-          /></a>
-          <a href="https://github.com/flipped-aurora/gin-vue-admin"
-            ><img src="@/assets/github.png" class="link-icon"
-          /></a>
-          <a href="https://space.bilibili.com/322210472"
-            ><img src="@/assets/video.png" class="link-icon"
-          /></a>
+          <img src="@/assets/docs.png" class="link-icon"
+          />
+          <img src="@/assets/yuque.png" class="link-icon"
+          />
+          <img src="@/assets/github.png" class="link-icon"
+          />
+          <img src="@/assets/video.png" class="link-icon"
+          />
         </div>
         <div class="copyright">
           Copyright &copy; {{ curYear }} 💖flipped-aurora
@@ -98,7 +94,7 @@ export default {
   name: "Login",
   data() {
     const checkUsername = (rule, value, callback) => {
-      if (value.length < 5 || value.length > 12) {
+      if (value.length < 2 || value.length > 20) {
         return callback(new Error("请输入正确的用户名"));
       } else {
         callback();
@@ -115,8 +111,8 @@ export default {
       curYear: 0,
       lock: "lock",
       loginForm: {
-        username: "admin",
-        password: "123456",
+        username: "",
+        password: "",
         captcha: "",
         captchaId: "",
       },

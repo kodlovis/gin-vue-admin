@@ -111,3 +111,27 @@ export const setUserInfo = (data) => {
         data: data
     })
 }
+
+export const getUserByNickName = (data) => {
+    return service({
+        url: "/user/getUserByNickName",
+        method: 'post',
+        data
+    })
+}
+
+export const getUserByIds = (data) => {
+    return service({
+        url: "/user/getUserByIds",
+        method: 'post',
+        data
+    })
+}
+
+export const getUserListByAuthorityId = (data) => {
+    return service({
+        url: "/user/getUserListByAuthorityId",
+        method: 'post',
+        data
+    })
+}

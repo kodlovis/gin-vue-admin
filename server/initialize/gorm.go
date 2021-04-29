@@ -3,11 +3,13 @@ package initialize
 import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
+	"gin-vue-admin/model/pas"
+	"os"
+
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"os"
 )
 
 // Gorm 初始化数据库并产生数据库全局变量
@@ -39,7 +41,14 @@ func MysqlTables(db *gorm.DB) {
 		model.ExaSimpleUploader{},
 		model.ExaCustomer{},
 		model.SysOperationRecord{},
-		model.PasKpi{},
+		pas.Kpi{},
+		pas.Tag{},
+		pas.PerformanceReview{},
+		pas.Evaluation{},
+		pas.EvaluationKpi{},
+		pas.PerformanceReviewItem{},
+		pas.EvaluationKpiUser{},
+		pas.PerformanceReviewItemUser{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Any("err", err))
