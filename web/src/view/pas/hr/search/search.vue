@@ -106,7 +106,7 @@
       <el-table-column label="评分人打分详情">
         <template slot-scope="scope">
           <span v-for="(item,index) in scope.row.PRIUs"
-          :key="index">评分人：{{item.user.nickName}},评分：{{item.result}}分<br/></span>
+          :key="index">评分人：{{item.user.nickName}},评分：{{item.result}}分,操作状态：{{filterKpiDict(item.status)}}<br/></span>
         </template>
       </el-table-column>
       </el-table>
