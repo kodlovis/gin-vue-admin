@@ -89,10 +89,9 @@
         <el-table-column label="评分人及评分" prop="PRIUs.user.nickName" width="160">
           <template slot-scope="scope">
             <span v-for="(item,index) in scope.row.PRIUs"
-            :key="index">{{item.user.nickName}}:{{item.result}}分<br/></span>
+            :key="index">{{item.user.nickName}}:{{item.result}}分，操作状态：{{filterKpiDict(item.status)}}，备注：{{item.comment}}<br/></span>
           </template>
         </el-table-column>
-        <el-table-column label="评分人备注" prop="comment"></el-table-column>
         </el-table>
     
 
@@ -124,6 +123,7 @@ export default {
       dictList:[],
       multipleSelection: [],
       countData:9,
+      kpiDictList:[],
       prData:{
         result:"",
         kpi:{
@@ -170,6 +170,17 @@ export default {
     }
   },
   methods: {
+      filterKpiDict(status){
+        const re = this.kpiDictList.filter(item=>{
+          return item.value == status
+        })[0]
+        if(re){
+          return re.label
+          }
+        else{
+          return""
+          }
+      },
       //条件搜索前端看此方法
       filterDict(status){
         const re = this.dictList.filter(item=>{
@@ -261,6 +272,10 @@ export default {
     const pr = await getDict("PR");
     pr.map(item=>item.value)
     this.dictList = pr
+    //获取指标状态字典
+    const kpi = await getDict("kpi");
+    kpi.map(item=>item.value)
+    this.kpiDictList = kpi
     this.getPRListByUser()
     
 }
