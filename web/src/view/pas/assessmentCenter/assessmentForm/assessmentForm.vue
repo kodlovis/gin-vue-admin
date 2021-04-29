@@ -227,9 +227,12 @@ export default {
         this.getPRIUListByUser()
     },
     async getPRIUListByUserNoRefresh(page = this.page, pageSize = this.pageSize){
-      const num = []
+      const idArr = []
+      const resultArr = []
+      // 记录已填写的内容
       for (let i = 0; i < this.acData.length; i++) {
-        num.push(this.acData[i].result)
+        resultArr.push(this.acData[i].result)
+        idArr.push(this.acData[i].id)
       }
       const res = await getPRIUListByUser({
           ID:this.userInfo.ID,
@@ -241,8 +244,13 @@ export default {
       this.page = res.data.page
       this.pageSize = res.data.pageSize
       this.acData = res.data.list
-      for (let i = 0; i < this.acData.length; i++) {
-        this.acData[i].result=num[i+1]
+      // 找到对应ID赋值
+      for (let j = 0; j < idArr.length; j++) {
+        for (let i = 0; i < this.acData.length; i++) {
+        if(this.acData[i].id==idArr[j]){
+          this.acData[i].result=resultArr[j]
+          }
+        }
       }
     },
     async getPRIUListByUser(page = this.page, pageSize = this.pageSize){
